@@ -1,0 +1,12 @@
+#ctree-loading-icon-styles (@size: 30px, @color: @ctree-color-primary) {
+  display: inline-block;
+  width: @size;
+  height: @size;
+  animation: ctree-animation-spin 2s linear infinite;
+
+  .@{ctree-prefix}-loading-icon__circle {
+    stroke: @color;
+    stroke-linecap: round;
+    animation: ctree-animation-svg-circle-spin 1.5s ease-in-out infinite;
+  }
+}

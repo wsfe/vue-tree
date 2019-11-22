@@ -1,0 +1,52 @@
+@ctree-prefix: ~"ctree";
+
+// Colors
+// Thanks to iviewui
+// https://www.iviewui.com/components/color
+@ctree-color-primary: #2d8cf0;
+@ctree-color-light-primary: #5cadff;
+@ctree-color-dark-primary: #2b85e4;
+
+@ctree-color-info: #2db7f5;
+@ctree-color-success: #19be6b;
+@ctree-color-warning: #ff9900;
+@ctree-color-error: #ed4014;
+
+@ctree-color-title: #17233d;
+@ctree-color-content: #515a6e;
+@ctree-color-sub: #808695;
+@ctree-color-disabled: #c5c8ce;
+@ctree-color-border: #dcdee2;
+@ctree-color-divider: #e8eaec;
+@ctree-color-background: #f8f8f9;
+
+@ctree-color-input-border: #57a3f3;
+@ctree-color-input-background-disabled: #f3f3f3;
+@ctree-color-input-disabled: #ccc;
+@ctree-color-input-placeholder: #c5c8ce;
+
+// Animations
+@keyframes ctree-animation-spin {
+  from {
+    // 使用 translate3d 强行启用 GPU 加速，缓解 CPU 计算 SVG 的压力
+    transform: rotate(0deg) translate3d(0, 0, 0);
+  }
+  to {
+    transform: rotate(360deg) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes ctree-animation-svg-circle-spin {
+  0% {
+    stroke-dasharray: 1 130;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90 130;
+    stroke-dashoffset: -30;
+  }
+  100% {
+    stroke-dasharray: 90 130;
+    stroke-dashoffset: -124;
+  }
+}

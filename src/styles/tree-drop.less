@@ -1,0 +1,157 @@
+#ctree-tree-drop-styles () {
+  // prefix
+  @tree-drop-prefix: ~"@{ctree-prefix}-tree-drop";
+  @tree-search-prefix: ~"@{ctree-prefix}-tree-search";
+  @tree-dropdown-prefix: ~"@{ctree-prefix}-dropdown";
+
+  // TreeDrop
+  .@{tree-drop-prefix} {
+    // 容器
+    &__wrapper {
+      position: relative;
+    }
+
+    // 下拉框触发区域
+    &__reference {
+      cursor: pointer;
+    }
+
+    // 触发区域
+    &__display {
+      // 输入框
+      &-input {
+        position: relative;
+        user-select: none;
+        padding-right: 20px;
+
+        &-text {
+          display: block;
+          height: 100%;
+          line-height: 22px;
+        }
+
+        &-placeholder {
+          color: @ctree-color-input-placeholder;
+        }
+
+        &_focus {
+          border-color: @ctree-color-input-border;
+          box-shadow: 0 0 0 2px fade(@ctree-color-primary, 20%);
+        }
+      }
+
+      // 图标
+      &-icon {
+        @icon-size: 14px;
+        .icon () {
+          position: absolute;
+          top: 8px;
+          right: 3px;
+          width: @icon-size;
+          height: @icon-size;
+          box-sizing: border-box;
+        }
+
+        // 下拉图标
+        &-drop {
+          @scale: 0.5;
+          @translate: -(@icon-size / 2) * @scale;
+          @transform-rest: scale(@scale) translateX(@translate) translateY(@translate);
+
+          .icon();
+          border: 3px solid @ctree-color-sub;
+          border-top: none;
+          border-left: none;
+          transform: rotate(45deg) @transform-rest;
+          transition: transform .2s ease-in-out;
+
+          &_active {
+            transform: rotate(225deg) @transform-rest;
+          }
+        }
+
+        // 清除图标
+        &-clear {
+          @scale: 0.9;
+          .pseudo () {
+            @thick: 1px;
+            @offset: (@icon-size - @thick) / 2;
+            @diff: 7px;
+
+            content: "";
+            width: @thick;
+            height: @icon-size - @diff;
+            display: block;
+            background-color: #fff;
+            position: absolute;
+            top: @diff / 2;
+            left: @offset;
+          }
+
+          .icon();
+          border-radius: 50%;
+          background-color: @ctree-color-sub;
+          overflow: hidden;
+          transform: scale(@scale) rotate(45deg);
+          display: none;
+
+          &::before {
+            .pseudo();
+          }
+
+          &::after {
+            .pseudo();
+            transform: rotate(90deg);
+          }
+        }
+      }
+
+      &-input:hover &-icon-clear {
+        display: block;
+      }
+    }
+
+    // 下拉框
+    &__dropdown {
+      position: absolute;
+      top: -999px;
+      left: -999px;
+      box-shadow: 0 1px 6px fade(#000, 20%);
+      border-radius: 4px;
+      margin: 5px 0;
+      padding: 5px 0;
+      transform-origin: center top 0px;
+      background-color: #fff;
+      z-index: 9999;
+
+      .@{tree-search-prefix} {
+        // TreeSearch 搜索区域
+        &__search {
+          border-bottom: 1px solid @ctree-color-border;
+          padding-bottom: 5px;
+          height: 38px;
+        }
+
+        // TreeSearch 树区域
+        &__tree-wrapper {
+          padding-top: 5px;
+        }
+      }
+    }
+  }
+
+  // Dropdown animation
+  .@{tree-dropdown-prefix} {
+    &-enter, &-leave-to {
+      opacity: 0;
+      transform: scaleY(0.8)
+    }
+
+    &-enter-active, &-leave-active {
+      transition: opacity .3s,
+                  transform .3s;
+    }
+  }
+}
+
+#ctree-tree-drop-styles();

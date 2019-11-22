@@ -1,0 +1,52 @@
+{
+  "name": "@wsfe/ctree",
+  "version": "2.2.4",
+  "main": "./dist/ctree.umd.min.js",
+  "types": "./types",
+  "description": "A vue tree component using virtual list.",
+  "scripts": {
+    "serve": "vue-cli-service serve --open",
+    "bundle": "vue-cli-service build --target lib --name ctree ./src/index.ts --report",
+    "lint": "vue-cli-service lint",
+    "test": "vue-cli-service test:unit",
+    "prepublishOnly": "yarn bundle"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "src",
+    "types"
+  ],
+  "author": {
+    "name": "ChuChencheng",
+    "url": "https://github.com/ChuChencheng"
+  },
+  "keywords": [
+    "wsfe",
+    "CTree",
+    "ctree",
+    "tree",
+    "vue tree component"
+  ],
+  "homepage": "https://github.com/wsfe/ctree",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "^23.1.4",
+    "@vue/cli-plugin-babel": "^3.5.1",
+    "@vue/cli-plugin-typescript": "^3.5.1",
+    "@vue/cli-plugin-unit-jest": "^3.5.1",
+    "@vue/cli-service": "^3.5.1",
+    "@vue/test-utils": "^1.0.0-beta.29",
+    "babel-core": "7.0.0-bridge.0",
+    "less": "^3.9.0",
+    "less-loader": "^4.1.0",
+    "ts-jest": "^23.0.0",
+    "typescript": "^3.3.4000",
+    "vue": "^2.6.10",
+    "vue-template-compiler": "^2.6.10"
+  }
+}

@@ -1,0 +1,286 @@
+#ctree-tree-styles () {
+  // prefix
+  @tree-prefix: ~"@{ctree-prefix}-tree";
+  @tree-node-prefix: ~"@{tree-prefix}-node";
+
+  // Tree
+  .@{tree-prefix} {
+    // 覆盖整个树并且垂直居中
+    .wrap-tree () {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    // 容器
+    &__wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    // 滚动区域
+    &__scroll-area {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      position: relative;
+      display: flex;
+    }
+
+    // 数据块区域
+    &__block-area {
+      flex: 1;
+    }
+
+    // 暂无数据
+    &__empty {
+      .wrap-tree();
+      &-text_default {
+        // 水平居中
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    // 加载中
+    &__loading {
+      .wrap-tree();
+      background-color: rgba(255, 255, 255, .95);
+      &-wrapper {
+        width: 100%;
+        text-align: center;
+      }
+      &-icon {
+        #ctree-loading-icon-styles();
+      }
+    }
+
+    // iframe
+    &__iframe {
+      .wrap-tree();
+      display: block;
+      border: none;
+      padding: 0px;
+      margin: 0px;
+      opacity: 0;
+      z-index: -1000;
+      pointer-events: none;
+    }
+  }
+
+  // Node
+  .@{tree-node-prefix} {
+    @base-square-length: 20px;
+
+    // 容器
+    &__wrapper {
+      display: flex;
+      flex-direction: column;
+    }
+
+    // 拖拽区域
+    &__drop {
+      width: 100%;
+      height: 2px;
+
+      &_active {
+        background-color: @ctree-color-light-primary;
+      }
+    }
+
+    // 节点本体
+    &__node-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    // 占位
+    &__square {
+      position: relative;
+      width: @base-square-length;
+      height: @base-square-length;
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+    }
+
+    // 展开 icon
+    &__expand {
+      @icon-border-width: 5px;
+      // 展开图标可点击区域大小
+      @icon-clickable-size: 16px;
+
+      &::after {
+        content: '';
+        display: block;
+        width: 0;
+        height: 0;
+        position: absolute;
+        border: @icon-border-width solid transparent;
+        border-left: @icon-border-width solid @ctree-color-content;
+      }
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      width: @icon-clickable-size;
+      height: @icon-clickable-size;
+      position: relative;
+      transition: transform .2s linear;
+
+      // 展开状态，顺时针旋转 90 度
+      &_active{
+        transform: rotate(90deg);
+      }
+    }
+
+    // Loading icon
+    &__loading-icon {
+      #ctree-loading-icon-styles(14px, @ctree-color-content);
+    }
+
+    // 复选框
+    &__checkbox {
+      @checkbox-size: 14px;
+
+      .active-color () {
+        border-color: @ctree-color-primary;
+        background-color: @ctree-color-primary;
+      }
+
+      box-sizing: border-box;
+      cursor: pointer;
+      width: @checkbox-size;
+      height: @checkbox-size;
+      position: absolute;
+      border: 1px solid;
+      border-color: @ctree-color-border;
+      border-radius: 2px;
+      background-color: #fff;
+      transition: border-color .2s ease-in-out,
+                  background-color .2s ease-in-out,
+                  box-shadow .2s ease-in-out;
+      
+      &::after {
+        content: "";
+        display: table;
+        position: absolute;
+        box-sizing: border-box;
+        border: 2px solid #fff;
+        border-top: 0;
+        border-left: 0;
+        width: 4px;
+        height: 8px;
+        top: 1px;
+        left: 4px;
+        transform: rotate(45deg) scale(0);
+        transition: all .2s ease-in-out;
+      }
+
+      &:hover {
+        border-color: @ctree-color-disabled;
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 2px @ctree-color-light-primary;
+      }
+
+      &_checked {
+        .active-color();
+
+        &::after {
+          width: 4px;
+          height: 8px;
+          top: 1px;
+          left: 4px;
+          transform: rotate(45deg) scale(1);
+        }
+
+        &:hover {
+          .active-color();
+        }
+      }
+
+      &_indeterminate {
+        .active-color();
+
+        &::after {
+          width: 8px;
+          height: 1px;
+          top: 5px;
+          left: 2px;
+          transform: scale(1);
+        }
+
+        &:hover {
+          .active-color();
+        }
+      }
+
+      &_disabled {
+        cursor: not-allowed;
+        border-color: @ctree-color-border;
+        background-color: @ctree-color-divider;
+
+        &:hover {
+          border-color: @ctree-color-border;
+          background-color: @ctree-color-divider;
+        }
+
+        &::after {
+          border-color: @ctree-color-disabled;
+        }
+      }
+    }
+
+    // 标题
+    &__title {
+      @title-height: @base-square-length + 6px;
+      @title-margin-left: 5px;
+      @title-padding-left: 5px;
+
+      cursor: pointer;
+      user-select: none;
+      flex: 1;
+      height: @title-height;
+      line-height: @title-height;
+      margin-left: @title-margin-left;
+      padding-left: @title-padding-left;
+      background-color: transparent;
+      word-break: keep-all;
+      white-space: nowrap;
+      word-wrap: none;
+
+      &:hover {
+        background-color: lighten(@ctree-color-light-primary, 28%);
+      }
+
+      &_selected {
+        .selected () {
+          background-color: lighten(@ctree-color-primary, 35%);
+        }
+
+        .selected();
+
+        &:hover {
+          .selected();
+        }
+      }
+
+      &_disabled {
+        cursor: not-allowed;
+        color: @ctree-color-disabled;
+      }
+    }
+  }
+}
+
+#ctree-tree-styles();

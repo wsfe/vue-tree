@@ -1,0 +1,121 @@
+#ctree-tree-search-styles () {
+  // prefix
+  @tree-search-prefix: ~"@{ctree-prefix}-tree-search";
+
+  // TreeSearch
+  .@{tree-search-prefix} {
+    @search-height: 42px;
+
+    .search-wrapper () {
+      // height: @search-height;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    // 容器
+    &__wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    // 搜索区域
+    &__search {
+      height: @search-height;
+      display: flex;
+      box-sizing: border-box;
+    }
+
+    // 全选框容器
+    &__check-all-wrapper {
+      .search-wrapper();
+      justify-content: initial;
+      width: 40px;
+    }
+
+    // 全选框
+    &__check-all {
+      margin-left: 23px;
+    }
+
+    // 搜索框容器
+    &__input-wrapper {
+      .search-wrapper();
+      padding-left: 5px;
+      flex: 1;
+    }
+
+    // 搜索框
+    &__input {
+      color: @ctree-color-content;
+      box-sizing: border-box;
+      width: 100%;
+      height: 32px;
+      border: 1px solid @ctree-color-border;
+      border-radius: 4px;
+      padding: 4px 7px;
+      outline: none;
+      transition: border .2s ease-in-out,
+                  box-shadow .2s ease-in-out;
+      
+      &::placeholder {
+        color: @ctree-color-input-placeholder;
+      }
+
+      &:hover {
+        border-color: @ctree-color-input-border;
+      }
+
+      &:focus {
+        border-color: @ctree-color-input-border;
+        box-shadow: 0 0 0 2px fade(@ctree-color-primary, 20%);
+      }
+
+      &_disabled {
+        cursor: not-allowed;
+        color: @ctree-color-input-disabled;
+        background-color: @ctree-color-input-background-disabled;
+
+        &:hover {
+          border-color: @ctree-color-border;
+        }
+      }
+    }
+
+    // 按钮容器
+    &__action-wrapper {
+      .search-wrapper();
+      padding: 0 10px;
+    }
+
+    // 已选按钮
+    &__checked-button {
+      cursor: pointer;
+
+      &:hover {
+        color: @ctree-color-light-primary;
+      }
+
+      &_active {
+        color: @ctree-color-primary;
+      }
+    }
+
+    // 树区域
+    &__tree-wrapper {
+      width: 100%;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    // 底部信息
+    &__footer {
+      padding: 5px;
+    }
+  }
+}
+
+#ctree-tree-search-styles();
