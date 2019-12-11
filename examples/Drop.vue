@@ -7,6 +7,7 @@
       clearable
       :cascade="false"
       drop-placeholder="请选择"
+      :placement="placement"
       :dropdown-min-width="300"
       dropdown-width-fixed
       @checked-change="handleCheckedChange"
@@ -48,6 +49,7 @@ export default {
     return {
       data,
       value: '2',
+      placement: 'bottom-start',
     }
   },
   methods: {

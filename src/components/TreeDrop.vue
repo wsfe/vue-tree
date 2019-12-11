@@ -264,8 +264,8 @@ export default (Vue as VueConstructor<Vue & {
     /** 定位下拉框 */
     locateDropdown (): void {
       const referenceRect = this.$refs.reference.getBoundingClientRect()
-      const referenceWidth = referenceRect.right - referenceRect.left
-      const referenceHeight = referenceRect.bottom - referenceRect.top
+      const referenceWidth = referenceRect.width
+      const referenceHeight = referenceRect.height
 
       // Set dropdown width
       const minWidth = `${typeof this.dropdownMinWidth === 'number' ? this.dropdownMinWidth : referenceWidth}px`
@@ -273,8 +273,12 @@ export default (Vue as VueConstructor<Vue & {
       this.$refs.dropdown.style.width = this.dropdownWidthFixed ? minWidth : 'auto'
 
       const dropdownRect = this.$refs.dropdown.getBoundingClientRect()
-      const dropdownWidth = dropdownRect.right - dropdownRect.left
-      const dropdownHeight = dropdownRect.bottom - dropdownRect.top
+      const dropdownStyleDeclaration = window.getComputedStyle(this.$refs.dropdown)
+      const dropdownMarginHorizontal = parseFloat(dropdownStyleDeclaration.marginLeft) + parseFloat(dropdownStyleDeclaration.marginRight)
+      const dropdownMarginVertical = parseFloat(dropdownStyleDeclaration.marginTop) + parseFloat(dropdownStyleDeclaration.marginBottom)
+      const dropdownWidth = dropdownRect.width + dropdownMarginHorizontal
+      // 0.8 这个值写在 css 里，因为有动画，所以获取到的是 scaleY 变换后的值
+      const dropdownHeight = dropdownRect.height / 0.8 + dropdownMarginVertical
       let top = 0
       let left = 0
       if (this.transfer) {
@@ -302,7 +306,7 @@ export default (Vue as VueConstructor<Vue & {
         case 'bottom':
           if (this.transfer) {
             top = window.pageYOffset + referenceRect.bottom
-            left = window.pageXOffset + referenceRect.right - dropdownWidth
+            left = (window.pageXOffset + referenceRect.right - dropdownWidth) / 2
           } else {
             top = referenceHeight
             left = (referenceWidth - dropdownWidth) / 2
@@ -328,7 +332,7 @@ export default (Vue as VueConstructor<Vue & {
         case 'top':
           if (this.transfer) {
             top = window.pageYOffset + referenceRect.top - dropdownHeight
-            left = window.pageXOffset + referenceRect.right - dropdownWidth
+            left = (window.pageXOffset + referenceRect.right - dropdownWidth) / 2
           } else {
             top = -dropdownHeight
             left = (referenceWidth - dropdownWidth) / 2
