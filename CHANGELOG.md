@@ -5,6 +5,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+## [2.2.6] - 2019-12-12
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+- 修复 `CTreeDrop` 下拉框定位 `top`, `bottom` 不正确的问题
+
+### Security
+
 ## [2.2.5] - 2019-12-11
 
 ### Added

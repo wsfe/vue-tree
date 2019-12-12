@@ -306,7 +306,7 @@ export default (Vue as VueConstructor<Vue & {
         case 'bottom':
           if (this.transfer) {
             top = window.pageYOffset + referenceRect.bottom
-            left = (window.pageXOffset + referenceRect.right - dropdownWidth) / 2
+            left = window.pageXOffset + referenceRect.left + (referenceWidth - dropdownWidth) / 2
           } else {
             top = referenceHeight
             left = (referenceWidth - dropdownWidth) / 2
@@ -332,7 +332,7 @@ export default (Vue as VueConstructor<Vue & {
         case 'top':
           if (this.transfer) {
             top = window.pageYOffset + referenceRect.top - dropdownHeight
-            left = (window.pageXOffset + referenceRect.right - dropdownWidth) / 2
+            left = window.pageXOffset + referenceRect.left + (referenceWidth - dropdownWidth) / 2
           } else {
             top = -dropdownHeight
             left = (referenceWidth - dropdownWidth) / 2
