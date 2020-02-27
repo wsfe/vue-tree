@@ -1,5 +1,7 @@
 # CTree 2.x
 
+[在线 demo](https://wsfe.github.io/ctree/)
+
 ## 安装
 
 ### yarn 安装方式

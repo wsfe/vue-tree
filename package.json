@@ -7,6 +7,7 @@
   "scripts": {
     "serve": "vue-cli-service serve --open",
     "bundle": "vue-cli-service build --target lib --name ctree ./src/index.ts --report",
+    "bundle:docs": "vue-cli-service build --mode docs --dest docs",
     "lint": "vue-cli-service lint",
     "test": "vue-cli-service test:unit",
     "prepublishOnly": "yarn bundle"

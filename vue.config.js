@@ -7,12 +7,19 @@ module.exports = {
   css: {
     // extract: false,
   },
+  publicPath: process.env.VUE_APP_PUBLIC_PATH || '/',
+  outputDir: process.env.VUE_APP_OUTPUT_DIR || 'dist',
   configureWebpack: () => {
     let extraConfig = {}
     if (process.env.NODE_ENV === 'production') {
       extraConfig = {
       }
     } else {
+      extraConfig = {
+        entry: './examples/main.js',
+      }
+    }
+    if (process.env.VUE_APP_IS_BUILDING_DOCS === 'true') {
       extraConfig = {
         entry: './examples/main.js',
       }
@@ -42,5 +49,13 @@ module.exports = {
             opts.happyPackMode = false
             return opts
           })
+    if (process.env.NODE_ENV !== 'production' || process.env.VUE_APP_IS_BUILDING_DOCS === 'true') {
+      config
+      .plugin('html')
+        .tap((args) => {
+          args[0].template = './examples/index.html'
+          return args
+        })
+    }
   },
 }

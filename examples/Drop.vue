@@ -3,9 +3,8 @@
     <CTreeDrop
       v-model="value"
       :data="data"
-      selectable
+      checkable
       clearable
-      :cascade="false"
       drop-placeholder="请选择"
       :placement="placement"
       :dropdown-min-width="300"
@@ -38,11 +37,11 @@ export default {
     CTreeDrop,
   },
   data () {
-    // const data = genData().data
-    const data = [{
-      id: '1',
-      title: 'zzz',
-    }]
+    const data = genData().data
+    // const data = [{
+    //   id: '1',
+    //   title: 'zzz',
+    // }]
     // data[0].checked = true
     // data[2].checked = true
     // data[4].checked = true
@@ -57,15 +56,15 @@ export default {
       console.log('checked-change')
     },
   },
-  created () {
-    setTimeout(() => {
-      this.data = [
-        {
-          id: '2',
-          title: 'xxcxxxx',
-        }
-      ]
-    }, 3000)
-  },
+  // created () {
+  //   setTimeout(() => {
+  //     this.data = [
+  //       {
+  //         id: '2',
+  //         title: 'xxcxxxx',
+  //       }
+  //     ]
+  //   }, 3000)
+  // },
 }
 </script>
