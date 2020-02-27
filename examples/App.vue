@@ -34,12 +34,12 @@ const components = {
   Performance,
   Loading,
   Search,
-  SearchRemote,
-  SearchRootRemote,
+  // SearchRemote,
+  // SearchRootRemote,
   Drop,
-  DropRemote,
+  // DropRemote,
   Drag,
-  DropDataChange,
+  // DropDataChange,
   InsertRenderTree,
 }
 

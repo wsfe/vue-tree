@@ -1,12 +1,13 @@
 {
   "name": "@wsfe/ctree",
-  "version": "2.2.4",
+  "version": "2.2.6",
   "main": "./dist/ctree.umd.min.js",
   "types": "./types",
   "description": "A vue tree component using virtual list.",
   "scripts": {
     "serve": "vue-cli-service serve --open",
     "bundle": "vue-cli-service build --target lib --name ctree ./src/index.ts --report",
+    "bundle:docs": "vue-cli-service build --mode docs --dest docs",
     "lint": "vue-cli-service lint",
     "test": "vue-cli-service test:unit",
     "prepublishOnly": "yarn bundle"

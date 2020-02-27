@@ -122,12 +122,12 @@ export default class TreeStore {
      * 获取多选选中节点
      * @param ignoreMode 忽略模式，可选择忽略父节点或子节点，默认值是 CTree 的 ignoreMode Prop
      */
-    getCheckedNodes(ignoreMode?: "none" | "parents" | "children" | undefined): TreeNode[];
+    getCheckedNodes(ignoreMode?: "children" | "none" | "parents" | undefined): TreeNode[];
     /**
      * 获取多选选中的节点 key ，包括未加载的 key
      * @param ignoreMode 忽略模式，同 `getCheckedNodes`
      */
-    getCheckedKeys(ignoreMode?: "none" | "parents" | "children" | undefined): TreeNodeKeyType[];
+    getCheckedKeys(ignoreMode?: "children" | "none" | "parents" | undefined): TreeNodeKeyType[];
     /**
      * 获取多选半选状态节点
      */
