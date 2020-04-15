@@ -5,6 +5,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+## [2.3.0] - 2020-04-15
+
+### Added
+
+- `CTreeDrop` 默认与 display slot 新增 Slot Props
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
 ## [2.2.6] - 2019-12-12
 
 ### Added
