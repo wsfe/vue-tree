@@ -1,19 +1,44 @@
 <template>
-  <div style="width: 200px;">
-    <CTreeDrop
-      v-model="value"
-      :data="data"
-      checkable
-      clearable
-      drop-placeholder="请选择"
-      :placement="placement"
-      :dropdown-min-width="300"
-      dropdown-width-fixed
-      @checked-change="handleCheckedChange"
-    >
-      <span slot="empty">slot 传进来的暂无数据</span>
-    </CTreeDrop>
-    {{ value }}
+  <div>
+    <div style="width: 200px;">
+      <p>自定义展示 slot ：</p>
+      <CTreeDrop
+        v-model="value"
+        :data="data"
+        checkable
+        clearable
+        drop-placeholder="请选择"
+        :placement="placement"
+        :dropdown-min-width="300"
+        dropdown-width-fixed
+        @checked-change="handleCheckedChange"
+      >
+        <template v-slot:display="scope">
+          <div
+            style="width: 170px; text-overflow: ellipsis; overflow: hidden;"
+          >{{ scope.checkedNodes.map((node) => node.title).join(',') }}</div>
+        </template>
+        <span slot="empty">slot 传进来的暂无数据</span>
+      </CTreeDrop>
+      {{ value }}
+    </div>
+    <div style="width: 200px;">
+      <p>默认：</p>
+      <CTreeDrop
+        v-model="value"
+        :data="data"
+        checkable
+        clearable
+        drop-placeholder="请选择"
+        :placement="placement"
+        :dropdown-min-width="300"
+        dropdown-width-fixed
+        @checked-change="handleCheckedChange"
+      >
+        <span slot="empty">slot 传进来的暂无数据</span>
+      </CTreeDrop>
+      {{ value }}
+    </div>
   </div>
 </template>
 

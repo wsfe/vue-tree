@@ -244,3 +244,24 @@ npm install @wsfe/ctree
 | 默认    | 展示输入框                                           |
 | display | 展示输入框的展示文字，如果有默认 slot 则此 slot 无效 |
 | clear   | 替换清空图标，如果有默认 slot 则此 slot 无效         |
+
+默认 slot 与 display slot 的 Slot Props `2.3.0` ：
+
+```typescript
+/** 展示 slot 的 props */
+slotProps: {
+  /** 多选选中的节点 */
+  checkedNodes: [] as TreeNode[],
+
+  /** 多选选中的节点 key */
+  checkedKeys: [] as Array<string | number>,
+
+  /** 单选选中的节点 */
+  selectedNode: null as TreeNode | null,
+
+  /** 单选选中的节点 key */
+  selectedKey: null as string | number | null,
+},
+```
+
+**注意**： `checkedNodes` 与 `selectedNode` 只包含已加载的节点，如果设置了选中的值（比如设置了 `value` Prop），但没有设置树的数据，则这两个字段内容将为空；而 `checkedKeys` 与 `selectedKey` 则会包含未加载的选中节点 key 。

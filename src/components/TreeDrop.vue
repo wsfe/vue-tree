@@ -6,10 +6,13 @@
       :class="referenceCls"
       @click="handleRefClick"
     >
-      <slot>
+      <slot v-bind="slotProps">
         <div :class="displayInputCls">
           <span :class="displayInputTextCls">
-            <slot name="display">
+            <slot
+              name="display"
+               v-bind="slotProps"
+            >
               {{ displayValue }}
             </slot>
           </span>
@@ -178,6 +181,21 @@ export default (Vue as VueConstructor<Vue & {
 
       /** 单选选中节点名称 */
       selectedTitle: ('' as TreeNodeKeyType),
+
+      /** 展示 slot 的 props */
+      slotProps: {
+        /** 多选选中的节点 */
+        checkedNodes: [] as TreeNode[],
+
+        /** 多选选中的节点 key */
+        checkedKeys: [] as TreeNodeKeyType[],
+
+        /** 单选选中的节点 */
+        selectedNode: null as TreeNode | null,
+
+        /** 单选选中的节点 key */
+        selectedKey: null as TreeNodeKeyType | null,
+      },
     }
   },
   computed: {
@@ -364,9 +382,14 @@ export default (Vue as VueConstructor<Vue & {
       }
     },
     handleCheckedChange (nodes: TreeNode[], keys: TreeNodeKeyType[]): void {
+      this.slotProps.checkedNodes = nodes
+      this.slotProps.checkedKeys = keys
       this.checkedCount = keys.length
     },
     handleSelectedChange (node: TreeNode | null, key: TreeNodeKeyType | null): void {
+      this.slotProps.selectedNode = node
+      this.slotProps.selectedKey = key
+
       if (node) {
         const titleField = this.$refs.treeSearch.$refs.tree.titleField
         this.selectedTitle = node[titleField]
@@ -380,8 +403,13 @@ export default (Vue as VueConstructor<Vue & {
 
     /** 处理树数据更新 */
     handleSetData (): void {
+      this.slotProps.checkedNodes = this.getCheckedNodes()
+      this.slotProps.checkedKeys = this.getCheckedKeys()
+      this.slotProps.selectedNode = this.getSelectedNode()
+      this.slotProps.selectedKey = this.getSelectedKey()
+
       if (this.checkable) {
-        this.checkedCount = this.getCheckedKeys().length
+        this.checkedCount = this.slotProps.checkedKeys.length
       }
       if (this.selectable) {
         if (this.value != null) {
