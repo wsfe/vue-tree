@@ -9,11 +9,12 @@ declare const _default: import("vue/types/vue").ExtendedVue<Vue & {
             checkAllStatus: {
                 checked: boolean;
                 indeterminate: boolean; /** 多选选中节点个数 */
-                disabled: boolean; /** 单选选中节点名称 */
+                disabled: boolean;
             };
             isShowingChecked: boolean;
+            /** 展示 slot 的 props */
             keyword: string;
-            debounceTimer: number | undefined;
+            debounceTimer: number | undefined; /** 多选选中的节点 key */
             checkedCount: number;
         } & {
             clearKeyword(): void;
@@ -220,6 +221,17 @@ declare const _default: import("vue/types/vue").ExtendedVue<Vue & {
     checkedCount: number;
     /** 单选选中节点名称 */
     selectedTitle: TreeNodeKeyType;
+    /** 展示 slot 的 props */
+    slotProps: {
+        /** 多选选中的节点 */
+        checkedNodes: TreeNode[];
+        /** 多选选中的节点 key */
+        checkedKeys: TreeNodeKeyType[];
+        /** 单选选中的节点 */
+        selectedNode: TreeNode | null;
+        /** 单选选中的节点 key */
+        selectedKey: string | number | null;
+    };
 }, {
     /** 定位下拉框 */
     locateDropdown(): void;
