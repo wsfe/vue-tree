@@ -1,59 +1,19 @@
 <template>
   <div class="app">
-    <div class="tab">
-      <button
-        v-for="tab in tabList"
-        :key="tab"
-        :class="{
-          active: currentTab === tab
-        }"
-        @click="currentTab = tab"
-      >{{ tab }}</button>
-    </div>
-    <div class="tab-panel">
-      <component :is="currentTab"></component>
-    </div>
+      1111111
   </div>
 </template>
 
-<script>
-import Feature from './Feature'
-import Performance from './Performance'
-import Loading from './Loading'
-import Search from './Search'
-import SearchRemote from './SearchRemote'
-import SearchRootRemote from './SearchRootRemote'
-import Drop from './Drop'
-import DropRemote from './DropRemote'
-import Drag from './Drag'
-import DropDataChange from './DropDataChange'
-import InsertRenderTree from './InsertRenderTree'
-
-const components = {
-  Feature,
-  Performance,
-  Loading,
-  Search,
-  // SearchRemote,
-  // SearchRootRemote,
-  Drop,
-  // DropRemote,
-  Drag,
-  // DropDataChange,
-  InsertRenderTree,
-}
-
-export default {
-  name: 'App',
-  components,
-  data () {
-    const tabList = Object.keys(components)
-    return {
-      currentTab: tabList[0],
-      tabList,
-    }
+<script lang="ts">
+import {defineComponent,reactive} from 'vue'
+export default defineComponent({
+  components: {
   },
-}
+  setup(props) {
+    return {
+    }
+  }
+})
 </script>
 
 <style lang="less" scoped>
