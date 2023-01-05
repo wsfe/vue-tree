@@ -13,9 +13,9 @@
 </template>
 
 <script lang="ts">
-import Vue, { VueConstructor } from 'vue'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'CLoadingIcon',
 })
 </script>

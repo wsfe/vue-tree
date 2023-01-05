@@ -5,7 +5,7 @@
   "types": "./types",
   "description": "A vue tree component using virtual list.",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite serve",
     "build": "vue-tsc && vite build",
     "preview": "vite preview"
   },

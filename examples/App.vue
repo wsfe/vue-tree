@@ -1,16 +1,34 @@
 <template>
   <div class="app">
-      1111111
+    <div class="tab">
+      <button
+        v-for="tab in tabList"
+        :key="tab"
+        :class="{
+          active: currentTab === tab
+        }"
+        @click="currentTab = tab"
+      >{{ tab }}</button>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import {defineComponent,reactive} from 'vue'
+import Loading from './Loading.vue'
 export default defineComponent({
   components: {
+    Loading
   },
   setup(props) {
+    const components = {
+      Loading
+      }
+    const tabList = reactive(Object.keys(components)) as any[]
+    const currentTab =  reactive(tabList[0])
     return {
+      tabList,
+      currentTab
     }
   }
 })
