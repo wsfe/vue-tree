@@ -10,6 +10,9 @@
         @click="currentTab = tab"
       >{{ tab }}</button>
     </div>
+    <div class="tab-panel">
+      <component :is="currentTab"></component>
+    </div>
   </div>
 </template>
 

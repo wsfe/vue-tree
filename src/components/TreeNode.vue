@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import{VNode,defineComponent,ref,computed, ComputedRef,getCurrentInstance } from 'vue'
+import{VNode,defineComponent,ref,computed, ComputedRef,getCurrentInstance,h } from 'vue'
 import { TreeNode } from '../store'
 import LoadingIcon from './LoadingIcon.vue'
 import { dragHoverPartEnum } from '../const'
@@ -64,7 +64,7 @@ const prefixCls = 'ctree-tree-node'
 
 export default defineComponent({
   name:'CTreeNode',
-  inheritAttrs: false,
+  emits:['expand','check','click','select','node-dblclick','node-right-click','node-dragstart','node-dragenter','node-dragover','node-dragleave','node-drop'],
   components: {
     LoadingIcon,
   },
@@ -98,7 +98,7 @@ export default defineComponent({
 
     /** 是否可放置 */
     droppable: Boolean,
-    getNode: () => (key: TreeNodeKeyType) => TreeNode
+    getNode: Function
   },
   setup(props,{emit}){
     const dragoverBody = ref(false)
@@ -190,10 +190,10 @@ export default defineComponent({
       return defineComponent({
         name: 'Render',
         functional: true,
-        render: (h: Function): VNode => {
+        render(){
           if (typeof renderFunction !== 'function') return h('div')
-          return renderFunction(h, fullData)
-        },
+          return renderFunction(h, fullData) 
+        } ,
       })
     })
     const dragListeners = computed(()=>{
@@ -340,6 +340,7 @@ export default defineComponent({
       handleSelect,
       handleDblclick,
       handleRightClick,
+      nodeBody
     }
   }
 })

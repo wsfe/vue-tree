@@ -28,7 +28,8 @@ export default defineComponent({
   },
   setup(){
     const basicUsage = ref(genData().data)
-    const loading = ref(loading)
+    console.log(basicUsage.value)
+    const loading = ref(false)
     function handleToggle(){
       loading.value = !loading.value
     }
