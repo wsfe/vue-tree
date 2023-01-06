@@ -17,18 +17,21 @@
 </template>
 
 <script lang="ts">
-import {defineComponent,reactive} from 'vue'
+import {defineComponent,reactive,ref} from 'vue'
 import Loading from './Loading.vue'
+import Search from './Search.vue'
 export default defineComponent({
   components: {
-    Loading
+    Loading,
+    Search
   },
   setup(props) {
     const components = {
-      Loading
+      Loading,
+      Search
       }
     const tabList = reactive(Object.keys(components)) as any[]
-    const currentTab =  reactive(tabList[0])
+    const currentTab =  ref(tabList[0])
     return {
       tabList,
       currentTab

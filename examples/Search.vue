@@ -17,6 +17,7 @@
 <script>
 import { CTreeSearch } from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
+import {defineComponent,reactive,ref} from 'vue'
 
 const genData = (extra = {}) => {
   return treeDataGenerator(Object.assign({
@@ -28,16 +29,18 @@ const genData = (extra = {}) => {
   }, extra))
 }
 
-export default {
+export default defineComponent({
   name: 'Search',
   components: {
     CTreeSearch,
   },
-  data () {
+  setup(props){
+    const data = reactive(genData().data)
+    const value = ref('2')
     return {
-      data: genData().data,
-      value: '2',
+      data,
+      value
     }
   },
-}
+})
 </script>

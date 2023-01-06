@@ -2,33 +2,17 @@
   <div :class="wrapperCls">
     <!-- 搜索、操作区域 -->
     <div :class="searchCls">
-      <div
-        v-if="showCheckAll && checkable"
-        :class="checkAllWrapperCls"
-      >
-        <div
-          :class="checkboxCls"
-          @click="handleCheckAll"
-        ></div>
+      <div v-if="showCheckAll && checkable" :class="checkAllWrapperCls">
+        <div :class="checkboxCls" @click="handleCheckAll"></div>
       </div>
       <div :class="inputWrapperCls">
         <slot name="search-input">
-          <input
-            v-model="keyword"
-            type="text"
-            :class="inputCls"
-            :placeholder="searchPlaceholder"
-            :disabled="searchDisabled"
-            @input="handleSearch"
-          />
+          <input v-model="keyword" type="text" :class="inputCls" :placeholder="searchPlaceholder"
+            :disabled="searchDisabled" @input="handleSearch" />
         </slot>
       </div>
       <div :class="actionWrapperCls">
-        <span
-          v-if="showCheckedButton && checkable"
-          :class="checkedButtonCls"
-          @click="handleShowChecked"
-        >
+        <span v-if="showCheckedButton && checkable" :class="checkedButtonCls" @click="handleShowChecked">
           {{ checkedButtonText }}
         </span>
         <slot name="actions"></slot>
@@ -37,32 +21,16 @@
 
     <!-- 树区域 -->
     <div :class="treeWrapperCls">
-      <CTree
-        ref="tree"
-        :value="value"
-        v-bind="$attrs"
-        v-on="$listeners"
-        @input="updateCheckedCount"
-        @set-data="handleSetData"
-        @checked-change="updateCheckAllStatus"
-      >
-        <template
-          v-for="(_, slot) in $scopedSlots"
-          v-slot:[slot]="scope"
-        >
-          <slot
-            :name="slot"
-            v-bind="scope"
-          ></slot>
+      <CTree ref="tree" v-bind="$attrs" :value="value" @input="updateCheckedCount" @set-data="handleSetData"
+        @checked-change="updateCheckAllStatus">
+        <template v-for="(_, slot) in $slots" :name="slot" v-slot="scope">
+          <slot :name="slot" v-bind="scope"></slot>
         </template>
       </CTree>
     </div>
 
     <!-- 底部信息 -->
-    <div
-      v-if="showFooter && checkable"
-      :class="footerCls"
-    >
+    <div v-if="showFooter && checkable" :class="footerCls">
       <slot name="footer">
         <span style="float: right">已选 {{ checkedCount }} 个</span>
       </slot>
@@ -71,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { VueConstructor } from 'vue'
+import { defineComponent, reactive, ref, Ref, computed, onMounted } from 'vue'
 import CTree from './Tree.vue'
 import TreeStore, { TreeNode } from '../store'
 import { API_METHODS, ApiType, TreeNodeKeyType } from '../const'
@@ -86,26 +54,11 @@ type CTreeApiMethodsType = { [key in ApiType]: CTreeInstanceType[key] }
 // Vue 2.6 内部没改变的话可以这样获取 Vue.extend 中的 methods。Vue 版本有升级的话需要注意这个特性有没有改变
 // 如果是对象的话可以直接 CTree.methods ，并且是安全的。
 let ctreeMethods: CTreeApiMethodsType = ({} as CTreeApiMethodsType)
-// 因为获取不到 CTree.methods 的类型，所以这边 methods 的类型不好写
-const methods: { [key in keyof CTreeApiMethodsType]: CTreeApiMethodsType[key] } = (CTree as any).options.methods
-for (let key in methods) {
-  const keyCache: keyof CTreeApiMethodsType = (key as keyof CTreeApiMethodsType)
-  if (API_METHODS.indexOf(keyCache) > -1) {
-    // 躲避 TypeScript 类型推断错误
-    const _methods = ctreeMethods as any
-    _methods[keyCache] = function <T extends typeof ctreeMethods[typeof keyCache]>(...args: Parameters<T>): ReturnType<T> {
-      return (methods as any)[keyCache].apply(((this as any).$refs.tree as CTreeInstanceType), args)
-    }
-  }
-}
 
-export default (Vue as VueConstructor<Vue & {
-  $refs: {
-    tree: CTreeInstanceType,
-  },
-}>).extend({
+export default defineComponent({
   name: 'CTreeSearch',
   inheritAttrs: false,
+  expose: ['handleCheckAll'],
   components: {
     CTree,
   },
@@ -172,211 +125,190 @@ export default (Vue as VueConstructor<Vue & {
     },
     //#endregion Search related
   },
-  data () {
-    return {
-      /** 全选复选框状态 */
-      checkAllStatus: {
-        /** 选中 */
-        checked: false,
-        /** 半选 */
-        indeterminate: false,
-        /** 禁用 */
-        disabled: false,
-      },
-
-      /** 是否正在展示已选数据 */
-      isShowingChecked: false,
-
-      /** 搜索关键字 */
-      keyword: '',
-
-      /** 防抖计时器 id */
-      debounceTimer: (undefined as number | undefined),
-
-      /** 已选节点数 */
-      checkedCount: 0,
-    }
-  },
-  computed: {
-    //#region Classes
-    wrapperCls (): string[] {
+  setup(props, { emit, attrs }) {
+    const checkAllStatus = reactive({
+      checked: false,
+      /** 半选 */
+      indeterminate: false,
+      /** 禁用 */
+      disabled: false,
+    })
+    const isShowingChecked = ref(false)
+    const keyword = ref('')
+    const debounceTimer: Ref<number | undefined> = ref(undefined)
+    const checkedCount = ref(0)
+    const tree = ref()
+    const wrapperCls = computed(() => {
       return [
         `${prefixCls}__wrapper`,
       ]
-    },
-    searchCls (): string[] {
+    })
+    const searchCls = computed(() => {
       return [
         `${prefixCls}__search`,
       ]
-    },
-    checkAllWrapperCls (): string[] {
+    })
+    const checkAllWrapperCls = computed(() => {
       return [
         `${prefixCls}__check-all-wrapper`,
       ]
-    },
-    checkboxCls (): Array<string | object> {
+    })
+    const checkboxCls = computed(() => {
       return [
         `${prefixCls}__check-all`,
         `${treeNodePrefixCls}__checkbox`,
         {
-          [`${treeNodePrefixCls}__checkbox_checked`]: this.checkAllStatus.checked,
-          [`${treeNodePrefixCls}__checkbox_indeterminate`]: this.checkAllStatus.indeterminate,
-          [`${treeNodePrefixCls}__checkbox_disabled`]: this.searchDisabled || this.checkAllStatus.disabled,
+          [`${treeNodePrefixCls}__checkbox_checked`]: checkAllStatus.checked,
+          [`${treeNodePrefixCls}__checkbox_indeterminate`]: checkAllStatus.indeterminate,
+          [`${treeNodePrefixCls}__checkbox_disabled`]: props.searchDisabled || checkAllStatus.disabled,
         },
       ]
-    },
-    inputWrapperCls (): string[] {
+    })
+    const inputWrapperCls = computed(() => {
       return [
         `${prefixCls}__input-wrapper`,
       ]
-    },
-    inputCls (): Array<string | object> {
+    })
+    const inputCls = computed(() => {
       return [
         `${prefixCls}__input`,
         {
-          [`${prefixCls}__input_disabled`]: this.searchDisabled,
+          [`${prefixCls}__input_disabled`]: props.searchDisabled,
         },
       ]
-    },
-    actionWrapperCls (): string[] {
+    })
+    const actionWrapperCls = computed(() => {
       return [
         `${prefixCls}__action-wrapper`,
       ]
-    },
-    checkedButtonCls (): Array<string | object> {
+    })
+    const checkedButtonCls = computed(() => {
       return [
         `${prefixCls}__checked-button`,
         {
-          [`${prefixCls}__checked-button_active`]: this.isShowingChecked,
+          [`${prefixCls}__checked-button_active`]: isShowingChecked.value,
         },
       ]
-    },
-    treeWrapperCls (): string[] {
+    })
+    const treeWrapperCls = computed(() => {
       return [
         `${prefixCls}__tree-wrapper`,
       ]
-    },
-    footerCls (): string[] {
+    })
+    const footerCls = computed(() => {
       return [
         `${prefixCls}__footer`,
       ]
-    },
-    //#endregion Classes
-    checkable (): boolean {
-      return ('checkable' in this.$attrs) && (this.$attrs.checkable as unknown) !== false
-    },
-  },
-  methods: {
-    /** CTree 中的方法 */
-    ...ctreeMethods,
+    })
+    const checkable = computed(() => {
+      return ('checkable' in attrs) && (attrs.checkable as unknown) !== false
+    })
 
-    //#region Public API
-    /** 清空关键字 */
-    clearKeyword (): void {
-      this.keyword = ''
-    },
+    function clearKeyword(): void {
+      keyword.value = ''
+    }
 
     /** 获取搜索关键字 */
-    getKeyword (): string {
-      return this.keyword
-    },
+    function getKeyword(): string {
+      return keyword.value
+    }
 
     /** 执行搜索 */
-    search (keyword?: string): Promise<void> {
-      let searchKeyword: string = keyword as string
-      if (typeof keyword !== 'string') {
-        searchKeyword = this.keyword
+    function search(keyword1?: string): Promise<void> {
+      let searchKeyword: string = keyword1 as string
+      if (typeof keyword1 !== 'string') {
+        searchKeyword = keyword.value
       }
       return new Promise((resolve, reject) => {
-        clearTimeout(this.debounceTimer)
-        this.debounceTimer = setTimeout(() => {
-          if (searchKeyword.length > 0 && searchKeyword.length < this.searchLength) return
-          this.isShowingChecked = false
-          this.$emit('search', searchKeyword)
-          if (typeof this.searchMethod === 'function') {
-            const searchReturnValue: void | Promise<void> = this.searchMethod(searchKeyword)
+        clearTimeout(debounceTimer.value)
+        debounceTimer.value = setTimeout(() => {
+          if (searchKeyword.length > 0 && searchKeyword.length < props.searchLength) return
+          isShowingChecked.value = false
+          emit('search', searchKeyword)
+          if (typeof props.searchMethod === 'function') {
+            const searchReturnValue: void | Promise<void> = props.searchMethod(searchKeyword)
             Promise.resolve(searchReturnValue).then(() => {
-              this.updateCheckAllStatus()
+              updateCheckAllStatus()
               resolve()
             })
           } else {
-            if (this.searchRemote) {
+            if (props.searchRemote) {
               // 远程搜索
-              this.$refs.tree.loadRootNodes().then(() => {
-                this.updateCheckAllStatus()
+              tree.value.loadRootNodes().then(() => {
+                updateCheckAllStatus()
                 resolve()
               })
             } else {
               // 本地搜索
-              this.$refs.tree.filter(searchKeyword)
-              this.updateCheckAllStatus()
+              tree.value.filter(searchKeyword)
+              updateCheckAllStatus()
               resolve()
             }
           }
-        }, this.searchDebounceTime)
+        }, props.searchDebounceTime)
       })
-    },
+    }
     //#endregion Public API
 
     //#region Event handlers
     /** 处理全选点击 */
-    handleCheckAll (): void {
-      if (this.searchDisabled || this.checkAllStatus.disabled) return
+    function handleCheckAll(): void {
+      if (props.searchDisabled || checkAllStatus.disabled) return
 
-      const currentVisibleKeys = this.$refs.tree.getCurrentVisibleNodes().map((node) => node[this.$refs.tree.keyField])
-      if (this.checkAllStatus.checked || this.checkAllStatus.indeterminate) {
+      const currentVisibleKeys = tree.value.getCurrentVisibleNodes().map((node: any) => node[tree.value.keyField])
+      if (checkAllStatus.checked || checkAllStatus.indeterminate) {
         // 反选
-        this.$refs.tree.setCheckedKeys(currentVisibleKeys, false)
+        tree.value.setCheckedKeys(currentVisibleKeys, false)
       } else {
         // 全选
-        this.$refs.tree.setCheckedKeys(currentVisibleKeys, true)
+        tree.value.setCheckedKeys(currentVisibleKeys, true)
       }
 
-      this.updateCheckAllStatus()
-    },
+      updateCheckAllStatus()
+    }
 
     /** 处理搜索 */
-    handleSearch (): void {
-      this.search()
-    },
+    function handleSearch(): void {
+      search()
+    }
 
     /** 处理已选点击 */
-    handleShowChecked (): void {
+    function handleShowChecked(): void {
       const execShowChecked = () => {
         // 处理展示已选操作
-        this.isShowingChecked = !this.isShowingChecked
-        if (this.isShowingChecked) {
+        isShowingChecked.value = !isShowingChecked.value
+        if (isShowingChecked.value) {
           // 展示已选
-          this.$refs.tree.showCheckedNodes()
+          tree.value.showCheckedNodes()
         } else {
           // 恢复展示
-          this.$refs.tree.filter(this.keyword, () => true)
+          tree.value.filter(keyword.value, () => true)
         }
 
-        this.updateCheckAllStatus()
+        updateCheckAllStatus()
       }
 
-      if (this.keyword) {
+      if (keyword.value) {
         // 清空关键字
-        this.clearKeyword()
-        this.search().then(() => {
+        clearKeyword()
+        search().then(() => {
           execShowChecked()
         })
       } else {
         execShowChecked()
       }
-    },
+    }
 
     /** 处理树数据更新 */
-    handleSetData (): void {
-      this.updateCheckedCount()
-      this.updateCheckAllStatus()
-    },
+    function handleSetData(): void {
+      updateCheckedCount()
+      updateCheckAllStatus()
+    }
     //#endregion Event handlers
 
     /** 更新全选复选框状态 */
-    updateCheckAllStatus (): void {
-      const currentVisibleNodes = this.$refs.tree.getCurrentVisibleNodes()
+    function updateCheckAllStatus(): void {
+      const currentVisibleNodes = tree.value.getCurrentVisibleNodes()
       const length = currentVisibleNodes.length
       let hasChecked = false
       let hasUnchecked = false
@@ -390,25 +322,63 @@ export default (Vue as VueConstructor<Vue & {
         }
         if ((hasChecked && hasUnchecked) || node.indeterminate) {
           isInterrupted = true
-          this.checkAllStatus.checked = false
-          this.checkAllStatus.indeterminate = true
+          checkAllStatus.checked = false
+          checkAllStatus.indeterminate = true
           break
         }
       }
       if (!isInterrupted) {
-        this.checkAllStatus.checked = hasChecked
-        this.checkAllStatus.indeterminate = false
+        checkAllStatus.checked = hasChecked
+        checkAllStatus.indeterminate = false
       }
-    },
-
-    updateCheckedCount (): void {
-      this.checkedCount = this.$refs.tree.getCheckedKeys().length
-    },
-  },
-  mounted () {
-    if (this.checkable && !this.checkedCount) {
-      this.handleSetData()
     }
-  },
+
+    function updateCheckedCount(): void {
+      checkedCount.value = tree.value.getCheckedKeys().length
+    }
+
+    onMounted(() => {
+      // 因为获取不到 CTree.methods 的类型，所以这边 methods 的类型不好写
+      const methods: { [key in keyof CTreeApiMethodsType]: CTreeApiMethodsType[key] } = tree.value.methods
+      for (let key in methods) {
+        const keyCache: keyof CTreeApiMethodsType = (key as keyof CTreeApiMethodsType)
+        if (API_METHODS.indexOf(keyCache) > -1) {
+          // 躲避 TypeScript 类型推断错误
+          const _methods = ctreeMethods as any
+          _methods[keyCache] = function <T extends typeof ctreeMethods[typeof keyCache]>(...args: Parameters<T>): ReturnType<T> {
+            return (methods as any)[keyCache].apply(((this as any).$refs.tree as CTreeInstanceType), args)
+          }
+        }
+      }
+      if (checkable.value && !checkedCount.value) {
+        handleSetData()
+      }
+    })
+    return {
+      checkAllStatus,
+      isShowingChecked,
+      keyword,
+      debounceTimer,
+      checkedCount,
+      wrapperCls,
+      searchCls,
+      checkAllWrapperCls,
+      checkboxCls,
+      inputWrapperCls,
+      inputCls,
+      actionWrapperCls,
+      checkedButtonCls,
+      treeWrapperCls,
+      footerCls,
+      checkable,
+      tree,
+      handleCheckAll,
+      handleSearch,
+      handleShowChecked,
+      updateCheckedCount,
+      handleSetData,
+      updateCheckAllStatus
+    }
+  }
 })
 </script>
