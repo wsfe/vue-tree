@@ -10,12 +10,12 @@
       <div :class="squareCls">
         <!-- 外层用于占位，icon 用于点击 -->
         <i
-          v-show="!data.isLeaf && !data._loading"
+          v-show="!data?.isLeaf && !data?._loading"
           :class="expandCls"
           @click="handleExpand"
         ></i>
         <LoadingIcon
-          v-if="data._loading"
+          v-if="data?._loading"
           :class="loadingIconCls"
         />
       </div>
@@ -38,13 +38,13 @@
         @dblclick="handleDblclick"
         @contextmenu="handleRightClick"
         v-on="dragListeners"
-        :draggable="draggable && !disableAll && !data.disabled"
+        :draggable="draggable && !disableAll && !data?.disabled"
       >
         <component
           v-if="renderFunction"
           :is="renderComponent"
         ></component>
-        <template v-else>{{ data[titleField] }}</template>
+        <template v-else>{{ data?data[titleField]:'' }}</template>
       </div>
     </div>
     <div :class="dropAfterCls"></div>
@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import{VNode,defineComponent,ref,computed, ComputedRef,getCurrentInstance,h } from 'vue'
+import{VNode,defineComponent,ref,computed, ComputedRef,getCurrentInstance,h,reactive,watch } from 'vue'
 import { TreeNode } from '../store'
 import LoadingIcon from './LoadingIcon.vue'
 import { dragHoverPartEnum } from '../const'
@@ -64,7 +64,6 @@ const prefixCls = 'ctree-tree-node'
 
 export default defineComponent({
   name:'CTreeNode',
-  emits:['expand','check','click','select','node-dblclick','node-right-click','node-dragstart','node-dragenter','node-dragover','node-dragleave','node-drop'],
   components: {
     LoadingIcon,
   },
@@ -104,7 +103,6 @@ export default defineComponent({
     const dragoverBody = ref(false)
     const dragoverBefore = ref(false)
     const dragoverAfter = ref(false)
-    const data = props.data as TreeNode
     const keyField = props.keyField as string
     const getNode = props.getNode as Function
     const titleField = props.titleField as string
@@ -112,7 +110,7 @@ export default defineComponent({
       return [
         `${prefixCls}__wrapper`,
         {
-          [`${prefixCls}__wrapper_is-leaf`]: data.isLeaf,
+          [`${prefixCls}__wrapper_is-leaf`]: props.data?.isLeaf,
         },
       ]
     }) 
@@ -149,7 +147,7 @@ export default defineComponent({
       return [
         `${prefixCls}__expand`,
         {
-          [`${prefixCls}__expand_active`]: data.expand,
+          [`${prefixCls}__expand_active`]: props.data?.expand,
         },
       ]
     }) 
@@ -162,9 +160,9 @@ export default defineComponent({
       return [
         `${prefixCls}__checkbox`,
         {
-          [`${prefixCls}__checkbox_checked`]: data.checked,
-          [`${prefixCls}__checkbox_indeterminate`]: data.indeterminate,
-          [`${prefixCls}__checkbox_disabled`]: props.disableAll || data.disabled,
+          [`${prefixCls}__checkbox_checked`]: props.data?.checked,
+          [`${prefixCls}__checkbox_indeterminate`]: props.data?.indeterminate,
+          [`${prefixCls}__checkbox_disabled`]: props.disableAll || props.data?.disabled,
         },
       ]
     }) 
@@ -172,19 +170,19 @@ export default defineComponent({
       return [
         `${prefixCls}__title`,
         {
-          [`${prefixCls}__title_selected`]: data.selected,
-          [`${prefixCls}__title_disabled`]: props.disableAll || data.disabled,
+          [`${prefixCls}__title_selected`]: props.data?.selected,
+          [`${prefixCls}__title_disabled`]: props.disableAll || props.data?.disabled,
         },
       ]
     }) 
     const fullData = computed(()=>{
-      return getNode(data[keyField]) || ({} as TreeNode)
+      return getNode(props.data?props.data[keyField]:'') || ({} as TreeNode)
     }) 
     const showCheckbox = computed(()=>{
       return props.checkable
     }) 
     const renderFunction = computed(()=>{
-      return data.render || props.render || null
+      return props.data?.render || props.render || null
     })
     const renderComponent = computed(()=>{
       return defineComponent({
@@ -192,13 +190,13 @@ export default defineComponent({
         functional: true,
         render(){
           if (typeof renderFunction !== 'function') return h('div')
-          return renderFunction(h, fullData) 
+          return renderFunction(h, fullData.value) 
         } ,
       })
     })
     const dragListeners = computed(()=>{
       let result = {}
-      if (props.draggable && !props.disableAll && !data.disabled) {
+      if (props.draggable && !props.disableAll && !props.data?.disabled) {
         result = {
           dragstart: handleDragStart,
         }
@@ -219,21 +217,21 @@ export default defineComponent({
     })
 
     function handleExpand (): void {
-      if (data.isLeaf) return
-      emit('expand', fullData)
+      if (props.data?.isLeaf) return
+      emit('expand', fullData.value)
     }
 
     function handleCheck (): void {
-      if (props.disableAll || data.disabled || !props.checkable) return
-      emit('check', fullData)
+      if (props.disableAll || props.data?.disabled || !props.checkable) return
+      emit('check', fullData.value)
     }
 
     function handleSelect (): void {
-      emit('click', fullData)
+      emit('click', fullData.value)
       if (props.selectable) {
-        if (props.disableAll || data.disabled) return
-        if (data.selected && ! props.unselectOnClick) return
-        emit('select', fullData)
+        if (props.disableAll || props.data?.disabled) return
+        if (props.data?.selected && ! props.unselectOnClick) return
+        emit('select', fullData.value)
       } else if (props.checkable) {
         handleCheck()
       } else {
@@ -242,11 +240,11 @@ export default defineComponent({
     }
 
     function handleDblclick (): void {
-      emit('node-dblclick', fullData)
+      emit('node-dblclick', fullData.value)
     }
 
     function handleRightClick (): void {
-      emit('node-right-click', fullData)
+      emit('node-right-click', fullData.value)
     }
 
     //#region Drag handlers
@@ -279,36 +277,36 @@ export default defineComponent({
 
     function handleDragStart (e: DragEvent): void {
       if (e.dataTransfer) {
-        e.dataTransfer.setData('node', JSON.stringify(data))
+        e.dataTransfer.setData('node', JSON.stringify(props.data))
       }
-      if (data.expand) handleExpand()
-      emit('node-dragstart', fullData, e)
+      if (props.data?.expand) handleExpand()
+      emit('node-dragstart', fullData.value, e)
     }
 
     function handleDragEnter (e: DragEvent): void {
       e.preventDefault()
       const hoverPart = getHoverPart(e)
       resetDragoverFlags(hoverPart)
-      emit('node-dragenter', fullData, e, hoverPart)
+      emit('node-dragenter', fullData.value, e, hoverPart)
     }
 
     function handleDragOver (e: DragEvent): void {
       e.preventDefault()
       const hoverPart = getHoverPart(e)
       resetDragoverFlags(hoverPart)
-      emit('node-dragover', fullData, e, hoverPart)
+      emit('node-dragover', fullData.value, e, hoverPart)
     }
 
     function handleDragLeave (e: DragEvent): void {
       const hoverPart = getHoverPart(e)
       resetDragoverFlags(hoverPart, true)
-      emit('node-dragleave', fullData, e, hoverPart)
+      emit('node-dragleave', fullData.value, e, hoverPart)
     }
 
     function handleDrop (e: DragEvent): void {
       const hoverPart = getHoverPart(e)
       resetDragoverFlags(hoverPart, true)
-      emit('node-drop', fullData, e, hoverPart)
+      emit('node-drop', fullData.value, e, hoverPart)
     }
 
     return {
@@ -333,7 +331,6 @@ export default defineComponent({
       renderComponent,
       dragListeners,
       dropListeners,
-      data,
       titleField,
       handleExpand,
       handleCheck,

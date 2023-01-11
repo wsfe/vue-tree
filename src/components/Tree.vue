@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { VNode, defineComponent, reactive, ref, Ref, computed, watch, onMounted, getCurrentInstance } from 'vue'
+import { VNode, defineComponent, reactive, ref, Ref, computed, watch, onMounted, getCurrentInstance,toRef } from 'vue'
 import TreeStore, { TreeNode } from '../store'
 import CTreeNode from './TreeNode.vue'
 import LoadingIcon from './LoadingIcon.vue'
@@ -62,10 +62,10 @@ export default defineComponent({
     CTreeNode,
     LoadingIcon,
   },
-  emit: ['input', 'node-drop'],
+  emit: ['update:modelValue', 'node-drop'],
   props: {
     /** 单选模式下为字符串或数字，多选模式下为数组或者以 separator 分隔的字符串。当即可单选又可多选时，value 是多选的值 */
-    value: [
+    modelValue: [
       String,
       Number,
       Array as () => TreeNodeKeyType[],
@@ -309,7 +309,7 @@ export default defineComponent({
     const renderStart = ref(0)
     const renderStartCache = ref(0)
     const isRootLoading = ref(false)
-    const valueCache = ref(Array.isArray(props.value) ? props.value.concat() : props.value) as Ref<VModelType>
+    const valueCache = ref(Array.isArray(props.modelValue) ? props.modelValue.concat() : props.modelValue) as Ref<VModelType>
     const debounceTimer = ref(undefined) as Ref<number | undefined>
     const scrollArea = ref()
     const iframe = ref()
@@ -391,9 +391,9 @@ export default defineComponent({
       }),
       blockNodes: [] as TreeNode[],
     }
-    watch(() => props.value, (newVal) => {
+    watch(() => props.modelValue, (newVal) => {
       if (props.checkable) {
-        // 检查是否由 input 事件触发
+        // 检查是否由 update:modelValue 事件触发
         if (sameValue(newVal as VModelType, valueCache.value)) return
 
         // 多选
@@ -406,7 +406,7 @@ export default defineComponent({
         nonReactive.store.clearChecked(false, false)
         nonReactive.store.setCheckedKeys(checkedKeys, true)
       } else if (props.selectable) {
-        // 检查是否由 input 事件触发
+        // 检查是否由 update:modelValue 事件触发
         if (newVal === valueCache.value) return
 
         // 单选
@@ -435,13 +435,13 @@ export default defineComponent({
       let checkableUnloadKeys: TreeNodeKeyType | TreeNodeKeyType[] | null = null
       let selectableUnloadKey: TreeNodeKeyType | null = null
       if (props.checkable) {
-        if (Array.isArray(props.value)) {
-          checkableUnloadKeys = props.value.concat()
-        } else if (typeof props.value === 'string') {
-          checkableUnloadKeys = props.value === '' ? [] : props.value.split(props.separator)
+        if (Array.isArray(props.modelValue)) {
+          checkableUnloadKeys = props.modelValue.concat()
+        } else if (typeof props.modelValue === 'string') {
+          checkableUnloadKeys = props.modelValue === '' ? [] : props.modelValue.split(props.separator)
         }
-      } else if (props.selectable && !Array.isArray(props.value)) {
-        selectableUnloadKey = props.value as TreeNodeKeyType | null
+      } else if (props.selectable && !Array.isArray(props.modelValue)) {
+        selectableUnloadKey = props.modelValue as TreeNodeKeyType | null
       }
       nonReactive.store.setData(data, selectableUnloadKey, checkableUnloadKeys as TreeNodeKeyType[])
       updateExpandedKeys()
@@ -647,7 +647,7 @@ export default defineComponent({
       nonReactive.store.setSelected(node[props.keyField], !node.selected)
     }
     function handleNodeExpand(node: TreeNode): void {
-      nonReactive.store.setExpand(node.value[props.keyField], !node.expand)
+      nonReactive.store.setExpand(node[props.keyField], !node.expand)
     }
     function handleNodeDrop(data: TreeNode, e: DragEvent, hoverPart: dragHoverPartEnum): void {
       if (!props.droppable) return
@@ -673,13 +673,13 @@ export default defineComponent({
     //#endregion Handle node events
 
     /**
-     * 触发多选 input 事件
+     * 触发多选 update:modelValue 事件
      */
     function emitCheckableInput(checkedNodes: TreeNode[], checkedKeys: TreeNodeKeyType[]): void {
       if (props.checkable) {
         // 多选
         let emitValue: TreeNodeKeyType[] | string = checkedKeys
-        if (!Array.isArray(props.value)) {
+        if (!Array.isArray(props.modelValue)) {
           emitValue = emitValue.join(props.separator)
         }
         if (Array.isArray(emitValue)) {
@@ -687,19 +687,19 @@ export default defineComponent({
         } else {
           valueCache.value = emitValue
         }
-        content.emit('input', emitValue)
+        content.emit('update:modelValue', emitValue)
       }
     }
 
     /**
-     * 触发单选 input 事件
+     * 触发单选 update:modelValue 事件
      */
     function emitSelectableInput(selectedNode: TreeNode | null, selectedKey: TreeNodeKeyType | null): void {
       if (props.selectable && !props.checkable) {
         // 单选
         const emitValue: TreeNodeKeyType = selectedKey ? selectedKey : ''
         valueCache.value = emitValue
-        content.emit('input', emitValue)
+        content.emit('update:modelValue', emitValue)
       }
     }
 
@@ -835,6 +835,7 @@ export default defineComponent({
       updateRenderNodes,
       getNode
     }
+    content.expose({methods,titleField:props.titleField})
     onMounted(() => {
       nonReactive.store.on('visible-data-change', updateBlockNodes)
       nonReactive.store.on('render-data-change', updateRender)

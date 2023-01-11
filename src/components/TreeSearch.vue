@@ -21,8 +21,8 @@
 
     <!-- 树区域 -->
     <div :class="treeWrapperCls">
-      <CTree ref="tree" v-bind="$attrs" :value="value" @input="updateCheckedCount" @set-data="handleSetData"
-        @checked-change="updateCheckAllStatus">
+      <CTree ref="tree" v-bind="$attrs" :modelValue="modelValue" :input="updateCheckedCount" :set-data="setData"
+        :checked-change="checkedChange">
         <template v-for="(_, slot) in $slots" :name="slot" v-slot="scope">
           <slot :name="slot" v-bind="scope"></slot>
         </template>
@@ -58,13 +58,18 @@ let ctreeMethods: CTreeApiMethodsType = ({} as CTreeApiMethodsType)
 export default defineComponent({
   name: 'CTreeSearch',
   inheritAttrs: false,
+  emits:['checked-change','search','set-Data'],
   expose: ['handleCheckAll'],
   components: {
     CTree,
   },
   props: {
     /** 兼容 Vue 2.5.16 bug */
-    value: {},
+    modelValue: [
+      String,
+      Number,
+      Array as () => TreeNodeKeyType[],
+    ],
 
     /** 搜索输入框的 placeholder */
     searchPlaceholder: {
@@ -125,7 +130,7 @@ export default defineComponent({
     },
     //#endregion Search related
   },
-  setup(props, { emit, attrs }) {
+  setup(props, { emit, attrs,expose }) {
     const checkAllStatus = reactive({
       checked: false,
       /** 半选 */
@@ -234,13 +239,13 @@ export default defineComponent({
           } else {
             if (props.searchRemote) {
               // 远程搜索
-              tree.value.loadRootNodes().then(() => {
+              tree.value.methods.loadRootNodes().then(() => {
                 updateCheckAllStatus()
                 resolve()
               })
             } else {
               // 本地搜索
-              tree.value.filter(searchKeyword)
+              tree.value.methods.filter(searchKeyword)
               updateCheckAllStatus()
               resolve()
             }
@@ -255,13 +260,13 @@ export default defineComponent({
     function handleCheckAll(): void {
       if (props.searchDisabled || checkAllStatus.disabled) return
 
-      const currentVisibleKeys = tree.value.getCurrentVisibleNodes().map((node: any) => node[tree.value.keyField])
+      const currentVisibleKeys = tree.value.methods.getCurrentVisibleNodes().map((node: any) => node[tree.value.methods.keyField])
       if (checkAllStatus.checked || checkAllStatus.indeterminate) {
         // 反选
-        tree.value.setCheckedKeys(currentVisibleKeys, false)
+        tree.value.methods.setCheckedKeys(currentVisibleKeys, false)
       } else {
         // 全选
-        tree.value.setCheckedKeys(currentVisibleKeys, true)
+        tree.value.methods.setCheckedKeys(currentVisibleKeys, true)
       }
 
       updateCheckAllStatus()
@@ -279,10 +284,10 @@ export default defineComponent({
         isShowingChecked.value = !isShowingChecked.value
         if (isShowingChecked.value) {
           // 展示已选
-          tree.value.showCheckedNodes()
+          tree.value.methods.showCheckedNodes()
         } else {
           // 恢复展示
-          tree.value.filter(keyword.value, () => true)
+          tree.value.methods.filter(keyword.value, () => true)
         }
 
         updateCheckAllStatus()
@@ -308,7 +313,7 @@ export default defineComponent({
 
     /** 更新全选复选框状态 */
     function updateCheckAllStatus(): void {
-      const currentVisibleNodes = tree.value.getCurrentVisibleNodes()
+      const currentVisibleNodes = tree.value.methods.getCurrentVisibleNodes()
       const length = currentVisibleNodes.length
       let hasChecked = false
       let hasUnchecked = false
@@ -334,9 +339,18 @@ export default defineComponent({
     }
 
     function updateCheckedCount(): void {
-      checkedCount.value = tree.value.getCheckedKeys().length
+      checkedCount.value = tree.value.methods.getCheckedKeys().length
     }
 
+    function checkedChange(value1:any,value2:any){
+      updateCheckAllStatus()
+      emit('checked-change',value1,value2)
+    }
+
+    function setData(){
+      emit('set-Data')
+      handleSetData()
+    }
     onMounted(() => {
       // 因为获取不到 CTree.methods 的类型，所以这边 methods 的类型不好写
       const methods: { [key in keyof CTreeApiMethodsType]: CTreeApiMethodsType[key] } = tree.value.methods
@@ -353,6 +367,15 @@ export default defineComponent({
       if (checkable.value && !checkedCount.value) {
         handleSetData()
       }
+    })
+    expose({
+      handleCheckAll,
+      handleSearch,
+      handleShowChecked,
+      updateCheckedCount,
+      handleSetData,
+      updateCheckAllStatus,
+      getKeyword
     })
     return {
       checkAllStatus,
@@ -377,7 +400,10 @@ export default defineComponent({
       handleShowChecked,
       updateCheckedCount,
       handleSetData,
-      updateCheckAllStatus
+      updateCheckAllStatus,
+      getKeyword,
+      checkedChange,
+      setData
     }
   }
 })

@@ -20,15 +20,19 @@
 import {defineComponent,reactive,ref} from 'vue'
 import Loading from './Loading.vue'
 import Search from './Search.vue'
+import Drop from './Drop.vue'
+
 export default defineComponent({
   components: {
     Loading,
-    Search
+    Search,
+    Drop
   },
   setup(props) {
     const components = {
       Loading,
-      Search
+      Search,
+      Drop
       }
     const tabList = reactive(Object.keys(components)) as any[]
     const currentTab =  ref(tabList[0])
