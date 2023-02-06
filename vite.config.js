@@ -14,6 +14,12 @@ export default defineConfig({
     open:true,
     hmr:true
   },
+  build:{
+    outDir:'dist',
+    lib:{
+      entry:resolve(__dirname,'src/index.ts')
+    }
+  },
   css:{
     preprocessorOptions:{
         less:{

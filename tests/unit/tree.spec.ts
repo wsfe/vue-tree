@@ -91,7 +91,7 @@ describe('树展示测试', () => {
   it('本地过滤 - 不展开节点', (done) => {
     const data = genData({ inOrder: true, forceString: true }).data
     const wrapper = mount(CTree, {
-      propsData: {
+      props: {
         data,
         expandOnFilter: false,
       },
@@ -107,7 +107,7 @@ describe('树展示测试', () => {
     expect((vm as any).nonReactive.blockNodes.length).toBe(5)
 
     vm.$nextTick(() => {
-      let $treeNodes = wrapper.findAll(CTreeNode)
+      let $treeNodes = wrapper.findAll(CTreeNode as any)
       // 展开 124 节点
       $treeNodes.at(4).find('.ctree-tree-node__title').trigger('click')
 
@@ -115,7 +115,7 @@ describe('树展示测试', () => {
 
       expect((vm as any).nonReactive.blockNodes.length).toBe(2)
 
-      $treeNodes = wrapper.findAll(CTreeNode)
+      $treeNodes = wrapper.findAll(CTreeNode as any)
       // 展开搜索后的 125 节点
       $treeNodes.at(1).find('.ctree-tree-node__title').trigger('click')
 

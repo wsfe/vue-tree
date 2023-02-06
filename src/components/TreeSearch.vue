@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, Ref, computed, onMounted } from 'vue'
+import { defineComponent, reactive, ref, Ref, computed, onMounted } from 'vue-demi'
 import CTree from './Tree.vue'
 import TreeStore, { TreeNode } from '../store'
 import { API_METHODS, ApiType, TreeNodeKeyType } from '../const'

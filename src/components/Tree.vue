@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { VNode, defineComponent, reactive, ref, Ref, computed, watch, onMounted, getCurrentInstance,toRef } from 'vue'
+import { VNode, defineComponent, reactive, ref, Ref, computed, watch, onMounted, getCurrentInstance,toRef } from 'vue-demi'
 import TreeStore, { TreeNode } from '../store'
 import CTreeNode from './TreeNode.vue'
 import LoadingIcon from './LoadingIcon.vue'
@@ -581,7 +581,7 @@ export default defineComponent({
     function loadRootNodes(): Promise<void> {
       isRootLoading.value = true
       return new Promise((resolve, reject) => {
-        props.load(null, resolve, reject)
+        if(props.load)props.load(null, resolve, reject)
       }).then((root) => {
         if (Array.isArray(root)) {
           setData(root as AnyPropsArrayType)

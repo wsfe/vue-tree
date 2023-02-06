@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import{VNode,defineComponent,ref,computed, ComputedRef,getCurrentInstance,h,reactive,watch } from 'vue'
+import{VNode,defineComponent,ref,computed, ComputedRef,getCurrentInstance,h,reactive,watch } from 'vue-demi'
 import { TreeNode } from '../store'
 import LoadingIcon from './LoadingIcon.vue'
 import { dragHoverPartEnum } from '../const'
@@ -181,9 +181,7 @@ export default defineComponent({
     const showCheckbox = computed(()=>{
       return props.checkable
     }) 
-    const renderFunction = computed(()=>{
-      return props.data?.render || props.render || null
-    })
+    const renderFunction = props.data?.render || props.render || null
     const renderComponent = computed(()=>{
       return defineComponent({
         name: 'Render',

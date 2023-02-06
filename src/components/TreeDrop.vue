@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, computed, onMounted,watch,nextTick } from 'vue'
+import { defineComponent, ref, reactive, computed, onMounted,watch,nextTick } from 'vue-demi'
 import CTreeSearch from './TreeSearch.vue'
 import { TreeNode } from '../store'
 import {
@@ -54,18 +54,18 @@ const prefixCls = 'ctree-tree-drop'
 
 const treeSearchPrefixCls = 'ctree-tree-search'
 
-type CombinedApiType = ApiType | TreeSearchApiType
-type CTreeSearchInstanceType = InstanceType<typeof CTreeSearch>
-type CTreeSearchApiMethodsType = { [key in CombinedApiType]: CTreeSearchInstanceType[key] }
+// type CombinedApiType = ApiType | TreeSearchApiType
+// type CTreeSearchInstanceType = InstanceType<typeof CTreeSearch>
+// type CTreeSearchApiMethodsType = { [key in CombinedApiType]: CTreeSearchInstanceType[key] }
 
-// 注释同 TreeSearch
-let ctreeSearchMethods: CTreeSearchApiMethodsType = ({} as CTreeSearchApiMethodsType)
-let COMBINED_API_METHODS = API_METHODS.concat(TREE_SEARCH_API_METHODS)
+// // 注释同 TreeSearch
+// let ctreeSearchMethods: CTreeSearchApiMethodsType = ({} as CTreeSearchApiMethodsType)
+// let COMBINED_API_METHODS = API_METHODS.concat(TREE_SEARCH_API_METHODS)
 
 export default defineComponent({
   name: 'CTreeDrop',
   inheritAttrs: false,
-  emit:['clear','checked-change','dropdown-visible-change'],
+  emits:['clear','checked-change','dropdown-visible-change'],
   components: {
     CTreeSearch,
   },
@@ -128,7 +128,6 @@ export default defineComponent({
       default: false,
     },
   },
-  emits: ['clear','checked-change'],
   setup(props, { attrs, emit }) {
     const dropdownVisible = ref(false)
     const checkedCount = ref(0)

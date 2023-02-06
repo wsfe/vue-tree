@@ -167,6 +167,7 @@
 <script>
 import CTree from '@'
 import treeDataGenerator from '../tests/tree-data-generator'
+import {defineComponent} from 'vue'
 
 const genData = (extra = {}) => {
   return treeDataGenerator(Object.assign({
@@ -184,12 +185,12 @@ const genChildrenData = (nodeCount = 2) => {
   })
 }
 
-export default {
+export default defineComponent({
   name: 'Feature',
   components: {
     CTree,
   },
-  data () {
+  setup () {
     const selectableData = genData().data
     selectableData[0].selected = true
     const checkableData = genData().data
@@ -229,7 +230,7 @@ export default {
       }
     }
   },
-}
+})
 </script>
 
 <style lang="less" scoped>

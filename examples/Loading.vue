@@ -11,7 +11,7 @@
 <script>
 import CTree from '@'
 import treeDataGenerator from '../tests/tree-data-generator'
-import {defineComponent,ref} from 'vue'
+import {defineComponent,ref} from 'vue-demi'
 
 const genData = (extra = {}) => {
   return treeDataGenerator(Object.assign({

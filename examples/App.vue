@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent,reactive,ref} from 'vue'
+import {defineComponent,reactive,ref} from 'vue-demi'
 import Loading from './Loading.vue'
 import Search from './Search.vue'
 import Drop from './Drop.vue'
