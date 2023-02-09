@@ -52,7 +52,6 @@ import {
   VerticalPositionType,
   dragHoverPartEnum,
 } from '../const'
-import { HtmlAttributes } from 'csstype'
 type AnyPropsArrayType = Array<{ [key: string]: any }>
 type VModelType = TreeNodeKeyType | TreeNodeKeyType[]
 
@@ -835,7 +834,7 @@ export default defineComponent({
       updateRenderNodes,
       getNode
     }
-    content.expose({methods,titleField:props.titleField})
+    content.expose({methods,titleField:props.titleField,nonReactive})
     onMounted(() => {
       nonReactive.store.on('visible-data-change', updateBlockNodes)
       nonReactive.store.on('render-data-change', updateRender)
@@ -859,6 +858,7 @@ export default defineComponent({
       }
       attachStoreEvents()
     })
+    
     return {
       /** 未加载选中的节点，展示已选时生成，其他情况下没用 */
       unloadCheckedNodes,

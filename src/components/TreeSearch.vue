@@ -59,7 +59,6 @@ export default defineComponent({
   name: 'CTreeSearch',
   inheritAttrs: false,
   emits:['checked-change','search','set-Data'],
-  expose: ['handleCheckAll'],
   components: {
     CTree,
   },
@@ -367,7 +366,12 @@ export default defineComponent({
       if (checkable.value && !checkedCount.value) {
         handleSetData()
       }
+      expose({...ctreeMethods
+})
     })
+    const setChecked = (a:any,b:any)=>{
+      tree.value.setChecked(a,b)
+    }
     expose({
       handleCheckAll,
       handleSearch,
@@ -378,6 +382,7 @@ export default defineComponent({
       getKeyword
     })
     return {
+      ...ctreeMethods,
       checkAllStatus,
       isShowingChecked,
       keyword,

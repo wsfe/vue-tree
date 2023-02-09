@@ -10,6 +10,9 @@ export default defineConfig({
     }
   },
   plugins: [vue()],
+  optimizeDeps: {
+    exclude: ['vue-demi']
+ },
   server:{
     open:true,
     hmr:true
@@ -17,7 +20,8 @@ export default defineConfig({
   build:{
     outDir:'dist',
     lib:{
-      entry:resolve(__dirname,'src/index.ts')
+      entry:resolve(__dirname,'src/index.ts'),
+      name:'@wsfe/ctree'
     }
   },
   css:{

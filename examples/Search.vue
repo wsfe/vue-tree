@@ -1,5 +1,7 @@
 <template>
+  <button @click="setChecked"></button>
   <CTreeSearch
+    ref="treeSearch"
     v-model="value"
     :data="data"
     checkable
@@ -18,7 +20,6 @@
 import { CTreeSearch } from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
 import {defineComponent,reactive,ref} from 'vue-demi'
-
 const genData = (extra = {}) => {
   return treeDataGenerator(Object.assign({
     treeDepth: 3,
@@ -37,9 +38,15 @@ export default defineComponent({
   setup(props){
     const data = reactive(genData().data)
     const value = ref('2')
+    const treeSearch = ref()
+    const setChecked = ()=>{
+  treeSearch.value.setChecked('7',true)
+}
     return {
       data,
-      value
+      value,
+      treeSearch,
+      setChecked
     }
   },
 })

@@ -1,6 +1,7 @@
 <template>
   <div>
     <CTree
+    ref="tree"
       :data="basicUsage"
       :loading="loading"
     ></CTree>
@@ -11,7 +12,7 @@
 <script>
 import CTree from '@'
 import treeDataGenerator from '../tests/tree-data-generator'
-import {defineComponent,ref} from 'vue-demi'
+import {defineComponent,ref,onMounted} from 'vue-demi'
 
 const genData = (extra = {}) => {
   return treeDataGenerator(Object.assign({
@@ -29,12 +30,14 @@ export default defineComponent({
   setup(){
     const basicUsage = ref(genData().data)
     const loading = ref(false)
+    const tree = ref()
     function handleToggle(){
       loading.value = !loading.value
     }
     return {
       basicUsage,
-      loading
+      loading,
+      tree
     }
   }
 })
