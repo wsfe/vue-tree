@@ -54,9 +54,9 @@ describe('树展示测试', () => {
     })
     const vm = wrapper.vm as any
 
-    expect((vm as any).$.exposed.nonReactive.store).toBeInstanceOf(TreeStore)
-    expect((vm as any).$.exposed.nonReactive.store.flatData.length).toBe(155)
-    expect((vm as any).$.exposed.nonReactive.blockNodes.length).toBe(5)
+    expect((vm as any).nonReactive.store).toBeInstanceOf(TreeStore)
+    expect((vm as any).nonReactive.store.flatData.length).toBe(155)
+    expect((vm as any).nonReactive.blockNodes.length).toBe(5)
   })
 
   it('数据顺序正确性', () => {
@@ -66,9 +66,9 @@ describe('树展示测试', () => {
     })
     const vm = wrapper.vm
 
-    const length = (vm as any).$.exposed.nonReactive.store.flatData.length
+    const length = (vm as any).nonReactive.store.flatData.length
     for (let i = 0; i < length; i++) {
-      expect((vm as any).$.exposed.nonReactive.store.flatData[i].title).toBe(i)
+      expect((vm as any).nonReactive.store.flatData[i].title).toBe(i)
     }
   })
 
@@ -81,11 +81,11 @@ describe('树展示测试', () => {
 
     vm.filter('126')
 
-    expect((vm as any).$.exposed.nonReactive.blockNodes.length).toBe(3)
+    expect((vm as any).nonReactive.blockNodes.length).toBe(3)
 
     vm.filter('', () => true)
 
-    expect((vm as any).$.exposed.nonReactive.blockNodes.length).toBe((vm as any).$.exposed.nonReactive.store.flatData.length)
+    expect((vm as any).nonReactive.blockNodes.length).toBe((vm as any).nonReactive.store.flatData.length)
   })
 
   it('本地过滤 - 不展开节点', (done) => {
@@ -100,11 +100,11 @@ describe('树展示测试', () => {
 
     vm.filter('126')
 
-    expect((vm as any).$.exposed.nonReactive.blockNodes.length).toBe(1)
+    expect((vm as any).nonReactive.blockNodes.length).toBe(1)
 
     vm.filter('', () => true)
 
-    expect((vm as any).$.exposed.nonReactive.blockNodes.length).toBe(5)
+    expect((vm as any).nonReactive.blockNodes.length).toBe(5)
 
     vm.$nextTick(() => {
       let treeNodes:any[] = wrapper.findAllComponents({name:'CTreeNode'}) as any[]
@@ -113,12 +113,12 @@ describe('树展示测试', () => {
 
       vm.filter('126')
 
-      expect((vm as any).$.exposed.nonReactive.blockNodes.length).toBe(2)
+      expect((vm as any).nonReactive.blockNodes.length).toBe(2)
       treeNodes = wrapper.findAllComponents({name:'CTreeNode'}) as any[]
       // 展开搜索后的 125 节点
       treeNodes.slice(1,2)[0].find('.ctree-tree-node__title').trigger('click')
 
-      expect((vm as any).$.exposed.nonReactive.blockNodes.length).toBe(2)
+      expect((vm as any).nonReactive.blockNodes.length).toBe(2)
 
       done()
     })

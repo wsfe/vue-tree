@@ -834,7 +834,58 @@ export default defineComponent({
       updateRenderNodes,
       getNode
     }
-    content.expose({...methods,titleField:props.titleField,nonReactive,methods})
+    // content.expose({
+    //   methods,
+    //   titleField:props.titleField,
+    //   nonReactive,
+    //   setData,
+    //   setChecked,
+    //   setCheckedKeys,
+    //   checkAll,
+    //   clearChecked,
+    //   setSelected,
+    //   clearSelected,
+    //   setExpand,
+    //   setExpandKeys,
+    //   setExpandAll,
+    //   getCheckedNodes,
+    //   getCheckedKeys,
+    //   getIndeterminateNodes,
+    //   getSelectedNode,
+    //   getSelectedKey,
+    //   getExpandNodes,
+    //   getExpandKeys,
+    //   getCurrentVisibleNodes,
+    //   getTreeData,
+    //   getFlatData,
+    //   getNodesCount,
+    //   insertBefore,
+    //   insertAfter,
+    //   append,
+    //   prepend,
+    //   remove,
+    //   filter,
+    //   showCheckedNodes,
+    //   loadRootNodes,
+    //   scrollTo,
+    //   updateExpandedKeys,
+    //   updateUnloadStatus,
+    //   handleTreeScroll,
+    //   handleNodeCheck,
+    //   handleNodeSelect,
+    //   handleNodeExpand,
+    //   handleNodeDrop,
+    //   emitCheckableInput,
+    //   emitSelectableInput,
+    //   attachStoreEvents,
+    //   resetSpaceHeights,
+    //   updateBlockNodes,
+    //   updateBlockData,
+    //   updateRender,
+    //   updateRenderAmount,
+    //   updateRenderNodes,
+    //   getNode
+    // })
     onMounted(() => {
       nonReactive.store.on('visible-data-change', updateBlockNodes)
       nonReactive.store.on('render-data-change', updateRender)
@@ -860,6 +911,7 @@ export default defineComponent({
     })
     
     return {
+      nonReactive,
       /** 未加载选中的节点，展示已选时生成，其他情况下没用 */
       unloadCheckedNodes,
 

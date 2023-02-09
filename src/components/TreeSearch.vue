@@ -366,23 +366,22 @@ export default defineComponent({
       if (checkable.value && !checkedCount.value) {
         handleSetData()
       }
-      expose({...ctreeMethods
-})
     })
     const setChecked = (a:any,b:any)=>{
       tree.value.setChecked(a,b)
     }
-    expose({
-      handleCheckAll,
-      handleSearch,
-      handleShowChecked,
-      updateCheckedCount,
-      handleSetData,
-      updateCheckAllStatus,
-      getKeyword
-    })
+    // expose({
+    //   setChecked,
+    //   handleCheckAll,
+    //   handleSearch,
+    //   handleShowChecked,
+    //   updateCheckedCount,
+    //   handleSetData,
+    //   updateCheckAllStatus,
+    //   getKeyword
+    // })
     return {
-      ...ctreeMethods,
+      setChecked,
       checkAllStatus,
       isShowingChecked,
       keyword,
