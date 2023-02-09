@@ -188,7 +188,7 @@ export default defineComponent({
         functional: true,
         render(){
           if (typeof renderFunction !== 'function') return h('div')
-          return renderFunction(h, fullData.value) 
+          return renderFunction(fullData.value) 
         } ,
       })
     })

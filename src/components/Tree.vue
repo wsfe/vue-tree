@@ -834,7 +834,7 @@ export default defineComponent({
       updateRenderNodes,
       getNode
     }
-    content.expose({methods,titleField:props.titleField,nonReactive})
+    content.expose({...methods,titleField:props.titleField,nonReactive,methods})
     onMounted(() => {
       nonReactive.store.on('visible-data-change', updateBlockNodes)
       nonReactive.store.on('render-data-change', updateRender)

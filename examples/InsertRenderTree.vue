@@ -1,46 +1,46 @@
 <template>
-  <CTree
-    ref="tree"
-    :data="treeData"
-    :render="renderTree"
-  />
+  <CTree ref="tree" :data="treeData" :render="renderTree" />
 </template>
 
 <script>
 import CTree from '../src'
-
-export default {
+import { defineComponent, reactive, ref, h } from 'vue-demi'
+export default defineComponent({
   name: 'InsertRenderTree',
   components: {
     CTree,
   },
-  data () {
-    return {
-      treeData: [{}],
-    }
-  },
-  methods: {
-    renderTree (h, node) {
-      return (
-        <div>
-          <input type="text"/>
-          <button onClick={this.handleAdd.bind(this, node)}>Add sibling</button>
-          <button onClick={this.handleAddChild.bind(this, node)}>Add child</button>
-          <button onClick={this.handleDelete.bind(this, node)}>Remove</button>
-        </div>
+  setup() {
+    const treeData = reactive([{}])
+    const tree = ref()
+    const renderTree = (node) => {
+      return h(
+        'div',
+        {},
+        [
+          h('input', { type: 'text' }),
+          h('button', { onClick: handleAdd.bind(this,node) }, 'Add sibling'),
+          h('button', { onClick: handleAddChild.bind(this,node) }, 'Add child'),
+          h('button', { onClick: handleDelete.bind(this,node) }, 'Remove'),
+        ],
       )
-    },
-    handleAdd (node) {
-      this.$refs.tree.insertAfter({}, node.id)
-    },
+    }
+    const handleAdd = (node) => {
+      tree.value.insertAfter({}, node.id)
+    }
 
-    handleAddChild (node) {
-      this.$refs.tree.append({}, node.id)
-    },
+    const handleAddChild = (node) => {
+      tree.value.append({}, node.id)
+    }
 
-    handleDelete (node) {
-      this.$refs.tree.remove(node.id)
-    },
-  },
-}
+    const handleDelete = (node) => {
+      tree.value.remove(node.id)
+    }
+    return {
+      tree,
+      treeData,
+      renderTree
+    }
+  }
+})
 </script>
