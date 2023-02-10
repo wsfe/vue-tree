@@ -1,10 +1,5 @@
 <template>
-  <CTreeSearch
-    v-model="value"
-    :data="data"
-    checkable
-    :expandOnFilter="false"
-  >
+  <CTreeSearch ref="treeSearch" v-model="value" :data="data" checkable :expandOnFilter="false">
     <span slot="empty">slot 传进来的暂无数据</span>
     <template slot="actions">
       <span style="margin-left: 5px;">折叠</span>
@@ -17,7 +12,7 @@
 <script>
 import { CTreeSearch } from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
-
+import { defineComponent, reactive, ref, nextTick } from 'vue-demi'
 const genData = (extra = {}) => {
   return treeDataGenerator(Object.assign({
     treeDepth: 3,
@@ -28,16 +23,21 @@ const genData = (extra = {}) => {
   }, extra))
 }
 
-export default {
+export default defineComponent({
   name: 'Search',
   components: {
     CTreeSearch,
   },
-  data () {
+  setup(props) {
+    const data = reactive(genData().data)
+    const value = ref('2')
+    const treeSearch = ref()
     return {
-      data: genData().data,
-      value: '2',
+      data,
+      value,
+      treeSearch,
+      setChecked
     }
   },
-}
+})
 </script>

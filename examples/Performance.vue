@@ -1,12 +1,7 @@
 <template>
   <div class="container">
     <div class="tree">
-      <CTree
-        ref="tree"
-        :data="treeData"
-        checkable
-        selectable
-      ></CTree>
+      <CTree ref="tree" :data="treeData" checkable selectable></CTree>
     </div>
     <div class="control">
       <div class="desc-block">
@@ -16,17 +11,11 @@
       </div>
       <div class="controls">
         <label>节点深度：</label>
-        <input
-          v-model="params.treeDepth"
-          type="number"
-        >
+        <input v-model="params.treeDepth" type="number">
       </div>
       <div class="controls">
         <label>每层节点个数：</label>
-        <input
-          v-model="params.nodesPerLevel"
-          type="number"
-        >
+        <input v-model="params.nodesPerLevel" type="number">
       </div>
       <div class="controls">
         <label>总节点个数：</label>
@@ -45,15 +34,12 @@
         </div>
         <div class="actions">
           <span v-if="!isTreeSet" style="color: red;">树数据已生成</span>
-          <span v-else  style="color: green;">树数据已设置</span>
+          <span v-else style="color: green;">树数据已设置</span>
         </div>
       </div>
       <div class="controls">
         <label>滚动节点id：</label>
-        <input
-          v-model="scrollKey"
-          type="text"
-        />
+        <input v-model="scrollKey" type="text" />
       </div>
       <div class="controls">
         <label>滚动垂直位置：</label>
@@ -65,10 +51,7 @@
       </div>
       <div class="controls">
         <label>滚动垂直偏移值：</label>
-        <input
-          v-model.number="scrollValue"
-          type="text"
-        />
+        <input v-model.number="scrollValue" type="text" />
       </div>
       <div class="controls">
         <div class="actions">
@@ -82,6 +65,7 @@
 <script>
 import CTree from '@'
 import treeDataGenerator from '../tests/tree-data-generator'
+import { defineComponent } from 'vue-demi'
 
 const dataAmountMap = {
   '1w': {
@@ -102,53 +86,65 @@ const dataAmountMap = {
   },
 }
 
-let cache = []
-
-export default {
+export default defineComponent({
   name: 'Performance',
   components: {
     CTree,
   },
-  data () {
-    return {
-      cache: [],
-      isTreeSet: false,
-      params: {
-        treeDepth: 2,
-        nodesPerLevel: 5,
-      },
-      nodeTotal: 0,
-      treeData: [],
-      scrollKey: '',
-      scrollVerticalOption: 'top',
-      scrollValue: 0,
+  setup() {
+    const cache = ref([])
+    const isTreeSet = ref(false)
+    const params = ref({
+      treeDepth: 2,
+      nodesPerLevel: 5,
+    })
+    const nodeTotal = ref(0)
+    const treeData = ref([])
+
+    const scrollKey = ref('')
+
+    const scrollVerticalOption = ref('top')
+    const scrollValue = ref(0)
+    const tree = ref()
+    const handleGenerate = () => {
+      const mock = treeDataGenerator(Object.assign({}, params.value, { inOrder: true, sameIdTitle: true, forceString: true }))
+      cache.value = mock.data
+      nodeTotal.value = mock.total
+      isTreeSet.value = false
     }
-  },
-  methods: {
-    handleGenerate () {
-      const mock = treeDataGenerator(Object.assign({}, this.params, { inOrder: true, sameIdTitle: true, forceString: true }))
-      cache = mock.data
-      this.nodeTotal = mock.total
-      this.isTreeSet = false
-    },
-    handleGenerateTotal (amount) {
-      Object.assign(this.params, dataAmountMap[amount])
-      this.handleGenerate()
-    },
-    handleSetData () {
+    const handleGenerateTotal = (amount) => {
+      Object.assign(params.value, dataAmountMap[amount])
+      handleGenerate()
+    }
+    const handleSetData = () => {
       // this.treeData = cache.concat()
       /** 性能模式 */
-      this.$refs.tree.setData(cache.concat())
+      tree.value.setData(cache.concat())
       this.isTreeSet = true
-    },
-    handleScrollToNode () {
-      this.$refs.tree.scrollTo(this.scrollKey, this.scrollValue || this.scrollVerticalOption)
-    },
+    }
+    const handleScrollToNode = () => {
+      tree.value.scrollTo(scrollKey.value, scrollValue.value || scrollVerticalOption.value)
+    }
+
+    return {
+      cache,
+      isTreeSet,
+      params,
+      nodeTotal,
+      treeData,
+      scrollKey,
+      scrollVerticalOption,
+      scrollValue,
+      handleGenerate,
+      handleGenerateTotal,
+      handleSetData,
+      handleScrollToNode
+    }
   },
-  created () {
+  created() {
     this.handleGenerate()
   },
-}
+})
 </script>
 
 <style lang="less" scoped>
@@ -157,29 +153,36 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: row;
+
   .tree {
     flex: 2;
   }
+
   .control {
     flex: 1;
     padding: 30px 0;
     border-left: 1px solid gray;
+
     .desc-block {
       padding: 10px 30px;
       margin-bottom: 20px;
     }
+
     .controls {
       @left-len: 120px;
 
       padding: 10px;
+
       label {
         display: inline-block;
         width: @left-len;
         text-align: right;
       }
+
       .actions {
         margin-left: @left-len;
         margin-bottom: 10px;
+
         button {
           cursor: pointer;
           margin-right: 10px;

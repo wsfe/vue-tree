@@ -2,49 +2,33 @@
   <div>
     <div style="width: 200px;">
       <p>自定义展示 slot ：</p>
-      <CTreeDrop
-        v-model="value"
-        :data="data"
-        checkable
-        clearable
-        drop-placeholder="请选择"
-        :placement="placement"
-        :dropdown-min-width="300"
-        dropdown-width-fixed
-        @checked-change="handleCheckedChange"
-      >
+      <CTreeDrop v-model="value" :data="data" checkable clearable drop-placeholder="请选择" :placement="placement"
+        :dropdown-min-width="300" dropdown-width-fixed @checked-change="handleCheckedChange">
         <template v-slot:display="scope">
-          <div
-            style="width: 170px; text-overflow: ellipsis; overflow: hidden;"
-          >{{ scope.checkedNodes.map((node) => node.title).join(',') }}</div>
+          <div style="width: 170px; text-overflow: ellipsis; overflow: hidden;">{{
+            scope.checkedNodes.map((node) =>
+              node.title).join(',')
+          }}</div>
         </template>
-        <span slot="empty">slot 传进来的暂无数据</span>
+        
       </CTreeDrop>
       {{ value }}
     </div>
     <div style="width: 200px;">
       <p>默认：</p>
-      <CTreeDrop
-        v-model="value"
-        :data="data"
-        checkable
-        clearable
-        drop-placeholder="请选择"
-        :placement="placement"
-        :dropdown-min-width="300"
-        dropdown-width-fixed
-        @checked-change="handleCheckedChange"
-      >
-        <span slot="empty">slot 传进来的暂无数据</span>
+      <CTreeDrop v-model="value" :data="data" checkable clearable drop-placeholder="请选择" :placement="placement"
+        :dropdown-min-width="300" dropdown-width-fixed @checked-change="handleCheckedChange">
+        <template #empty>slot 传进来的暂无数据</template>
       </CTreeDrop>
       {{ value }}
     </div>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { CTreeDrop } from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
+import { defineComponent, ref } from 'vue-demi'
 
 const genData = (extra = {}) => {
   return treeDataGenerator(Object.assign({
@@ -56,40 +40,24 @@ const genData = (extra = {}) => {
   }, extra))
 }
 
-export default {
+export default defineComponent({
   name: 'Drop',
   components: {
     CTreeDrop,
   },
-  data () {
-    const data = genData().data
-    // const data = [{
-    //   id: '1',
-    //   title: 'zzz',
-    // }]
-    // data[0].checked = true
-    // data[2].checked = true
-    // data[4].checked = true
+  setup() {
+    const data = ref(genData().data)
+    const value = ref('2')
+    const placement = ref('bottom-start')
+    function handleCheckedChange(){
+      console.log('checked-change')
+    }
     return {
       data,
-      value: '2',
-      placement: 'bottom-start',
+      value,
+      placement,
+      handleCheckedChange
     }
-  },
-  methods: {
-    handleCheckedChange () {
-      console.log('checked-change')
-    },
-  },
-  // created () {
-  //   setTimeout(() => {
-  //     this.data = [
-  //       {
-  //         id: '2',
-  //         title: 'xxcxxxx',
-  //       }
-  //     ]
-  //   }, 3000)
-  // },
-}
+  }
+})
 </script>

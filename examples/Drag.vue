@@ -1,49 +1,45 @@
 <template>
   <div>
-    <CTree
-      v-model="value"
-      :data="data"
-      checkable
-      draggable
-      droppable
-      @node-drop="handleDrop"
-    >
-      <span slot="empty">slot 传进来的暂无数据</span>
+    <CTree v-model="value" :data="data" checkable draggable droppable @node-drop="handleDrop">
+      <template #empty>slot 传进来的暂无数据</template>
     </CTree>
     {{ value }}
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import CTree from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
-
-const genData = (extra = {}) => {
-  return treeDataGenerator(Object.assign({
-    treeDepth: 3,
-    nodesPerLevel: 5,
-    sameIdTitle: true,
-    inOrder: true,
-    forceString: true,
-  }, extra))
-}
-
-export default {
+import { reactive, defineComponent,ref } from 'vue-demi'
+export default defineComponent({
   name: 'Drag',
-  components: {
-    CTree,
+  components:{
+    CTree
   },
-  data () {
-    const data = genData().data
+  setup() {
+    const value = ref(['0'])
+    const genData = (extra = {}) => {
+      return treeDataGenerator(Object.assign({
+        treeDepth: 3,
+        nodesPerLevel: 5,
+        sameIdTitle: true,
+        inOrder: true,
+        forceString: true,
+      }, extra))
+    }
+    const handleDrop = () => {
+      console.log('node drop')
+    }
+    const data = ref(genData().data)
+
     return {
       data,
-      value: ['0'],
+      value,
+      genData,
+      handleDrop
     }
-  },
-  methods: {
-    handleDrop () {
-      console.log('node drop')
-    },
-  },
-}
+  }
+})
+
+
 </script>

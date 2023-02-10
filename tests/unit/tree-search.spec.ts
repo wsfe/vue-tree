@@ -39,11 +39,11 @@ const asyncLoadData = (node: TreeNode | null, resolve: Function, reject: Functio
 describe('树搜索测试', () => {
   it('本地搜索', (done) => {
     const data = genData({ inOrder: true }).data
-    const wrapper = mount(CTreeSearch, {
+    const wrapper = mount(CTreeSearch as any, {
       propsData: { data },
     })
     const vm = wrapper.vm
-    const tree = wrapper.find(CTree).vm
+    const tree = wrapper.findComponent({ref:'tree'}).vm
 
     const input = wrapper.find('.ctree-tree-search__input')
     const inputElement = input.element as HTMLInputElement
@@ -82,21 +82,21 @@ describe('树远程搜索增强测试包', () => {
         resolve(data)
       }, 10)
     }
-    const wrapper = mount(CTreeSearch, {
+    const wrapper = mount(CTreeSearch as any, {
       propsData: {
         load,
         searchRemote: true,
         checkable: true,
-        value: ['93', '124'],
+        modelValue: ['93', '124'],
       },
       listeners: {
         input: (emitValue: Array<string | number>) => {
-          wrapper.setProps({ value: emitValue })
+          wrapper.setProps({ modelValue: emitValue })
         },
       },
-    })
+    }) as any
     const vm = wrapper.vm
-    const treeWrapper = wrapper.find(CTree)
+    const treeWrapper = wrapper.findComponent({ref:'tree'}) as any
 
     const input = wrapper.find('.ctree-tree-search__input')
     const inputElement = input.element as HTMLInputElement
@@ -107,7 +107,7 @@ describe('树远程搜索增强测试包', () => {
     setTimeout(() => {
       vm.$nextTick(() => {
         // index = 0
-        expect(treeWrapper.props('value')).toEqual(['93', '124'])
+        expect(treeWrapper.props('modelValue')).toEqual(['93', '124'])
 
         index = 1
 
@@ -115,15 +115,11 @@ describe('树远程搜索增强测试包', () => {
 
         setTimeout(() => {
           vm.$nextTick(() => {
-            expect(treeWrapper.props('value')).toEqual(['93', '124'])
-
+            expect(treeWrapper.props('modelValue')).toEqual(['93', '124'])
             setTimeout(() => {
-              const vmOfAny = vm as any
-
-              vmOfAny.setChecked('4', true)
-
+              vm.setChecked('4', true)
               vm.$nextTick(() => {
-                expect(treeWrapper.props('value')).toEqual(['4', '5', '6', '93', '124'])
+                expect(treeWrapper.vm.modelValue).toEqual(['4', '5', '6', '93', '124'])
 
                 index = 2
 
@@ -132,7 +128,7 @@ describe('树远程搜索增强测试包', () => {
                 setTimeout(() => {
                   vm.$nextTick(() => {
                     // 5
-                    expect(treeWrapper.props('value')).toEqual(['4', '5', '6'].concat(initValue))
+                    expect(treeWrapper.props('modelValue')).toEqual(['4', '5', '6'].concat(initValue))
 
                     done()
                   })

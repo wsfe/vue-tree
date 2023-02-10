@@ -4,7 +4,7 @@
       v-model="value"
       :data="data"
       checkable
-      :search-method="searchMethod"
+      :search-method="searchMethod"          b v
       @search="handleSearch"
     ><span slot="empty">slot 传进来的暂无数据</span></CTreeSearch>
     {{ value }}
