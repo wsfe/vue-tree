@@ -1,9 +1,12 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
+import { loadEnv } from "vite";
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({mode})=>{
+  const env = loadEnv(mode, process.cwd());
+  return {
   resolve: {
     alias: {
       '@': resolve('src')
@@ -18,9 +21,9 @@ export default defineConfig({
     hmr:true
   },
   build:{
-    outDir:'dist',
+    outDir:env.VITE_OUTPUT_DIR || 'dist',
     lib:{
-      entry:resolve(__dirname,'src/index.ts'),
+      entry:env.VITE_IS_BUILDING_DOCS?resolve(__dirname,'examples/main.js'):resolve(__dirname,'src/index.ts'),
       name:'@wsfe/ctree'
     }
   },
@@ -38,4 +41,4 @@ export default defineConfig({
   //       }
   //   }
   // }
-})
+}})

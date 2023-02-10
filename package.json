@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite serve",
     "build": "vite build",
+    "build:docs": "vite build --mode docs",
     "preview": "vite preview",
     "test": "jest --watch"
   },
