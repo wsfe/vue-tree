@@ -8,7 +8,7 @@
     "dev": "vite serve",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "jest"
+    "test": "jest --watch"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",

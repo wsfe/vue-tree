@@ -21,7 +21,7 @@
 
     <!-- 树区域 -->
     <div :class="treeWrapperCls">
-      <CTree ref="tree" v-bind="$attrs" :modelValue="modelValue" :input="updateCheckedCount" :set-data="setData"
+      <CTree ref="tree" v-bind="$attrs" v-model="modelValue" @update:modelValue="updateCheckedCount" :set-data="setData"
         :checked-change="checkedChange">
         <template v-for="(_, slot) in $slots" :name="slot" v-slot="scope">
           <slot :name="slot" v-bind="scope"></slot>
@@ -142,6 +142,7 @@ export default defineComponent({
     const debounceTimer: Ref<number | undefined> = ref(undefined)
     const checkedCount = ref(0)
     const tree = ref()
+    const modelValue = props.modelValue
     const wrapperCls = computed(() => {
       return [
         `${prefixCls}__wrapper`,
@@ -381,6 +382,7 @@ export default defineComponent({
     //   getKeyword
     // })
     return {
+      modelValue,
       setChecked,
       checkAllStatus,
       isShowingChecked,

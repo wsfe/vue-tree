@@ -119,7 +119,7 @@ describe('树远程搜索增强测试包', () => {
             setTimeout(() => {
               vm.setChecked('4', true)
               vm.$nextTick(() => {
-                // expect(treeWrapper.props('modelValue')).toEqual(['4', '5', '6', '93', '124'])
+                expect(treeWrapper.vm.modelValue).toEqual(['4', '5', '6', '93', '124'])
 
                 index = 2
 
@@ -128,7 +128,7 @@ describe('树远程搜索增强测试包', () => {
                 setTimeout(() => {
                   vm.$nextTick(() => {
                     // 5
-                    // expect(treeWrapper.props('modelValue')).toEqual(['4', '5', '6'].concat(initValue))
+                    expect(treeWrapper.props('modelValue')).toEqual(['4', '5', '6'].concat(initValue))
 
                     done()
                   })
