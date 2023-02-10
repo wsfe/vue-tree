@@ -61,7 +61,7 @@ export default defineComponent({
     CTreeNode,
     LoadingIcon,
   },
-  emit: ['update:modelValue', 'node-drop'],
+  emits: ['update:modelValue', 'node-drop'],
   props: {
     /** 单选模式下为字符串或数字，多选模式下为数组或者以 separator 分隔的字符串。当即可单选又可多选时，value 是多选的值 */
     modelValue: [

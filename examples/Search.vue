@@ -40,7 +40,7 @@ export default defineComponent({
     const value = ref('2')
     const treeSearch = ref()
     const setChecked = ()=>{
-  treeSearch.value.setChecked('7',true)
+  treeSearch.value.tree.setChecked('7',true)
 }
     return {
       data,
