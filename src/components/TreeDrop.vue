@@ -36,19 +36,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, computed, onMounted,watch,nextTick } from 'vue-demi'
+import { defineComponent, ref, reactive, computed, onMounted, watch, nextTick, PropType } from 'vue-demi'
 import CTreeSearch from './TreeSearch.vue'
 import { TreeNode } from '../store'
 import {
-  placementEnum,
-  PlacementType,
-
-  API_METHODS,
-  ApiType,
-  TREE_SEARCH_API_METHODS,
-  TreeSearchApiType,
-  TreeNodeKeyType,
+  placementEnum
 } from '../const'
+import {PlacementType, TreeNodeKeyType, TreeDropSlotProps} from '../types'
 
 const prefixCls = 'ctree-tree-drop'
 
@@ -71,11 +65,7 @@ export default defineComponent({
   },
   props: {
     /** 兼容 Vue 2.5.16 bug */
-    modelValue: [
-      String,
-      Number,
-      Array as () => TreeNodeKeyType[],
-    ],
+    modelValue: Object as PropType<string | number | TreeNodeKeyType[]>,
 
     /** 下拉内容高度 */
     dropHeight: {
@@ -102,7 +92,7 @@ export default defineComponent({
 
     /** 下拉弹出框位置 */
     placement: {
-      type: String as () => PlacementType,
+      type: String as PropType<PlacementType>,
       default: placementEnum['bottom-start'],
     },
 
@@ -113,9 +103,7 @@ export default defineComponent({
     },
 
     /** 在下拉框容器上额外添加的 class */
-    dropdownClassName: {
-      type: [String, Array as () => string[]],
-    },
+    dropdownClassName: Object as PropType<string | string[]>,
 
     /** 下拉框容器最小宽度，未指定则默认为展示输入框宽度 */
     dropdownMinWidth: {
@@ -132,7 +120,7 @@ export default defineComponent({
     const dropdownVisible = ref(false)
     const checkedCount = ref(0)
     const selectedTitle = ref('')
-    const slotProps = reactive({
+    const slotProps = reactive<TreeDropSlotProps>({
       /** 多选选中的节点 */
       checkedNodes: [] as TreeNode[],
 
@@ -140,10 +128,10 @@ export default defineComponent({
       checkedKeys: [] as TreeNodeKeyType[],
 
       /** 单选选中的节点 */
-      selectedNode: null as TreeNode | null,
+      selectedNode: undefined,
 
       /** 单选选中的节点 key */
-      selectedKey: null as TreeNodeKeyType | null,
+      selectedKey: undefined,
     })
 
     const wrapperCls = computed(() => {
@@ -334,7 +322,7 @@ export default defineComponent({
       checkedCount.value = keys.length
       emit('checked-change',nodes,keys)
     }
-    function handleSelectedChange(node: TreeNode | null, key: TreeNodeKeyType | null): void {
+    function handleSelectedChange(node?: TreeNode, key?: TreeNodeKeyType): void {
       debugger
       slotProps.selectedNode = node
       slotProps.selectedKey = key

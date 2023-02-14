@@ -39,10 +39,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, Ref, computed, onMounted } from 'vue-demi'
+import { defineComponent, reactive, ref, Ref, computed, onMounted, PropType } from 'vue-demi'
 import CTree from './Tree.vue'
-import TreeStore, { TreeNode } from '../store'
-import { API_METHODS, ApiType, TreeNodeKeyType } from '../const'
+import { API_METHODS, ApiType } from '../const'
+import type {TreeNodeKeyType} from '../types'
 
 const prefixCls = 'ctree-tree-search'
 
@@ -64,11 +64,7 @@ export default defineComponent({
   },
   props: {
     /** 兼容 Vue 2.5.16 bug */
-    modelValue: [
-      String,
-      Number,
-      Array as () => TreeNodeKeyType[],
-    ],
+    modelValue: Object as PropType<string | number | TreeNodeKeyType[]>,
 
     /** 搜索输入框的 placeholder */
     searchPlaceholder: {
@@ -102,7 +98,7 @@ export default defineComponent({
 
     //#region Search related
     /** 如果传入此 Prop ，触发 `search` 事件后将会执行此方法，否则会执行组件内置的搜索方法 */
-    searchMethod: Function as any as () => (keyword: string) => void | Promise<void>,
+    searchMethod: Function as PropType<(keyword: string) => void | Promise<void>>,
 
     /** 触发搜索的字符长度 */
     searchLength: {

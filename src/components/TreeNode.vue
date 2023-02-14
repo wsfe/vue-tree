@@ -52,14 +52,11 @@
 </template>
 
 <script lang="ts">
-import{VNode,defineComponent,ref,computed, ComputedRef,getCurrentInstance,h,reactive,watch } from 'vue-demi'
+import{VNode,defineComponent,ref,computed,getCurrentInstance,h, PropType } from 'vue-demi'
 import { TreeNode } from '../store'
 import LoadingIcon from './LoadingIcon.vue'
 import { dragHoverPartEnum } from '../const'
-import CTree from './Tree.vue'
-import {
-  TreeNodeKeyType
-} from '../const'
+import type {GetNodeFn} from '../types'
 const prefixCls = 'ctree-tree-node'
 
 export default defineComponent({
@@ -69,7 +66,7 @@ export default defineComponent({
   },
   props: {
     /** 节点数据，注意！！为了性能，不让 Vue 监听过多属性，这个 data 不是完整的 TreeNode ，不包括 _parent 和 children 属性 */
-    data: Object as () => TreeNode,
+    data: Object as PropType<TreeNode>,
 
     /** 节点标题字段 */
     titleField: String,
@@ -78,7 +75,7 @@ export default defineComponent({
     keyField: String,
 
     /** 节点渲染 render 函数 */
-    render: Function as any as () => (h: Function, node: TreeNode) => VNode,
+    render: Function as PropType<(node: TreeNode) => VNode>,
 
     /** 是否可多选 */
     checkable: Boolean,
@@ -97,7 +94,7 @@ export default defineComponent({
 
     /** 是否可放置 */
     droppable: Boolean,
-    getNode: Function
+    getNode: Function as PropType<GetNodeFn>
   },
   setup(props,{emit}){
     const dragoverBody = ref(false)
@@ -176,7 +173,7 @@ export default defineComponent({
       ]
     }) 
     const fullData = computed(()=>{
-      return getNode(props.data?props.data[keyField]:'') || ({} as TreeNode)
+      return getNode(props.data ? props.data[keyField] : '') || ({} as TreeNode)
     }) 
     const showCheckbox = computed(()=>{
       return props.checkable

@@ -2,8 +2,8 @@
   <CTree ref="tree" :data="treeData" :render="renderTree" />
 </template>
 
-<script>
-import CTree from '../src'
+<script lang="ts">
+import CTree, {TreeNodeType} from '../src'
 import { defineComponent, reactive, ref, h } from 'vue-demi'
 export default defineComponent({
   name: 'InsertRenderTree',
@@ -13,7 +13,7 @@ export default defineComponent({
   setup() {
     const treeData = reactive([{}])
     const tree = ref()
-    const renderTree = (node) => {
+    const renderTree = (node: TreeNodeType) => {
       return h(
         'div',
         {},
@@ -25,15 +25,15 @@ export default defineComponent({
         ],
       )
     }
-    const handleAdd = (node) => {
+    const handleAdd = (node: TreeNodeType) => {
       tree.value.insertAfter({}, node.id)
     }
 
-    const handleAddChild = (node) => {
+    const handleAddChild = (node: TreeNodeType) => {
       tree.value.append({}, node.id)
     }
 
-    const handleDelete = (node) => {
+    const handleDelete = (node: TreeNodeType) => {
       tree.value.remove(node.id)
     }
     return {

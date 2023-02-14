@@ -5,7 +5,7 @@
       <!-- 可见节点区域，包括上下两片空白加渲染的节点 -->
       <div :class="blockAreaCls">
         <div :style="topSpaceStyles"></div>
-        <CTreeNode v-for="node in renderNodes" v-bind="$props" :key="node[keyField]" :data="node"
+        <CTreeNode v-for="node in renderNodes" v-bind="$props" :key="node[keyField]"  :data="node"
           :getNode="getNode" v-on="treeNodeListeners"
           :class="typeof nodeClassName === 'function' ? nodeClassName(node) : nodeClassName" :style="{
             minHeight: `${nodeMinHeight}px`,
@@ -38,20 +38,19 @@
 </template>
 
 <script lang="ts">
-import { VNode, defineComponent, reactive, ref, Ref, computed, watch, onMounted, getCurrentInstance,toRef } from 'vue-demi'
+import { VNode, defineComponent, reactive, ref, Ref, computed, watch, onMounted, PropType } from 'vue-demi';
 import TreeStore, { TreeNode } from '../store'
 import CTreeNode from './TreeNode.vue'
 import LoadingIcon from './LoadingIcon.vue'
 import { IEventNames, ListenerType, FilterFunctionType } from '../store/tree-store'
 import { ITreeNodeOptions } from '../store/tree-node'
 import {
-  TreeNodeKeyType,
   ignoreEnum,
-  IgnoreType,
   verticalPositionEnum,
   VerticalPositionType,
   dragHoverPartEnum,
 } from '../const'
+import {TreeNodeKeyType, IgnoreType} from '../types'
 type AnyPropsArrayType = Array<{ [key: string]: any }>
 type VModelType = TreeNodeKeyType | TreeNodeKeyType[]
 
@@ -64,21 +63,22 @@ export default defineComponent({
   emits: ['update:modelValue', 'node-drop'],
   props: {
     /** 单选模式下为字符串或数字，多选模式下为数组或者以 separator 分隔的字符串。当即可单选又可多选时，value 是多选的值 */
-    modelValue: [
-      String,
-      Number,
-      Array as () => TreeNodeKeyType[],
-    ],
+    modelValue: Object as PropType<string | number | TreeNodeKeyType[]>,
+    // modelValue: [
+    //   String,
+    //   Number,
+    //   Array as PropType<TreeNodeKeyType[]>,
+    // ],
 
     /** 传入的树数据。数据量大时，不建议通过 props 传入数据，建议用 `setData` 方法代替 */
     data: {
-      type: Array as () => AnyPropsArrayType,
+      type: Array as PropType<AnyPropsArrayType>,
       default: () => [],
     },
 
     /** 供未加载且选中节点查询 title 字段值用的列表，格式与 `data` 一致即可 */
     unloadDataList: {
-      type: Array as () => AnyPropsArrayType,
+      type: Array as PropType<AnyPropsArrayType>,
       default: () => [],
     },
 
@@ -159,13 +159,13 @@ export default defineComponent({
      * @deprecated 下一个大版本将废弃，使用 expandedKeys 代替
      */
     defaultExpandedKeys: {
-      type: Array as () => TreeNodeKeyType[],
+      type: Array as PropType<TreeNodeKeyType[]>,
       default: () => [],
     },
 
     /** 展开的节点，该 Prop 变化时，树组件将会响应，建议配合事件使用 */
     expandedKeys: {
-      type: Array as () => TreeNodeKeyType[],
+      type: Array as PropType<TreeNodeKeyType[]>,
       default: () => [],
     },
 
@@ -183,13 +183,13 @@ export default defineComponent({
 
     /** 在放置节点之前执行的方法，返回 true 允许放置， false 可阻止放置 */
     beforeDropMethod: {
-      type: Function as any as () => (dragKey: TreeNodeKeyType, dropKey: TreeNodeKeyType, hoverPart: dragHoverPartEnum) => boolean,
+      type: Function as PropType<(dragKey: TreeNodeKeyType, dropKey: TreeNodeKeyType, hoverPart: dragHoverPartEnum) => boolean>,
       default: () => () => true,
     },
 
     /** 忽略模式 */
     ignoreMode: {
-      type: String as () => IgnoreType,
+      type: String as PropType<IgnoreType>,
       default: ignoreEnum.none,
     },
 
@@ -200,13 +200,13 @@ export default defineComponent({
     },
 
     /** 异步加载方法 */
-    load: Function as any as () => (node: null | TreeNode, resolve: Function, reject: Function) => any,
+    load: Function as PropType<(node: null | TreeNode, resolve: Function, reject: Function) => any>,
 
     /** 节点渲染 render 函数 */
-    render: Function as any as () => (h: Function, node: TreeNode) => VNode,
+    render: Function as PropType<(node: TreeNode) => VNode>,
 
     /** 节点过滤方法 */
-    filterMethod: Function as any as () => FilterFunctionType,
+    filterMethod: Function as PropType<FilterFunctionType>,
 
     /**
      * 过滤时是否展开所有可见节点
@@ -315,12 +315,12 @@ export default defineComponent({
     //computed
     const topSpaceStyles = computed(() => {
       return {
-        height: `${topSpaceHeight}px`,
+        height: `${topSpaceHeight.value}px`,
       }
     })
     const bottomSpaceStyles = computed(() => {
       return {
-        height: `${bottomSpaceHeight}px`,
+        height: `${bottomSpaceHeight.value}px`,
       }
     })
     const wrapperCls = computed(() => {
@@ -580,7 +580,7 @@ export default defineComponent({
     function loadRootNodes(): Promise<void> {
       isRootLoading.value = true
       return new Promise((resolve, reject) => {
-        if(props.load)props.load(null, resolve, reject)
+        if(props.load) props.load(null, resolve, reject)
       }).then((root) => {
         if (Array.isArray(root)) {
           setData(root as AnyPropsArrayType)
@@ -782,7 +782,7 @@ export default defineComponent({
       }
       renderAmountCache.value = renderAmount.value
       renderStartCache.value = renderStart.value
-      debounceTimer.value = window.requestAnimationFrame(updateRenderNodes.bind(getCurrentInstance(), true))
+      debounceTimer.value = window.requestAnimationFrame(updateRenderNodes.bind(null, true))
       // props.updateRenderNodes(true)
     }
     const methods = {

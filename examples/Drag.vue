@@ -10,7 +10,7 @@
 <script lang="ts">
 import CTree from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
-import { reactive, defineComponent,ref } from 'vue-demi'
+import { defineComponent,ref } from 'vue-demi'
 export default defineComponent({
   name: 'Drag',
   components:{

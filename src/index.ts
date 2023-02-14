@@ -6,6 +6,8 @@ import './styles/index.less'
 
 export default CTree
 
+export * from './types.d'
+
 export {
   CTreeNode,
   CTreeSearch,

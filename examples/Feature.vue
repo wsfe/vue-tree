@@ -53,8 +53,13 @@
       <div class="body">
         <div class="interface">
           <div style="height: 300px;">
-            <CTree v-if="showCheckable" v-model="checkableValue" :data="checkable" checkable
-              :ignore-mode="checkableIgnoreMode" :cascade="checkableCascade"></CTree>
+            <CTree
+              v-if="showCheckable"
+              v-model="checkableValue"
+              :data="checkable"
+              checkable
+              :ignore-mode="checkableIgnoreMode"
+              :cascade="checkableCascade"></CTree>
           </div>
         </div>
         <div class="desc">
@@ -65,7 +70,7 @@
           </div>
           <div class="desc-block">
             <p>设置 ignoreMode 可指定 v-model 与 getCheckedNodes 方法要忽略父节点或者子节点，该 prop 仅初始设置有效</p>
-            <button v-for="mode in ['none', 'parents', 'children']" :key="mode"
+            <button v-for="mode in (['none', 'parents', 'children'] as IgnoreType[])" :key="mode"
               @click="checkableIgnoreMode = mode; showCheckable = false; $nextTick(() => { checkableValue = []; showCheckable = true })">{{
                 mode
               }}</button>
@@ -134,8 +139,8 @@
   </div>
 </template>
 
-<script>
-import CTree from '@'
+<script lang="ts">
+import CTree, {TreeNodeType, IgnoreType} from '@/index'
 import treeDataGenerator from '../tests/tree-data-generator'
 import { defineComponent, ref } from 'vue-demi'
 
@@ -165,21 +170,21 @@ export default defineComponent({
     selectableData[0].selected = true
     const checkableData = genData().data
     checkableData[0].expand = true
-    checkableData[1].children[0].disabled = true
+    checkableData[1].children![0].disabled = true
     // checkableData[1].children[0].children[0].checked = true
     const selectableValue = ref('')
-    const checkableValue = ref([checkableData[0].id])
+    const checkableValue = ref<(string | number)[]>([checkableData[0].id!])
     const basicUsage = ref(genData().data)
     const orderData = ref(genData({ inOrder: true }).data)
     const selectable = ref(selectableData)
     const showCheckable = ref(true)
     const checkable = ref(checkableData)
-    const checkableIgnoreMode = ref('none')
+    const checkableIgnoreMode = ref<IgnoreType>('none')
     const checkableCascade = ref(true)
     const both = ref(genData().data)
     const bothValue = ref([])
     const remoteShow = ref(false)
-    const remoteLoad = (node, resolve, reject) => {
+    const remoteLoad = (node: TreeNodeType | null, resolve: Function, reject: Function) => {
       setTimeout(() => {
         resolve(genChildrenData(node ? 2 : 5).data)
       }, 1000)

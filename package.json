@@ -25,18 +25,17 @@
     "url": "https://github.com/ChuChencheng"
   },
   "keywords": [
-    "wsfe",
-    "CTree",
-    "ctree",
+    "vue",
+    "vue2",
+    "vue3",
     "tree",
+    "vue-tree",
     "vue tree component"
   ],
   "homepage": "https://github.com/wsfe/ctree",
   "license": "MIT",
   "dependencies": {
-    
     "autoprefixer": "^10.4.13",
-    
     "postcss": "^8.4.21",
     "vue": "^3.2.47",
     "vue-demi": "^0.13.11"
@@ -62,8 +61,8 @@
     "vue-tsc": "^1.0.24"
   },
   "peerDependencies": {
-    "@vue/composition-api": "^1.0.0-beta.1",
-    "vue": "^2.0.0 || >=3.0.0-rc.0"
+    "@vue/composition-api": "^1.0.0-rc.1",
+    "vue": "^2.0.0 || >=3.0.0"
   },
   "peerDependenciesMeta": {
     "@vue/composition-api": {

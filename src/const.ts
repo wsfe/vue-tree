@@ -4,8 +4,6 @@ export enum ignoreEnum {
   parents = 'parents',
   children = 'children',
 }
-
-export type IgnoreType = keyof typeof ignoreEnum
 //#endregion ignoreMode
 
 //#region API
@@ -95,9 +93,7 @@ export const TREE_SEARCH_API_METHODS = [
 ]
 
 export type TreeSearchApiType = keyof typeof treeSearchApiEnum
-//#endregion API
 
-//#region Placement
 export enum placementEnum {
   'bottom-start' = 'bottom-start',
   'bottom-end' = 'bottom-end',
@@ -106,9 +102,6 @@ export enum placementEnum {
   'top-end' = 'top-end',
   'top' = 'top',
 }
-
-export type PlacementType = keyof typeof placementEnum
-//#endregion Placement
 
 //#region Scroll position
 export enum verticalPositionEnum {
@@ -127,5 +120,3 @@ export enum dragHoverPartEnum {
   after = 'after',
 }
 //#endregion Drag
-
-export type TreeNodeKeyType = string | number

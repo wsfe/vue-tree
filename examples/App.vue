@@ -1,13 +1,11 @@
 <template>
-  <div class="app">
-    <div class="tab">
-      <button v-for="tab in tabList" :key="tab" :class="{
-        active: currentTab === tab
-      }" @click="currentTab = tab">{{ tab }}</button>
-    </div>
-    <div class="tab-panel">
-      <component :is="currentTab"></component>
-    </div>
+  <div class="tab">
+    <button v-for="tab in tabList" :key="tab" :class="{
+      active: currentTab === tab
+    }" @click="currentTab = tab">{{ tab }}</button>
+  </div>
+  <div class="tab-panel">
+    <component :is="currentTab"></component>
   </div>
 </template>
 
@@ -60,39 +58,32 @@ export default defineComponent({
 </script>
 
 <style lang="less" scoped>
-.app {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
+.tab {
+  height: 90px;
+  padding: 10px 50px;
+  border-bottom: 1px solid lightgray;
 
-  .tab {
-    height: 90px;
-    padding: 10px 50px;
-    border-bottom: 1px solid lightgray;
+  button {
+    cursor: pointer;
+    width: 100px;
+    height: 38px;
+    margin-right: 30px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background: lightcyan;
 
-    button {
-      cursor: pointer;
-      width: 100px;
-      height: 38px;
-      margin-right: 30px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      background: lightcyan;
-
-      &:focus {
-        outline: none;
-      }
-    }
-
-    .active {
-      background: lightblue;
+    &:focus {
+      outline: none;
     }
   }
 
-  .tab-panel {
-    flex: 1;
-    overflow-y: auto;
+  .active {
+    background: lightblue;
   }
+}
+
+.tab-panel {
+  flex: 1;
+  overflow-y: auto;
 }
 </style>

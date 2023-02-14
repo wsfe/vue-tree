@@ -62,12 +62,17 @@
   </div>
 </template>
 
-<script>
-import CTree from '@'
+<script lang="ts">
+import CTree from '@/index'
 import treeDataGenerator from '../tests/tree-data-generator'
-import { defineComponent } from 'vue-demi'
+import { defineComponent, ref } from 'vue-demi'
 
-const dataAmountMap = {
+interface TreeMockMeta {
+  treeDepth: number
+  nodesPerLevel: number
+}
+
+const dataAmountMap: Record<string, TreeMockMeta> = {
   '1w': {
     treeDepth: 2,
     nodesPerLevel: 100,
@@ -86,13 +91,15 @@ const dataAmountMap = {
   },
 }
 
+
+
 export default defineComponent({
   name: 'Performance',
   components: {
     CTree,
   },
   setup() {
-    const cache = ref([])
+    const cache = ref<any[]>([])
     const isTreeSet = ref(false)
     const params = ref({
       treeDepth: 2,
@@ -112,21 +119,22 @@ export default defineComponent({
       nodeTotal.value = mock.total
       isTreeSet.value = false
     }
-    const handleGenerateTotal = (amount) => {
+    const handleGenerateTotal = (amount: string) => {
       Object.assign(params.value, dataAmountMap[amount])
       handleGenerate()
     }
     const handleSetData = () => {
       // this.treeData = cache.concat()
       /** 性能模式 */
-      tree.value.setData(cache.concat())
-      this.isTreeSet = true
+      tree.value.setData(cache.value.concat())
+      isTreeSet.value = true
     }
     const handleScrollToNode = () => {
       tree.value.scrollTo(scrollKey.value, scrollValue.value || scrollVerticalOption.value)
     }
 
     return {
+      tree,
       cache,
       isTreeSet,
       params,

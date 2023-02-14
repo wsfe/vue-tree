@@ -1,4 +1,4 @@
-import { TreeNodeKeyType } from '../const'
+import { TreeNodeKeyType } from '../types'
 
 interface IKeyOption {
   [key: string]: TreeNodeKeyType,

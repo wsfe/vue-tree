@@ -9,10 +9,10 @@
   </div>
 </template>
 
-<script>
-import CTree from '@'
+<script lang="ts">
+import CTree from '@/index'
 import treeDataGenerator from '../tests/tree-data-generator'
-import {defineComponent,ref,onMounted} from 'vue-demi'
+import {defineComponent,ref} from 'vue-demi'
 
 const genData = (extra = {}) => {
   return treeDataGenerator(Object.assign({
@@ -37,7 +37,8 @@ export default defineComponent({
     return {
       basicUsage,
       loading,
-      tree
+      tree,
+      handleToggle
     }
   }
 })

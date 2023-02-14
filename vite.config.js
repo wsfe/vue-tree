@@ -21,7 +21,7 @@ export default defineConfig(({mode})=>{
     hmr:true
   },
   build:{
-    outDir:env.VITE_OUTPUT_DIR || 'dist',
+    outDir: env.VITE_OUTPUT_DIR || 'dist',
     lib:{
       entry:env.VITE_IS_BUILDING_DOCS?resolve(__dirname,'examples/main.js'):resolve(__dirname,'src/index.ts'),
       name:'@wsfe/ctree'

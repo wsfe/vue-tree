@@ -1,5 +1,6 @@
 import TreeNode, { ITreeNodeOptions } from './tree-node'
-import { TreeNodeKeyType, ignoreEnum, IgnoreType } from '../const'
+import { ignoreEnum } from '../const'
+import {TreeNodeKeyType, IgnoreType} from '../types'
 
 //#region Interfaces
 
