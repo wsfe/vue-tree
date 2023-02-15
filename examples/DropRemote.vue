@@ -18,7 +18,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { CTreeDrop } from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
 
@@ -33,51 +33,51 @@ const genData = (extra = {}) => {
 }
 
 const data = [
-    {
-      "id": "p1-id",
-      "title": "c(lL%8",
-      "checked": false,
-      "children": [
-        {
-          "id": "c1-1-id",
-          "title": "c1-1",
-          "children": []
-        },
-        {
-          "id": "c1-2-id",
-          "title": "c1-2",
-          "checked": false,
-          "children": []
-        }
-      ]
-    },
-    {
-      "id": "p2-id",
-      "title": "KfQrp",
-      "checked": false,
-      "children": [
-        {
-          "id": "c2-1-id",
-          "title": "c2-1",
-          "checked": false,
-          "children": []
-        },
-        {
-          "id": "c2-2-id",
-          "title": "c1-2",
-          "checked": false,
-          "children": [
-            {
-              "id": "c2-2-1-id",
-              "title": "c1-2-1",
-              "checked": false,
-              "children": []
-            }
-          ]
-        }
-      ]
-    }
-  ]
+  {
+    "id": "p1-id",
+    "title": "c(lL%8",
+    "checked": false,
+    "children": [
+      {
+        "id": "c1-1-id",
+        "title": "c1-1",
+        "children": []
+      },
+      {
+        "id": "c1-2-id",
+        "title": "c1-2",
+        "checked": false,
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "p2-id",
+    "title": "KfQrp",
+    "checked": false,
+    "children": [
+      {
+        "id": "c2-1-id",
+        "title": "c2-1",
+        "checked": false,
+        "children": []
+      },
+      {
+        "id": "c2-2-id",
+        "title": "c1-2",
+        "checked": false,
+        "children": [
+          {
+            "id": "c2-2-1-id",
+            "title": "c1-2-1",
+            "checked": false,
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+]
 
 export default {
   name: 'DropRemote',
@@ -100,13 +100,13 @@ export default {
         this.value = 'c1-1-id,c1-2-id'
       }, 100)
     },
-    handleCheckedChange (params) {
+    handleCheckedChange (params: any) {
       console.log('rrr checked change', params)
     },
     handleSetData () {
       this.loading = true
       setTimeout(() => {
-        this.data = data
+        this.data = data as any
         this.$nextTick(() => {
           this.value = 'c1-1-id,c1-2-id'
           this.loading = false

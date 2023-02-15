@@ -65,7 +65,7 @@ export default defineComponent({
   },
   props: {
     /** 兼容 Vue 2.5.16 bug */
-    modelValue: Object as PropType<string | number | TreeNodeKeyType[]>,
+    modelValue: [String, Number, Array] as PropType<string | number | TreeNodeKeyType[]>,
 
     /** 下拉内容高度 */
     dropHeight: {
@@ -103,7 +103,7 @@ export default defineComponent({
     },
 
     /** 在下拉框容器上额外添加的 class */
-    dropdownClassName: Object as PropType<string | string[]>,
+    dropdownClassName: [String, Array] as PropType<string | string[]>,
 
     /** 下拉框容器最小宽度，未指定则默认为展示输入框宽度 */
     dropdownMinWidth: {

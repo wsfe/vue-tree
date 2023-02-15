@@ -3,7 +3,6 @@ export declare enum ignoreEnum {
     parents = "parents",
     children = "children"
 }
-export declare type IgnoreType = keyof typeof ignoreEnum;
 declare const enum apiEnum {
     'setData' = 0,
     'setChecked' = 1,
@@ -38,14 +37,14 @@ declare const enum apiEnum {
     'scrollTo' = 30
 }
 export declare const API_METHODS: string[];
-export declare type ApiType = keyof typeof apiEnum;
+export type ApiType = keyof typeof apiEnum;
 declare const enum treeSearchApiEnum {
     'clearKeyword' = 0,
     'getKeyword' = 1,
     'search' = 2
 }
 export declare const TREE_SEARCH_API_METHODS: string[];
-export declare type TreeSearchApiType = keyof typeof treeSearchApiEnum;
+export type TreeSearchApiType = keyof typeof treeSearchApiEnum;
 export declare enum placementEnum {
     'bottom-start' = "bottom-start",
     'bottom-end' = "bottom-end",
@@ -54,17 +53,15 @@ export declare enum placementEnum {
     'top-end' = "top-end",
     'top' = "top"
 }
-export declare type PlacementType = keyof typeof placementEnum;
 export declare enum verticalPositionEnum {
     top = "top",
     center = "center",
     bottom = "bottom"
 }
-export declare type VerticalPositionType = keyof typeof verticalPositionEnum;
+export type VerticalPositionType = keyof typeof verticalPositionEnum;
 export declare enum dragHoverPartEnum {
     before = "before",
     body = "body",
     after = "after"
 }
-export declare type TreeNodeKeyType = string | number;
 export {};

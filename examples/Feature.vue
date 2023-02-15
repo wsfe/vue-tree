@@ -140,7 +140,8 @@
 </template>
 
 <script lang="ts">
-import CTree, {TreeNodeType, IgnoreType} from '@/index'
+import CTree, {TreeNode} from '../src'
+import {IgnoreType} from '../src/types'
 import treeDataGenerator from '../tests/tree-data-generator'
 import { defineComponent, ref } from 'vue-demi'
 
@@ -184,7 +185,7 @@ export default defineComponent({
     const both = ref(genData().data)
     const bothValue = ref([])
     const remoteShow = ref(false)
-    const remoteLoad = (node: TreeNodeType | null, resolve: Function, reject: Function) => {
+    const remoteLoad = (node: TreeNode | null, resolve: Function, reject: Function) => {
       setTimeout(() => {
         resolve(genChildrenData(node ? 2 : 5).data)
       }, 1000)

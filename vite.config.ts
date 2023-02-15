@@ -1,11 +1,9 @@
-import { defineConfig } from 'vite'
+import { defineConfig, UserConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
-import { loadEnv } from "vite";
 
 // https://vitejs.dev/config/
-export default defineConfig(({mode})=>{
-  const env = loadEnv(mode, process.cwd());
+export default defineConfig((): UserConfig => {
   return {
     resolve: {
       alias: {
@@ -15,16 +13,21 @@ export default defineConfig(({mode})=>{
     plugins: [vue()],
     optimizeDeps: {
       exclude: ['vue-demi']
-  },
-    server:{
+    },
+    server: {
       open:true,
       hmr:true
     },
-    build:{
+    build: {
       outDir: 'dist',
       lib: {
         entry: resolve(__dirname,'src/index.ts'),
-        name:'@wsfe/ctree'
+        name:'Ctree'
+      },
+      rollupOptions: {
+        output: {
+          exports: 'named'
+        }
       }
     }
   }

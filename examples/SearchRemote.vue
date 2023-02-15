@@ -6,8 +6,8 @@
   </div>
 </template>
 
-<script>
-import { CTreeSearch } from '../src'
+<script lang="ts">
+import { CTreeSearch, TreeNode } from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
 import { defineComponent, reactive, ref } from 'vue'
 
@@ -29,9 +29,9 @@ export default defineComponent({
   setup() {
     const times = reactive([3, 2, 5])
     const index = ref(0)
-    const load = (node, resolve) => {
+    const load = (node: TreeNode | null, resolve: Function) => {
       setTimeout(() => {
-        const data = genData({ nodesPerLevel: this.times[this.index] }).data
+        const data = genData({ nodesPerLevel: times[index.value] }).data
         resolve(data)
       }, 10)
     }

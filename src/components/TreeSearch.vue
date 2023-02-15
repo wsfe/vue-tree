@@ -64,7 +64,7 @@ export default defineComponent({
   },
   props: {
     /** 兼容 Vue 2.5.16 bug */
-    modelValue: Object as PropType<string | number | TreeNodeKeyType[]>,
+    modelValue: [String, Number, Array] as PropType<string | number | TreeNodeKeyType[]>,
 
     /** 搜索输入框的 placeholder */
     searchPlaceholder: {

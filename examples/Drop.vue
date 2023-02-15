@@ -14,7 +14,7 @@
         @checked-change="handleCheckedChange">
         <template #display="scope">
           <div style="width: 170px; text-overflow: ellipsis; overflow: hidden;">{{
-            scope.checkedNodes.map((node: TreeNodeType) =>
+            scope.checkedNodes.map((node: TreeNode) =>
               node.title).join(',')
           }}</div>
         </template>
@@ -42,7 +42,8 @@
 </template>
 
 <script lang="ts">
-import { CTreeDrop, PlacementType, TreeNodeType } from '../src'
+import { CTreeDrop, TreeNode } from '../src'
+import type {PlacementType} from '../src/types'
 import treeDataGenerator from '../tests/tree-data-generator'
 import { defineComponent, ref } from 'vue-demi'
 

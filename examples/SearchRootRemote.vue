@@ -11,7 +11,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { CTreeSearch } from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
 
@@ -32,14 +32,14 @@ export default {
   },
   data () {
     return {
-      data: [],
+      data: [] as any[],
       times: [3, 2, 5],
       index: 0,
       value: ['93', '124'],
     }
   },
   methods: {
-    searchMethod (keyword) {
+    searchMethod (keyword: string): Promise<void> {
       return new Promise((resolve) => {
         setTimeout(() => {
           this.data = genData({ nodesPerLevel: this.times[this.index] }).data

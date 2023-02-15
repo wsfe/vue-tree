@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import CTree from '@/index'
+import CTree from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
 import {defineComponent,ref} from 'vue-demi'
 

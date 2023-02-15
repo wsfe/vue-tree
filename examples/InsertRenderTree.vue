@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import CTree, {TreeNodeType} from '../src'
+import CTree, {TreeNode} from '../src'
 import { defineComponent, reactive, ref, h } from 'vue-demi'
 export default defineComponent({
   name: 'InsertRenderTree',
@@ -13,7 +13,7 @@ export default defineComponent({
   setup() {
     const treeData = reactive([{}])
     const tree = ref()
-    const renderTree = (node: TreeNodeType) => {
+    const renderTree = (node: TreeNode) => {
       return h(
         'div',
         {},
@@ -25,15 +25,15 @@ export default defineComponent({
         ],
       )
     }
-    const handleAdd = (node: TreeNodeType) => {
+    const handleAdd = (node: TreeNode) => {
       tree.value.insertAfter({}, node.id)
     }
 
-    const handleAddChild = (node: TreeNodeType) => {
+    const handleAddChild = (node: TreeNode) => {
       tree.value.append({}, node.id)
     }
 
-    const handleDelete = (node: TreeNodeType) => {
+    const handleDelete = (node: TreeNode) => {
       tree.value.remove(node.id)
     }
     return {

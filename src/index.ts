@@ -1,15 +1,16 @@
 import CTree from './components/Tree.vue'
-import CTreeNode from './components/TreeNode.vue'
-import CTreeSearch from './components/TreeSearch.vue'
-import CTreeDrop from './components/TreeDrop.vue'
+export {default as CTreeNode} from './components/TreeNode.vue'
+export {default as CTreeSearch} from './components/TreeSearch.vue'
+export {default as CTreeDrop} from './components/TreeDrop.vue'
+export { TreeNode } from './store'
+export { default as TreeStore } from './store'
 import './styles/index.less'
+// export * from './types'
 
 export default CTree
 
-export * from './types.d'
-
-export {
-  CTreeNode,
-  CTreeSearch,
-  CTreeDrop,
-}
+// export {
+//   CTreeNode,
+//   CTreeSearch,
+//   CTreeDrop,
+// }

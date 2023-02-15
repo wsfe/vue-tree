@@ -1,5 +1,7 @@
 import {placementEnum, ignoreEnum} from './const'
-export {TreeNode as TreeNodeType} from './store'
+
+import { TreeNode } from './store'
+
 export type PlacementType = keyof typeof placementEnum
 //#endregion Placement
 
