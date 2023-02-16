@@ -1,6 +1,6 @@
 import { shallowMount, mount } from '@vue/test-utils'
-import CTreeSearch from '../../src/components/TreeSearch.vue'
-import CTree from '../../src/components/Tree.vue'
+import VTreeSearch from '../../src/components/TreeSearch.vue'
+import VTree from '../../src/components/Tree.vue'
 import treeDataGenerator, { ITreeNodeData } from '../tree-data-generator'
 import TreeStore, { TreeNode } from '../../src/store'
 
@@ -16,7 +16,7 @@ const genData = (extra: object = {}) => {
 
 const asyncLoadData = (node: TreeNode | null, resolve: Function, reject: Function) => {
   setTimeout(() => {
-    let result = []
+    let result = [] as any[]
     if (node === null) {
       result = genData({
         treeDepth: 1,
@@ -39,7 +39,7 @@ const asyncLoadData = (node: TreeNode | null, resolve: Function, reject: Functio
 describe('树搜索测试', () => {
   it('本地搜索', (done) => {
     const data = genData({ inOrder: true }).data
-    const wrapper = mount(CTreeSearch as any, {
+    const wrapper = mount(VTreeSearch as any, {
       propsData: { data },
     })
     const vm = wrapper.vm
@@ -82,7 +82,7 @@ describe('树远程搜索增强测试包', () => {
         resolve(data)
       }, 10)
     }
-    const wrapper = mount(CTreeSearch as any, {
+    const wrapper = mount(VTreeSearch as any, {
       propsData: {
         load,
         searchRemote: true,

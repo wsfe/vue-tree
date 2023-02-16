@@ -6,7 +6,7 @@
       <div class="body">
         <div class="interface">
           <div style="height: 300px;">
-            <CTree :data="basicUsage" :nodeClassName="(node) => `generated-class-${node.id}`" />
+            <VTree :data="basicUsage" :nodeClassName="(node) => `generated-class-${node.id}`" />
           </div>
         </div>
         <div class="desc">
@@ -21,7 +21,7 @@
       <div class="body">
         <div class="interface">
           <div style="height: 300px;">
-            <CTree :data="orderData" default-expand-all></CTree>
+            <VTree :data="orderData" default-expand-all></VTree>
           </div>
         </div>
         <div class="desc">
@@ -36,7 +36,7 @@
       <div class="body">
         <div class="interface">
           <div style="height: 300px;">
-            <CTree v-model="selectableValue" :data="selectable" @update:modelValue="() => { }" selectable></CTree>
+            <VTree v-model="selectableValue" :data="selectable" @update:modelValue="() => { }" selectable></VTree>
           </div>
         </div>
         <div class="desc">
@@ -53,13 +53,13 @@
       <div class="body">
         <div class="interface">
           <div style="height: 300px;">
-            <CTree
+            <VTree
               v-if="showCheckable"
               v-model="checkableValue"
               :data="checkable"
               checkable
               :ignore-mode="checkableIgnoreMode"
-              :cascade="checkableCascade"></CTree>
+              :cascade="checkableCascade"></VTree>
           </div>
         </div>
         <div class="desc">
@@ -105,7 +105,7 @@
       <div class="body">
         <div class="interface">
           <div style="height: 300px;">
-            <CTree v-model="bothValue" :data="both" checkable selectable></CTree>
+            <VTree v-model="bothValue" :data="both" checkable selectable></VTree>
           </div>
         </div>
         <div class="desc">
@@ -122,7 +122,7 @@
       <div class="body">
         <div class="interface">
           <div style="height: 300px;">
-            <CTree v-if="remoteShow" :load="remoteLoad"></CTree>
+            <VTree v-if="remoteShow" :load="remoteLoad"></VTree>
           </div>
         </div>
         <div class="desc">
@@ -140,7 +140,7 @@
 </template>
 
 <script lang="ts">
-import CTree, {TreeNode} from '../src'
+import VTree, {TreeNode} from '../src'
 import {IgnoreType} from '../src/types'
 import treeDataGenerator from '../tests/tree-data-generator'
 import { defineComponent, ref } from 'vue-demi'
@@ -164,7 +164,7 @@ const genChildrenData = (nodeCount = 2) => {
 export default defineComponent({
   name: 'Feature',
   components: {
-    CTree,
+    VTree,
   },
   setup() {
     const selectableData = genData().data

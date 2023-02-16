@@ -1,6 +1,6 @@
 <template>
   <div style="width: 200px;">
-    <CTreeDrop
+    <VTreeDrop
       v-model="value"
       :data="data"
       checkable
@@ -12,14 +12,14 @@
       @checked-change="handleCheckedChange"
     >
       <span slot="empty">slot 传进来的暂无数据</span>
-    </CTreeDrop>
+    </VTreeDrop>
     {{ value }}
     <button @click="handleChangeValue">Change Value</button>
   </div>
 </template>
 
 <script lang="ts">
-import { CTreeDrop } from '../src'
+import { VTreeDrop } from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
 
 const genData = (extra = {}) => {
@@ -82,7 +82,7 @@ const data = [
 export default {
   name: 'DropRemote',
   components: {
-    CTreeDrop,
+    VTreeDrop,
   },
   data () {
     return {

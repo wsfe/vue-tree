@@ -1,19 +1,22 @@
-# CTree 2.x
-
-[在线 demo](https://wsfe.github.io/ctree/)
+# Vue-Tree 3.x
+一款高性能vue虚拟树控件，支持搜索，定位，拖拽等。该控件是在公司业务的基础上不断打磨出来的，提供了十分丰富强大的API，几乎能够满足你对树控件的所有需求。该控件同时支持vue2以及vue3。
+> 这是原先[ctree](https://github.com/wsfe/vue-tree/tree/2.x)的升级版本，同时支持vue2和vue3。
+新版改变了包的名称和部分export模块名称。
+## 案例
+[在线 demo](https://wsfe.github.io/vue-ctree/)
 
 ## 安装
 
 ### yarn 安装方式
 
 ```bash
-yarn add @wsfe/ctree
+yarn add @wsfe/vue-tree
 ```
 
 ### npm 安装方式
 
 ```bash
-npm install @wsfe/ctree
+npm install @wsfe/vue-tree
 ```
 
 ### 样式引入
@@ -21,18 +24,25 @@ npm install @wsfe/ctree
 直接引入 css
 
 ```less
-@import '~@wsfe/ctree/dist/ctree.css';
+@import '~@wsfe/vue-tree/dist/style.css';
 ```
 
 引入 less 以便于变量覆盖
 
 ```less
-@import '~@wsfe/ctree/src/styles/index.less';
+@import '~@wsfe/vue-tree/src/styles/index.less';
 ```
 
-## CTree API
+### 使用方式
+```typescript
+// 大家可以根据需要是否引入VTreeNode, VTreeSearch, VTreeDrop
+import Vtree, {VTreeNode, VTreeSearch, VTreeDrop} from '@wsfe/vue-tree'
+import '@wsfe/vue-tree/dist/style.css'
+```
+# 接口文档
+## VTree API
 
-### CTree Props
+### VTree Props
 
 | 属性                             | 说明                                                                                                          | 类型                                                                                                             | 默认值       |
 |:---------------------------------|:--------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------|:-------------|
@@ -70,7 +80,7 @@ npm install @wsfe/ctree
 | renderNodeAmount                 | 渲染节点数量，可见节点数大于此值且高度超过(容器可视高度能容纳节点数 + bufferNodeAmount)则不会渲染所有可见节点 | `number`                                                                                                         | 100          |
 | bufferNodeAmount                 | 当滚动到视野外的节点个数大于此值时刷新渲染节点                                                                | `number`                                                                                                         | 20           |
 
-### CTree Events
+### VTree Events
 
 注：从 `2.0.8` 起，事件中返回的节点信息都是包括 `_parent` 与 `children` 的完整节点信息（拖拽事件的 `dataTransfer` 除外）。
 
@@ -93,7 +103,7 @@ npm install @wsfe/ctree
 | node-dragleave   | dragleave 时触发            | 节点信息 , 拖拽事件对象, 事件触发的节点部位 `'before' \| 'body' \| 'after'` |
 | node-drop        | 放置节点时触发              | 节点信息 , 拖拽事件对象, 事件触发的节点部位 `'before' \| 'body' \| 'after'` |
 
-### CTree Methods
+### VTree Methods
 
 | 方法                   | 说明                                            | 参数                                                                                                                                                                                                | 返回值                            |
 |:-----------------------|:------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------|
@@ -128,14 +138,14 @@ npm install @wsfe/ctree
 | loadRootNodes          | 从远程加载根节点                                | 无                                                                                                                                                                                                  | `Promise<void>`                   |
 | scrollTo               | 滚动到指定节点位置                              | `key: string \| number`: 节点 key<br/>`verticalPosition: 'top' \| 'center' \| 'bottom' \| number`: 滚动的垂直位置                                                                                   | `void`                            |
 
-### CTree Slots
+### VTree Slots
 
 | 名称    | 说明             |
 |:--------|:-----------------|
 | empty   | 暂无数据         |
 | loading | 加载中显示的图标 |
 
-### CTree Data Fields
+### VTree Data Fields
 
 注：以 '`_`' 开头的字段最好不要覆盖，以免影响内部处理逻辑
 
@@ -157,11 +167,11 @@ npm install @wsfe/ctree
 | _loading       | 节点是否正在加载                                                                |
 | _loaded        | 节点是否已经加载过，异步加载下有效                                              |
 
-## CTreeSearch API
+## VTreeSearch API
 
-### CTreeSearch Props
+### VTreeSearch Props
 
-注：可在 `CTreeSearch` 上直接使用 `CTree` 的所有 Props
+注：可在 `VTreeSearch` 上直接使用 `VTree` 的所有 Props
 
 | 属性                 | 说明                                                                               | 类型                                         | 默认值       |
 |:---------------------|:-----------------------------------------------------------------------------------|:---------------------------------------------|:-------------|
@@ -176,17 +186,17 @@ npm install @wsfe/ctree
 | searchRemote         | 是否远程搜索，传入 `searchMethod` 时无效                                           | `boolean`                                    | false        |
 | searchDebounceTime   | 搜索防抖时间，单位为毫秒                                                           | `number`                                     | 300          |
 
-### CTreeSearch Events
+### VTreeSearch Events
 
-注：可在 `CTreeSearch` 上直接监听 `CTree` 的所有 Events
+注：可在 `VTreeSearch` 上直接监听 `VTree` 的所有 Events
 
 | 事件名 | 说明               | 返回值       |
 |:-------|:-------------------|:-------------|
 | search | 执行搜索操作时触发 | 搜索的关键字 |
 
-### CTreeSearch Methods
+### VTreeSearch Methods
 
-注：可在 `CTreeSearch` 上直接调用 `CTree` 的所有 Methods
+注：可在 `VTreeSearch` 上直接调用 `VTree` 的所有 Methods
 
 | 方法         | 说明           | 参数                                                     | 返回值          |
 |:-------------|:---------------|:---------------------------------------------------------|:----------------|
@@ -194,9 +204,9 @@ npm install @wsfe/ctree
 | getKeyword   | 获取搜索关键字 | 无                                                       | `string`        |
 | search       | 执行搜索       | `keyword: string`: 搜索的关键字，默认为内部 this.keyword | `Promise<void>` |
 
-### CTreeSearch Slots
+### VTreeSearch Slots
 
-注：可在 `CTreeSearch` 上直接传入 `CTree` 的所有 Slots
+注：可在 `VTreeSearch` 上直接传入 `VTree` 的所有 Slots
 
 | 名称         | 说明                                               |
 |:-------------|:---------------------------------------------------|
@@ -204,11 +214,11 @@ npm install @wsfe/ctree
 | actions      | 操作按钮，可在搜索输入框后加入更多操作按钮         |
 | footer       | 底部信息                                           |
 
-## CTreeDrop API
+## VTreeDrop API
 
-### CTreeDrop Props
+### VTreeDrop Props
 
-注：可在 `CTreeDrop` 上直接使用 `CTree` 和 `CTreeSearch` 的所有 Props
+注：可在 `VTreeDrop` 上直接使用 `VTree` 和 `VTreeSearch` 的所有 Props
 
 | 属性                       | 说明                                                                             | 类型                                                                              | 默认值         |
 |:---------------------------|:---------------------------------------------------------------------------------|:----------------------------------------------------------------------------------|:---------------|
@@ -222,22 +232,22 @@ npm install @wsfe/ctree
 | dropdownMinWidth `2.0.1`   | 下拉框容器最小宽度，未指定则默认为展示输入框宽度。 适合 transfer 为 false 时使用 | `number`                                                                          | 无             |
 | dropdownWidthFixed `2.0.5` | 固定下拉框容器宽度，当内容超出最小宽度不会伸长，而是出现横向滚动条               | `boolean`                                                                         | false          |
 
-### CTreeDrop Events
+### VTreeDrop Events
 
-注：可在 `CTreeDrop` 上直接监听 `CTree` 和 `CTreeSearch` 的所有 Events
+注：可在 `VTreeDrop` 上直接监听 `VTree` 和 `VTreeSearch` 的所有 Events
 
 | 事件名                  | 说明                   | 返回值         |
 |:------------------------|:-----------------------|:---------------|
 | dropdown-visible-change | 下拉框出现或消失时触发 | 下拉框是否可见 |
 | clear                   | 点击清空按钮时触发     | 无             |
 
-### CTreeDrop Methods
+### VTreeDrop Methods
 
-注：可在 `CTreeDrop` 上直接调用 `CTree` 和 `CTreeSearch` 的所有 Methods
+注：可在 `VTreeDrop` 上直接调用 `VTree` 和 `VTreeSearch` 的所有 Methods
 
-### CTreeDrop Slots
+### VTreeDrop Slots
 
-注：可在 `CTreeDrop` 上直接传入 `CTree` 和 `CTreeSearch` 的所有 Slots
+注：可在 `VTreeDrop` 上直接传入 `VTree` 和 `VTreeSearch` 的所有 Slots
 
 | 名称    | 说明                                                 |
 |:--------|:-----------------------------------------------------|

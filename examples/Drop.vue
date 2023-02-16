@@ -2,7 +2,7 @@
   <div>
     <div style="width: 200px;">
       <p>自定义展示 slot ：</p>
-      <CTreeDrop
+      <VTreeDrop
         v-model="value"
         :data="data"
         checkable
@@ -19,12 +19,12 @@
           }}</div>
         </template>
         
-      </CTreeDrop>
+      </VTreeDrop>
       {{ value }}
     </div>
     <div style="width: 200px;">
       <p>默认：</p>
-      <CTreeDrop
+      <VTreeDrop
         v-model="value"
         :data="data"
         checkable
@@ -35,14 +35,14 @@
         dropdown-width-fixed
         @checked-change="handleCheckedChange">
         <template #empty>slot 传进来的暂无数据</template>
-      </CTreeDrop>
+      </VTreeDrop>
       {{ value }}
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { CTreeDrop, TreeNode } from '../src'
+import { VTreeDrop, TreeNode } from '../src'
 import type {PlacementType} from '../src/types'
 import treeDataGenerator from '../tests/tree-data-generator'
 import { defineComponent, ref } from 'vue-demi'
@@ -60,7 +60,7 @@ const genData = (extra = {}) => {
 export default defineComponent({
   name: 'Drop',
   components: {
-    CTreeDrop,
+    VTreeDrop,
   },
   setup() {
     const data = ref(genData().data)

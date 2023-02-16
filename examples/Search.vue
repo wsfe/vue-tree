@@ -1,5 +1,5 @@
 <template>
-  <CTreeSearch
+  <VTreeSearch
     ref="treeSearch"
     v-model="value"
     :data="data"
@@ -11,11 +11,11 @@
         <span style="margin-left: 5px;">展开</span>
         <span style="margin-left: 5px;">slot 按钮</span>
       </template>
-  </CTreeSearch>
+  </VTreeSearch>
 </template>
 
 <script lang="ts">
-import { CTreeSearch } from '../src'
+import { VTreeSearch } from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
 import { defineComponent, reactive, ref } from 'vue-demi'
 const genData = (extra = {}) => {
@@ -31,7 +31,7 @@ const genData = (extra = {}) => {
 export default defineComponent({
   name: 'Search',
   components: {
-    CTreeSearch,
+    VTreeSearch,
   },
   setup(props) {
     const data = reactive(genData().data)

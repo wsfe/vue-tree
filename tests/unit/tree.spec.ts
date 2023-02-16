@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
-import CTree from '../../src/components/Tree.vue'
-import CTreeNode from '../../src/components/TreeNode.vue'
+import VTree from '../../src/components/Tree.vue'
+import VNode from '../../src/components/TreeNode.vue'
 import treeDataGenerator, { ITreeNodeData } from '../tree-data-generator'
 import TreeStore, { TreeNode } from '../../src/store'
 
@@ -26,7 +26,7 @@ const flatten = (root: ITreeNodeData, result: ITreeNodeData[] = []): ITreeNodeDa
 
 const asyncLoadData = (node: TreeNode | null, resolve: Function, reject: Function) => {
   setTimeout(() => {
-    let result = []
+    let result = [] as any[]
     if (node === null) {
       result = genData({
         treeDepth: 1,
@@ -49,7 +49,7 @@ const asyncLoadData = (node: TreeNode | null, resolve: Function, reject: Functio
 describe('树展示测试', () => {
   it('纯展示测试', () => {
     const data = genData().data
-    const wrapper = mount(CTree as any, {
+    const wrapper = mount(VTree as any, {
       propsData: { data },
     })
     const vm = wrapper.vm as any
@@ -61,7 +61,7 @@ describe('树展示测试', () => {
 
   it('数据顺序正确性', () => {
     const data = genData({ inOrder: true }).data
-    const wrapper = mount(CTree as any, {
+    const wrapper = mount(VTree as any, {
       propsData: { data },
     })
     const vm = wrapper.vm
@@ -74,7 +74,7 @@ describe('树展示测试', () => {
 
   it('本地过滤', () => {
     const data = genData({ inOrder: true, forceString: true }).data
-    const wrapper = mount(CTree as any, {
+    const wrapper = mount(VTree as any, {
       propsData: { data },
     })
     const vm: any = wrapper.vm
@@ -90,7 +90,7 @@ describe('树展示测试', () => {
 
   it('本地过滤 - 不展开节点', (done) => {
     const data = genData({ inOrder: true, forceString: true }).data
-    const wrapper = mount(CTree as any, {
+    const wrapper = mount(VTree as any, {
       propsData: {
         data,
         expandOnFilter: false,
@@ -131,7 +131,7 @@ describe('树展示测试', () => {
     data[2].selected = true
     data[3].disabled = true
     data[4].expand = true
-    const wrapper = mount(CTree as any, {
+    const wrapper = mount(VTree as any, {
       propsData: {
         data,
         checkable: true,
@@ -158,7 +158,7 @@ describe('树单选测试', () => {
   it('通过数据选中', () => {
     const data = genData().data
     data[0].selected = true
-    const wrapper: any = mount(CTree as any, {
+    const wrapper: any = mount(VTree as any, {
       propsData: {
         data,
         selectable: true,
@@ -171,7 +171,7 @@ describe('树单选测试', () => {
   it('通过 modelValue 选中', () => {
     const data = genData().data
     data[1].selected = true
-    const wrapper = mount(CTree as any, {
+    const wrapper = mount(VTree as any, {
       propsData: {
         modelValue: data[0].id,
         data,
@@ -185,7 +185,7 @@ describe('树单选测试', () => {
 
   it('数据与 modelValue 同时选中', () => {
     const data = genData().data
-    const wrapper = mount(CTree as any, {
+    const wrapper = mount(VTree as any, {
       propsData: {
         modelValue: data[0].id,
         data,
@@ -199,7 +199,7 @@ describe('树单选测试', () => {
 
   it('通过点击选中', (done) => {
     const data = genData().data
-    const wrapper = mount(CTree as any, {
+    const wrapper = mount(VTree as any, {
       propsData: {
         modelValue: data[0].id,
         data,
@@ -233,7 +233,7 @@ describe('树多选测试', () => {
     data[2].checked = true
     data[4].checked = true
     let modelValue: Array<string | number> = []
-    const wrapper = mount(CTree as any, {
+    const wrapper = mount(VTree as any, {
       propsData: {
         modelValue,
         data,
@@ -259,7 +259,7 @@ describe('树多选测试', () => {
   it('通过 modelValue 选中', () => {
     const data = genData().data
     let modelValue: Array<string | number> = [data[0].id as string]
-    const wrapper = mount(CTree as any, {
+    const wrapper = mount(VTree as any, {
       propsData: {
         modelValue,
         data,
@@ -286,7 +286,7 @@ describe('树多选测试', () => {
     data[1].checked = true
     data[2].checked = true
     let modelValue: Array<string | number> = [data[0].id as string]
-    const wrapper = mount(CTree as any, {
+    const wrapper = mount(VTree as any, {
       propsData: {
         modelValue,
         data,
@@ -312,7 +312,7 @@ describe('树多选测试', () => {
     const data = genData().data
     data[1].checked = true
     let modelValue: Array<string | number> = [data[0].id as string]
-    const wrapper = mount(CTree as any, {
+    const wrapper = mount(VTree as any, {
       propsData: {
         modelValue,
         data,
@@ -349,7 +349,7 @@ describe('树多选测试', () => {
     data[0].checked = true
     data[0].selected = true
     let modelValue: Array<string | number> = [data[0].id as string]
-    const wrapper = mount(CTree as any, {
+    const wrapper = mount(VTree as any, {
       propsData: {
         modelValue,
         data,
@@ -391,7 +391,7 @@ describe('树多选测试', () => {
 
 describe('树远程测试', () => {
   it('远程加载根数据', (done) => {
-    const wrapper = mount(CTree as any, {
+    const wrapper = mount(VTree as any, {
       propsData: {
         load: asyncLoadData,
       },
@@ -407,7 +407,7 @@ describe('树远程测试', () => {
   })
 
   it('远程加载节点数据', (done) => {
-    const wrapper = mount(CTree as any, {
+    const wrapper = mount(VTree as any, {
       propsData: {
         load: asyncLoadData,
       },
@@ -438,7 +438,7 @@ describe('树远程测试', () => {
 describe('节点拖拽测试', () => {
   it('拖拽数据正确性', (done) => {
     const data = genData({ inOrder: true }).data
-    const wrapper = mount(CTree as any, {
+    const wrapper = mount(VTree as any, {
       propsData: {
         data,
         draggable: true,

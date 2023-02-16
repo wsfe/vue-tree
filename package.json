@@ -1,14 +1,14 @@
 {
-  "name": "@wsfe/ctree",
+  "name": "@wsfe/vue-tree",
   "version": "3.0.0",
   "types": "./types",
   "description": "A vue tree component using virtual list.",
-  "main": "./dist/ctree.umd.min.js",
-  "module": "./dist/ctree.mjs",
+  "main": "./dist/vue-tree.umd.min.js",
+  "module": "./dist/vue-tree.mjs",
   "exports": {
     ".": {
-      "import": "./dist/ctree.mjs",
-      "require": "./dist/ctree.umd.js"
+      "import": "./dist/vue-tree.mjs",
+      "require": "./dist/vue-tree.umd.js"
     }
   },
   "scripts": {
@@ -37,12 +37,17 @@
     "vue2",
     "vue3",
     "tree",
+    "select",
+    "tree select",
+    "virtualtree",
+    "virtual tree",
+    "virtual-tree",
     "vue-tree",
     "vue tree",
     "vue tree component",
     "虚拟树"
   ],
-  "homepage": "https://github.com/wsfe/ctree",
+  "homepage": "https://github.com/wsfe/vue-tree",
   "license": "MIT",
   "devDependencies": {
     "@babel/preset-env": "^7.20.2",

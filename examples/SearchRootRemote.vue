@@ -1,18 +1,18 @@
 <template>
   <div style="height: 100%;">
-    <CTreeSearch
+    <VTreeSearch
       v-model="value"
       :data="data"
       checkable
       :search-method="searchMethod"          b v
       @search="handleSearch"
-    ><span slot="empty">slot 传进来的暂无数据</span></CTreeSearch>
+    ><span slot="empty">slot 传进来的暂无数据</span></VTreeSearch>
     {{ value }}
   </div>
 </template>
 
 <script lang="ts">
-import { CTreeSearch } from '../src'
+import { VTreeSearch } from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
 
 const genData = (extra = {}) => {
@@ -28,7 +28,7 @@ const genData = (extra = {}) => {
 export default {
   name: 'Search',
   components: {
-    CTreeSearch,
+    VTreeSearch,
   },
   data () {
     return {

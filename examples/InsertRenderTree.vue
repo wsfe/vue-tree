@@ -1,14 +1,14 @@
 <template>
-  <CTree ref="tree" :data="treeData" :render="renderTree" />
+  <VTree ref="tree" :data="treeData" :render="renderTree" />
 </template>
 
 <script lang="ts">
-import CTree, {TreeNode} from '../src'
+import VTree, {TreeNode} from '../src'
 import { defineComponent, reactive, ref, h } from 'vue-demi'
 export default defineComponent({
   name: 'InsertRenderTree',
   components: {
-    CTree,
+    VTree,
   },
   setup() {
     const treeData = reactive([{}])

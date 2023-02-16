@@ -22,7 +22,8 @@ export default defineConfig((): UserConfig => {
       outDir: 'dist',
       lib: {
         entry: resolve(__dirname,'src/index.ts'),
-        name:'Ctree'
+        name:'Vtree',
+        fileName: 'vue-tree'
       },
       rollupOptions: {
         output: {

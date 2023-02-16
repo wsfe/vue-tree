@@ -1,20 +1,20 @@
 <template>
   <div>
-    <CTree v-model="value" :data="data" checkable draggable droppable @node-drop="handleDrop">
+    <VTree v-model="value" :data="data" checkable draggable droppable @node-drop="handleDrop">
       <template #empty>slot 传进来的暂无数据</template>
-    </CTree>
+    </VTree>
     {{ value }}
   </div>
 </template>
 
 <script lang="ts">
-import CTree from '../src'
+import VTree from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
 import { defineComponent,ref } from 'vue-demi'
 export default defineComponent({
   name: 'Drag',
   components:{
-    CTree
+    VTree
   },
   setup() {
     const value = ref(['0'])

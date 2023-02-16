@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="tree">
-      <CTree ref="tree" :data="treeData" checkable selectable></CTree>
+      <VTree ref="tree" :data="treeData" checkable selectable></VTree>
     </div>
     <div class="control">
       <div class="desc-block">
@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts">
-import CTree from '../src'
+import VTree from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
 import { defineComponent, ref } from 'vue-demi'
 
@@ -96,7 +96,7 @@ const dataAmountMap: Record<string, TreeMockMeta> = {
 export default defineComponent({
   name: 'Performance',
   components: {
-    CTree,
+    VTree,
   },
   setup() {
     const cache = ref<any[]>([])
