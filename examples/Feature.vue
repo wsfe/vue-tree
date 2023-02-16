@@ -5,13 +5,14 @@
       <div class="header">基本用法</div>
       <div class="body">
         <div class="interface">
-          <div style="height: 300px;">
-            <VTree :data="basicUsage" :nodeClassName="(node) => `generated-class-${node.id}`" />
+          <div style="height: 300px">
+            <VTree
+              :data="basicUsage"
+              :nodeClassName="node => `generated-class-${node.id}`"
+            />
           </div>
         </div>
-        <div class="desc">
-          纯展示
-        </div>
+        <div class="desc">纯展示</div>
       </div>
     </div>
 
@@ -20,13 +21,11 @@
       <div class="header">数据正确性验证</div>
       <div class="body">
         <div class="interface">
-          <div style="height: 300px;">
+          <div style="height: 300px">
             <VTree :data="orderData" default-expand-all></VTree>
           </div>
         </div>
-        <div class="desc">
-          数据正确性
-        </div>
+        <div class="desc">数据正确性</div>
       </div>
     </div>
 
@@ -35,8 +34,13 @@
       <div class="header">单选</div>
       <div class="body">
         <div class="interface">
-          <div style="height: 300px;">
-            <VTree v-model="selectableValue" :data="selectable" @update:modelValue="() => { }" selectable></VTree>
+          <div style="height: 300px">
+            <VTree
+              v-model="selectableValue"
+              :data="selectable"
+              @update:modelValue="() => {}"
+              selectable
+            ></VTree>
           </div>
         </div>
         <div class="desc">
@@ -52,14 +56,15 @@
       <div class="header">多选</div>
       <div class="body">
         <div class="interface">
-          <div style="height: 300px;">
+          <div style="height: 300px">
             <VTree
               v-if="showCheckable"
               v-model="checkableValue"
               :data="checkable"
               checkable
               :ignore-mode="checkableIgnoreMode"
-              :cascade="checkableCascade"></VTree>
+              :cascade="checkableCascade"
+            ></VTree>
           </div>
         </div>
         <div class="desc">
@@ -69,31 +74,33 @@
             {{ checkableValue }}
           </div>
           <div class="desc-block">
-            <p>设置 ignoreMode 可指定 v-model 与 getCheckedNodes 方法要忽略父节点或者子节点，该 prop 仅初始设置有效</p>
-            <button v-for="mode in (['none', 'parents', 'children'] as IgnoreType[])" :key="mode"
-              @click="checkableIgnoreMode = mode; showCheckable = false; $nextTick(() => { checkableValue = []; showCheckable = true })">{{
-                mode
-              }}</button>
+            <p>
+              设置 ignoreMode 可指定 v-model 与 getCheckedNodes
+              方法要忽略父节点或者子节点，该 prop 仅初始设置有效
+            </p>
+            <button
+              v-for="mode in (['none', 'parents', 'children'] as IgnoreType[])"
+              :key="mode"
+              @click="onIgnoreBtnClick(mode)"
+            >
+              {{ mode }}
+            </button>
             <p>当前 ignoreMode: {{ checkableIgnoreMode }}</p>
           </div>
           <div class="desc-block">
             <p>设置 cascade 可指定父子节点是否级联</p>
-            <button v-for="(mode, index) in [true, false]" :key="index"
-              @click="checkableCascade = mode; showCheckable = false; $nextTick(() => { checkableValue = []; showCheckable = true })">{{
-                mode
-              }}</button>
+            <button
+              v-for="(mode, index) in [true, false]"
+              :key="index"
+              @click="onCascadeBtnClick(mode)"
+            >
+              {{ mode }}
+            </button>
             <p>当前 cascade: {{ checkableCascade }}</p>
           </div>
           <div class="desc-block">
             <p>重置以上选项</p>
-            <button @click="
-              showCheckable = false;
-            $nextTick(() => {
-              checkableIgnoreMode = 'none';
-              checkableCascade = true;
-              checkableValue = [];
-              showCheckable = true
-            })">Reset</button>
+            <button @click="onResetBtnClick">Reset</button>
           </div>
         </div>
       </div>
@@ -104,8 +111,13 @@
       <div class="header">单选与多选并存</div>
       <div class="body">
         <div class="interface">
-          <div style="height: 300px;">
-            <VTree v-model="bothValue" :data="both" checkable selectable></VTree>
+          <div style="height: 300px">
+            <VTree
+              v-model="bothValue"
+              :data="both"
+              checkable
+              selectable
+            ></VTree>
           </div>
         </div>
         <div class="desc">
@@ -121,17 +133,19 @@
       <div class="header">远程</div>
       <div class="body">
         <div class="interface">
-          <div style="height: 300px;">
+          <div style="height: 300px">
             <VTree v-if="remoteShow" :load="remoteLoad"></VTree>
           </div>
         </div>
         <div class="desc">
           <div class="desc-block">
-            设置 load 方法可以使用远程加载数据，如果有设置 data ，则 data 数据作为根数据；<br />
-            如果没有传 data ，则初始化时调用 load 方法载入根数据，其中节点参数为 null
+            设置 load 方法可以使用远程加载数据，如果有设置 data ，则 data
+            数据作为根数据；<br />
+            如果没有传 data ，则初始化时调用 load 方法载入根数据，其中节点参数为
+            null
           </div>
           <div class="desc-block">
-            <button @click="remoteShow = false; $nextTick(() => { remoteShow = true })">加载树组件</button>
+            <button @click="onLoadDataClick">加载树组件</button>
           </div>
         </div>
       </div>
@@ -140,31 +154,36 @@
 </template>
 
 <script lang="ts">
-import VTree, {TreeNode} from '../src'
-import {IgnoreType} from '../src/types'
+import VTree, { TreeNode } from '../src'
+import { IgnoreType } from '../src/types'
 import treeDataGenerator from '../tests/tree-data-generator'
-import { defineComponent, ref } from 'vue-demi'
+import { defineComponent, ref, nextTick } from 'vue-demi'
 
 const genData = (extra = {}) => {
-  return treeDataGenerator(Object.assign({
-    treeDepth: 3,
-    nodesPerLevel: 5,
-    sameIdTitle: true,
-  }, extra))
+  return treeDataGenerator(
+    Object.assign(
+      {
+        treeDepth: 3,
+        nodesPerLevel: 5,
+        sameIdTitle: true
+      },
+      extra
+    )
+  )
 }
 
 const genChildrenData = (nodeCount = 2) => {
   return treeDataGenerator({
     treeDepth: 1,
     nodesPerLevel: nodeCount,
-    inOrder: true,
+    inOrder: true
   })
 }
 
 export default defineComponent({
   name: 'Feature',
   components: {
-    VTree,
+    VTree
   },
   setup() {
     const selectableData = genData().data
@@ -185,11 +204,51 @@ export default defineComponent({
     const both = ref(genData().data)
     const bothValue = ref([])
     const remoteShow = ref(false)
-    const remoteLoad = (node: TreeNode | null, resolve: Function, reject: Function) => {
+    const remoteLoad = (
+      node: TreeNode | null,
+      resolve: Function,
+      reject: Function
+    ) => {
       setTimeout(() => {
         resolve(genChildrenData(node ? 2 : 5).data)
       }, 1000)
     }
+
+    function onIgnoreBtnClick(mode: IgnoreType) {
+      checkableIgnoreMode.value = mode
+      showCheckable.value = false
+      nextTick(() => {
+        checkableValue.value = []
+        showCheckable.value = true
+      })
+    }
+
+    function onCascadeBtnClick(mode: boolean) {
+      checkableCascade.value = mode
+      showCheckable.value = false
+      nextTick(() => {
+        checkableValue.value = []
+        showCheckable.value = true
+      })
+    }
+
+    function onResetBtnClick() {
+      showCheckable.value = false
+      nextTick(() => {
+        checkableIgnoreMode.value = 'none'
+        checkableCascade.value = true
+        checkableValue.value = []
+        showCheckable.value = true
+      })
+    }
+
+    function onLoadDataClick() {
+      remoteShow.value = false
+      nextTick(() => {
+        remoteShow.value = true
+      })
+    }
+
     return {
       // 基本用法
       basicUsage,
@@ -215,9 +274,13 @@ export default defineComponent({
 
       // 远程
       remoteShow,
-      remoteLoad
+      remoteLoad,
+      onIgnoreBtnClick,
+      onCascadeBtnClick,
+      onResetBtnClick,
+      onLoadDataClick
     }
-  },
+  }
 })
 </script>
 

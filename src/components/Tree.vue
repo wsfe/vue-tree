@@ -1,18 +1,36 @@
 <template>
   <div :class="wrapperCls">
     <!-- 滚动区域 -->
-    <div ref="scrollArea" :class="scrollAreaCls" @scroll.passive.stop="handleTreeScroll">
+    <div
+      ref="scrollArea"
+      :class="scrollAreaCls"
+      @scroll.passive.stop="handleTreeScroll"
+    >
       <!-- 可见节点区域，包括上下两片空白加渲染的节点 -->
       <div :class="blockAreaCls">
         <div :style="topSpaceStyles"></div>
-        <CTreeNode v-for="node in renderNodes" v-bind="$props" :key="node[keyField]"  :data="node"
-          :getNode="getNode" v-on="treeNodeListeners"
-          :class="typeof nodeClassName === 'function' ? nodeClassName(node) : nodeClassName" :style="{
+        <CTreeNode
+          v-for="node in renderNodes"
+          v-bind="$props"
+          :key="node[keyField]"
+          :data="node"
+          :getNode="getNode"
+          v-on="treeNodeListeners"
+          :class="
+            typeof nodeClassName === 'function'
+              ? nodeClassName(node)
+              : nodeClassName
+          "
+          :style="{
             minHeight: `${nodeMinHeight}px`,
             marginLeft: usePadding ? null : `${node._level * nodeIndent}px`,
-            paddingLeft: usePadding ? `${node._level * nodeIndent}px` : null,
-          }" @check="handleNodeCheck" @select="handleNodeSelect" @expand="handleNodeExpand"
-          @node-drop="handleNodeDrop" />
+            paddingLeft: usePadding ? `${node._level * nodeIndent}px` : null
+          }"
+          @check="handleNodeCheck"
+          @select="handleNodeSelect"
+          @expand="handleNodeExpand"
+          @node-drop="handleNodeDrop"
+        />
         <div :style="bottomSpaceStyles"></div>
       </div>
     </div>
@@ -38,32 +56,57 @@
 </template>
 
 <script lang="ts">
-import { VNode, defineComponent, reactive, ref, Ref, computed, watch, onMounted, PropType } from 'vue-demi';
+import {
+  VNode,
+  defineComponent,
+  reactive,
+  ref,
+  Ref,
+  computed,
+  watch,
+  onMounted,
+  PropType
+} from 'vue-demi'
 import TreeStore, { TreeNode } from '../store'
 import CTreeNode from './TreeNode.vue'
 import LoadingIcon from './LoadingIcon.vue'
-import { IEventNames, ListenerType, FilterFunctionType } from '../store/tree-store'
+import {
+  IEventNames,
+  ListenerType,
+  FilterFunctionType
+} from '../store/tree-store'
 import { ITreeNodeOptions } from '../store/tree-node'
 import {
   ignoreEnum,
   verticalPositionEnum,
   VerticalPositionType,
-  dragHoverPartEnum,
+  dragHoverPartEnum
 } from '../const'
-import {TreeNodeKeyType, IgnoreType} from '../types'
+import { TreeNodeKeyType, IgnoreType } from '../types'
 type AnyPropsArrayType = Array<{ [key: string]: any }>
 type VModelType = TreeNodeKeyType | TreeNodeKeyType[]
-
+const storeEvents: Array<keyof IEventNames> = [
+  'expand',
+  'select',
+  'unselect',
+  'selected-change',
+  'check',
+  'uncheck',
+  'checked-change',
+  'set-data'
+]
 export default defineComponent({
   name: 'CTree',
   components: {
     CTreeNode,
-    LoadingIcon,
+    LoadingIcon
   },
   emits: ['update:modelValue', 'node-drop'],
   props: {
     /** 单选模式下为字符串或数字，多选模式下为数组或者以 separator 分隔的字符串。当即可单选又可多选时，value 是多选的值 */
-    modelValue: [String, Number, Array] as PropType<string | number | TreeNodeKeyType[]>,
+    modelValue: [String, Number, Array] as PropType<
+      string | number | TreeNodeKeyType[]
+    >,
     // modelValue: [
     //   String,
     //   Number,
@@ -73,85 +116,85 @@ export default defineComponent({
     /** 传入的树数据。数据量大时，不建议通过 props 传入数据，建议用 `setData` 方法代替 */
     data: {
       type: Array as PropType<AnyPropsArrayType>,
-      default: () => [],
+      default: () => []
     },
 
     /** 供未加载且选中节点查询 title 字段值用的列表，格式与 `data` 一致即可 */
     unloadDataList: {
       type: Array as PropType<AnyPropsArrayType>,
-      default: () => [],
+      default: () => []
     },
 
     /** 过滤已选时是否在列表后面展示未加载的已选节点 */
     showUnloadCheckedNodes: {
       type: Boolean,
-      default: true,
+      default: true
     },
 
     /** 数据为空时显示的文本 */
     emptyText: {
       type: String,
-      default: '暂无数据',
+      default: '暂无数据'
     },
 
     /** 节点标题字段 */
     titleField: {
       type: String,
-      default: 'title',
+      default: 'title'
     },
 
     /** 节点唯一标识字段 */
     keyField: {
       type: String,
-      default: 'id',
+      default: 'id'
     },
 
     /** 多选模式下 value 分隔符 */
     separator: {
       type: String,
-      default: ',',
+      default: ','
     },
 
     /** 是否可多选 */
     checkable: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     /** 是否可单选 */
     selectable: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     /** 是否可勾选被过滤节点 */
     filteredNodeCheckable: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     /** 父子节点是否关联 */
     cascade: {
       type: Boolean,
-      default: true,
+      default: true
     },
 
     /** 是否只启用子节点，当 `多选且父子不关联` 或 `单选` 时有效 */
     enableLeafOnly: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     /** 是否禁用所有节点 */
     disableAll: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     /** 是否默认展开所有节点 */
     defaultExpandAll: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     /**
@@ -160,47 +203,55 @@ export default defineComponent({
      */
     defaultExpandedKeys: {
       type: Array as PropType<TreeNodeKeyType[]>,
-      default: () => [],
+      default: () => []
     },
 
     /** 展开的节点，该 Prop 变化时，树组件将会响应，建议配合事件使用 */
     expandedKeys: {
       type: Array as PropType<TreeNodeKeyType[]>,
-      default: () => [],
+      default: () => []
     },
 
     /** 是否可拖拽 */
     draggable: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     /** 是否可放置 */
     droppable: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     /** 在放置节点之前执行的方法，返回 true 允许放置， false 可阻止放置 */
     beforeDropMethod: {
-      type: Function as PropType<(dragKey: TreeNodeKeyType, dropKey: TreeNodeKeyType, hoverPart: dragHoverPartEnum) => boolean>,
-      default: () => () => true,
+      type: Function as PropType<
+        (
+          dragKey: TreeNodeKeyType,
+          dropKey: TreeNodeKeyType,
+          hoverPart: dragHoverPartEnum
+        ) => boolean
+      >,
+      default: () => () => true
     },
 
     /** 忽略模式 */
     ignoreMode: {
       type: String as PropType<IgnoreType>,
-      default: ignoreEnum.none,
+      default: ignoreEnum.none
     },
 
     /** 异步加载初始化时是否自动加载根节点 */
     autoLoad: {
       type: Boolean,
-      default: true,
+      default: true
     },
 
     /** 异步加载方法 */
-    load: Function as PropType<(node: null | TreeNode, resolve: Function, reject: Function) => any>,
+    load: Function as PropType<
+      (node: null | TreeNode, resolve: Function, reject: Function) => any
+    >,
 
     /** 节点渲染 render 函数 */
     render: Function as PropType<(node: TreeNode) => VNode>,
@@ -215,44 +266,44 @@ export default defineComponent({
      */
     expandOnFilter: {
       type: Boolean,
-      default: true,
+      default: true
     },
 
     /** 点击已选中节点是否取消选中 */
     unselectOnClick: {
       type: Boolean,
-      default: true,
+      default: true
     },
 
     /** 是否显示 loading 图标 */
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     //#region Render nodes related props
     /** 根据节点最小高度计算数据总高度 */
     nodeMinHeight: {
       type: Number,
-      default: 30,
+      default: 30
     },
 
     /** 子节点缩进 */
     nodeIndent: {
       type: Number,
-      default: 20,
+      default: 20
     },
 
     /** 渲染节点数量，可见节点数大于此值且高度超过(容器可视高度能容纳节点数 + bufferNodeAmount)则不会渲染所有可见节点 */
     renderNodeAmount: {
       type: Number,
-      default: 100,
+      default: 100
     },
 
     /** 当滚动到视野外的节点个数大于此值时刷新渲染节点 */
     bufferNodeAmount: {
       type: Number,
-      default: 20,
+      default: 20
     },
     //#endregion Render nodes related props
 
@@ -262,8 +313,10 @@ export default defineComponent({
         String,
         Object,
         Array as () => Array<string | object>,
-        Function as any as () => (node: TreeNode) => string | object | Array<string | object>,
-      ],
+        Function as any as () => (
+          node: TreeNode
+        ) => string | object | Array<string | object>
+      ]
     },
 
     /**
@@ -273,27 +326,21 @@ export default defineComponent({
      */
     usePadding: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   setup(props, content) {
     const prefixCls = 'ctree-tree'
-    const storeEvents: Array<keyof IEventNames> = [
-      'expand',
-      'select',
-      'unselect',
-      'selected-change',
-      'check',
-      'uncheck',
-      'checked-change',
-      'set-data',
-    ]
-    const excludedEvents = [
-      'node-drop',
-    ]
+    const excludedEvents = ['node-drop']
     const sameValue = (newVal: VModelType, valueCache: VModelType): boolean => {
       if (Array.isArray(newVal) && Array.isArray(valueCache)) {
-        if (newVal.length === valueCache.length && newVal.every((val) => (valueCache as TreeNodeKeyType[]).some((cache) => cache === val))) return true
+        if (
+          newVal.length === valueCache.length &&
+          newVal.every(val =>
+            (valueCache as TreeNodeKeyType[]).some(cache => cache === val)
+          )
+        )
+          return true
       } else if (newVal === valueCache) return true
       return false
     }
@@ -308,70 +355,59 @@ export default defineComponent({
     const renderStart = ref(0)
     const renderStartCache = ref(0)
     const isRootLoading = ref(false)
-    const valueCache = ref(Array.isArray(props.modelValue) ? props.modelValue.concat() : props.modelValue) as Ref<VModelType>
+    const valueCache = ref(
+      Array.isArray(props.modelValue)
+        ? props.modelValue.concat()
+        : props.modelValue
+    ) as Ref<VModelType>
     const debounceTimer = ref(undefined) as Ref<number | undefined>
     const scrollArea = ref()
     const iframe = ref()
     //computed
     const topSpaceStyles = computed(() => {
       return {
-        height: `${topSpaceHeight.value}px`,
+        height: `${topSpaceHeight.value}px`
       }
     })
     const bottomSpaceStyles = computed(() => {
       return {
-        height: `${bottomSpaceHeight.value}px`,
+        height: `${bottomSpaceHeight.value}px`
       }
     })
     const wrapperCls = computed(() => {
-      return [
-        `${prefixCls}__wrapper`,
-      ]
+      return [`${prefixCls}__wrapper`]
     })
     const scrollAreaCls = computed(() => {
-      return [
-        `${prefixCls}__scroll-area`,
-      ]
+      return [`${prefixCls}__scroll-area`]
     })
     const blockAreaCls = computed(() => {
-      return [
-        `${prefixCls}__block-area`,
-      ]
+      return [`${prefixCls}__block-area`]
     })
     const emptyCls = computed(() => {
-      return [
-        `${prefixCls}__empty`,
-      ]
+      return [`${prefixCls}__empty`]
     })
     const emptyTextDefaultCls = computed(() => {
-      return [
-        `${prefixCls}__empty-text_default`,
-      ]
+      return [`${prefixCls}__empty-text_default`]
     })
     const loadingCls = computed(() => {
-      return [
-        `${prefixCls}__loading`,
-      ]
+      return [`${prefixCls}__loading`]
     })
     const loadingWrapperCls = computed(() => {
-      return [
-        `${prefixCls}__loading-wrapper`,
-      ]
+      return [`${prefixCls}__loading-wrapper`]
     })
     const loadingIconCls = computed(() => {
-      return [
-        `${prefixCls}__loading-icon`,
-      ]
+      return [`${prefixCls}__loading-icon`]
     })
     const iframeCls = computed(() => {
-      return [
-        `${prefixCls}__iframe`,
-      ]
+      return [`${prefixCls}__iframe`]
     })
     const treeNodeListeners = computed(() => {
       let result: { [key: string]: any } = {}
       for (let event in content.attrs) {
-        if (storeEvents.indexOf(event as keyof IEventNames) === -1 && excludedEvents.indexOf(event) === -1) {
+        if (
+          storeEvents.indexOf(event as keyof IEventNames) === -1 &&
+          excludedEvents.indexOf(event) === -1
+        ) {
           result[event] = content.attrs[event]
         }
       }
@@ -388,44 +424,57 @@ export default defineComponent({
         load: props.load,
         expandOnFilter: props.expandOnFilter
       }),
-      blockNodes: [] as TreeNode[],
+      blockNodes: [] as TreeNode[]
     }
-    watch(() => props.modelValue, (newVal) => {
-      if (props.checkable) {
-        // 检查是否由 update:modelValue 事件触发
-        if (sameValue(newVal as VModelType, valueCache.value)) return
+    watch(
+      () => props.modelValue,
+      newVal => {
+        if (props.checkable) {
+          // 检查是否由 update:modelValue 事件触发
+          if (sameValue(newVal as VModelType, valueCache.value)) return
 
-        // 多选
-        let checkedKeys: TreeNodeKeyType[] = []
-        if (Array.isArray(newVal)) {
-          checkedKeys = newVal.concat()
-        } else if (typeof newVal === 'string') {
-          checkedKeys = newVal === '' ? [] : (newVal as string).split(props.separator)
-        }
-        nonReactive.store.clearChecked(false, false)
-        nonReactive.store.setCheckedKeys(checkedKeys, true)
-      } else if (props.selectable) {
-        // 检查是否由 update:modelValue 事件触发
-        if (newVal === valueCache.value) return
+          // 多选
+          let checkedKeys: TreeNodeKeyType[] = []
+          if (Array.isArray(newVal)) {
+            checkedKeys = newVal.concat()
+          } else if (typeof newVal === 'string') {
+            checkedKeys =
+              newVal === '' ? [] : (newVal as string).split(props.separator)
+          }
+          nonReactive.store.clearChecked(false, false)
+          nonReactive.store.setCheckedKeys(checkedKeys, true)
+        } else if (props.selectable) {
+          // 检查是否由 update:modelValue 事件触发
+          if (newVal === valueCache.value) return
 
-        // 单选
-        const currentSelected = nonReactive.store.getSelectedKey()
-        if (newVal !== '' && newVal != null) {
-          nonReactive.store.setSelected(newVal as TreeNodeKeyType, true)
-        } else if ((newVal === '' || newVal == null) && currentSelected) {
-          nonReactive.store.setSelected(currentSelected, false)
+          // 单选
+          const currentSelected = nonReactive.store.getSelectedKey()
+          if (newVal !== '' && newVal != null) {
+            nonReactive.store.setSelected(newVal as TreeNodeKeyType, true)
+          } else if ((newVal === '' || newVal == null) && currentSelected) {
+            nonReactive.store.setSelected(currentSelected, false)
+          }
         }
       }
-    })
-    watch(() => props.data, (newData) => {
-      setData(newData)
-    })
-    watch(() => props.expandedKeys, () => {
-      updateExpandedKeys()
-    })
-    watch(() => content.attrs, () => {
-      attachStoreEvents()
-    })
+    )
+    watch(
+      () => props.data,
+      newData => {
+        setData(newData)
+      }
+    )
+    watch(
+      () => props.expandedKeys,
+      () => {
+        updateExpandedKeys()
+      }
+    )
+    watch(
+      () => content.attrs,
+      () => {
+        attachStoreEvents()
+      }
+    )
     //methods
     //#region Public API
     /** 使用此方法重置树数据，可避免大量数据被 vue 监听 */
@@ -437,12 +486,19 @@ export default defineComponent({
         if (Array.isArray(props.modelValue)) {
           checkableUnloadKeys = props.modelValue.concat()
         } else if (typeof props.modelValue === 'string') {
-          checkableUnloadKeys = props.modelValue === '' ? [] : props.modelValue.split(props.separator)
+          checkableUnloadKeys =
+            props.modelValue === ''
+              ? []
+              : props.modelValue.split(props.separator)
         }
       } else if (props.selectable && !Array.isArray(props.modelValue)) {
         selectableUnloadKey = props.modelValue as TreeNodeKeyType | null
       }
-      nonReactive.store.setData(data, selectableUnloadKey, checkableUnloadKeys as TreeNodeKeyType[])
+      nonReactive.store.setData(
+        data,
+        selectableUnloadKey,
+        checkableUnloadKeys as TreeNodeKeyType[]
+      )
       updateExpandedKeys()
     }
     function setChecked(key: TreeNodeKeyType, value: boolean): void {
@@ -463,7 +519,11 @@ export default defineComponent({
     function clearSelected(): void {
       nonReactive.store.clearSelected()
     }
-    function setExpand(key: TreeNodeKeyType, value: boolean, expandParent: boolean = true): void {
+    function setExpand(
+      key: TreeNodeKeyType,
+      value: boolean,
+      expandParent: boolean = true
+    ): void {
       nonReactive.store.setExpand(key, value, expandParent)
     }
     function setExpandKeys(keys: TreeNodeKeyType[], value: boolean): void {
@@ -496,7 +556,7 @@ export default defineComponent({
       return nonReactive.store.getExpandKeys()
     }
     function getCurrentVisibleNodes(): TreeNode[] {
-      return nonReactive.store.flatData.filter((node) => node._filterVisible)
+      return nonReactive.store.flatData.filter(node => node._filterVisible)
     }
     function getNode(key: TreeNodeKeyType): TreeNode | null {
       return nonReactive.store.getNode(key)
@@ -512,29 +572,42 @@ export default defineComponent({
     function getNodesCount(): number {
       return nonReactive.store.flatData.length
     }
-    function insertBefore(insertedNode: TreeNodeKeyType | ITreeNodeOptions, referenceKey: TreeNodeKeyType): TreeNode | null {
+    function insertBefore(
+      insertedNode: TreeNodeKeyType | ITreeNodeOptions,
+      referenceKey: TreeNodeKeyType
+    ): TreeNode | null {
       return nonReactive.store.insertBefore(insertedNode, referenceKey)
     }
-    function insertAfter(insertedNode: TreeNodeKeyType | ITreeNodeOptions, referenceKey: TreeNodeKeyType): TreeNode | null {
+    function insertAfter(
+      insertedNode: TreeNodeKeyType | ITreeNodeOptions,
+      referenceKey: TreeNodeKeyType
+    ): TreeNode | null {
       return nonReactive.store.insertAfter(insertedNode, referenceKey)
     }
-    function append(insertedNode: TreeNodeKeyType | ITreeNodeOptions, parentKey: TreeNodeKeyType): TreeNode | null {
+    function append(
+      insertedNode: TreeNodeKeyType | ITreeNodeOptions,
+      parentKey: TreeNodeKeyType
+    ): TreeNode | null {
       return nonReactive.store.append(insertedNode, parentKey)
     }
-    function prepend(insertedNode: TreeNodeKeyType | ITreeNodeOptions, parentKey: TreeNodeKeyType): TreeNode | null {
+    function prepend(
+      insertedNode: TreeNodeKeyType | ITreeNodeOptions,
+      parentKey: TreeNodeKeyType
+    ): TreeNode | null {
       return nonReactive.store.prepend(insertedNode, parentKey)
     }
     function remove(removedKey: TreeNodeKeyType): TreeNode | null {
       return nonReactive.store.remove(removedKey)
     }
-    function filter(
-      keyword: string,
-      filterMethod?: FilterFunctionType,
-    ): void {
+    function filter(keyword: string, filterMethod?: FilterFunctionType): void {
       const defaultFilterMethod = (keyword: string, node: TreeNode) => {
         const title = node[props.titleField]
         if (title == null || !title.toString) return false
-        return (title.toString() as string).toLowerCase().indexOf(keyword.toLowerCase()) > -1
+        return (
+          (title.toString() as string)
+            .toLowerCase()
+            .indexOf(keyword.toLowerCase()) > -1
+        )
       }
       filterMethod = filterMethod || props.filterMethod || defaultFilterMethod
       nonReactive.store.filter(keyword, filterMethod)
@@ -544,29 +617,40 @@ export default defineComponent({
      */
     function showCheckedNodes(showUnloadCheckedNodes?: boolean): void {
       if (!props.checkable) return
-      showUnloadCheckedNodes = showUnloadCheckedNodes == null ? props.showUnloadCheckedNodes : showUnloadCheckedNodes
+      showUnloadCheckedNodes =
+        showUnloadCheckedNodes == null
+          ? props.showUnloadCheckedNodes
+          : showUnloadCheckedNodes
       const checkedNodesCache = nonReactive.store.getCheckedNodes()
       nonReactive.store.filter('', (keyword, node) => node.checked)
       if (!showUnloadCheckedNodes) return
       const unloadKeys = nonReactive.store.getUnloadCheckedKeys()
       if (unloadKeys.length) {
-        const unloadNodes: TreeNode[] = unloadKeys.map((key) => {
+        const unloadNodes: TreeNode[] = unloadKeys.map(key => {
           const queryList = props.unloadDataList.concat(checkedNodesCache)
           let title = key
-          queryList.some((query) => {
-            if (query[props.keyField] === key && query[props.titleField] != null) {
+          queryList.some(query => {
+            if (
+              query[props.keyField] === key &&
+              query[props.titleField] != null
+            ) {
               title = query[props.titleField]
               return true
             }
             return false
           })
 
-          return new TreeNode({
-            [props.keyField]: key,
-            [props.titleField]: title,
-            checked: true,
-            isLeaf: true,
-          }, null, props.keyField, !!props.load)
+          return new TreeNode(
+            {
+              [props.keyField]: key,
+              [props.titleField]: title,
+              checked: true,
+              isLeaf: true
+            },
+            null,
+            props.keyField,
+            !!props.load
+          )
         })
         unloadCheckedNodes = unloadNodes as TreeNode[]
         nonReactive.blockNodes.push(...unloadNodes)
@@ -580,21 +664,27 @@ export default defineComponent({
     function loadRootNodes(): Promise<void> {
       isRootLoading.value = true
       return new Promise((resolve, reject) => {
-        if(props.load) props.load(null, resolve, reject)
-      }).then((root) => {
-        if (Array.isArray(root)) {
-          setData(root as AnyPropsArrayType)
-        }
-      }).catch(() => { }).then(() => {
-        isRootLoading.value = false
+        if (props.load) props.load(null, resolve, reject)
       })
+        .then(root => {
+          if (Array.isArray(root)) {
+            setData(root as AnyPropsArrayType)
+          }
+        })
+        .catch(() => {})
+        .then(() => {
+          isRootLoading.value = false
+        })
     }
     /**
      * 滚动到指定节点位置
      * @param key 要滚动的节点
      * @param verticalPosition 滚动的垂直位置，可选为 'top', 'center', 'bottom' 或距离容器可视顶部距离的数字，默认为 'top'
      */
-    function scrollTo(key: TreeNodeKeyType, verticalPosition: VerticalPositionType | number = verticalPositionEnum.top): void {
+    function scrollTo(
+      key: TreeNodeKeyType,
+      verticalPosition: VerticalPositionType | number = verticalPositionEnum.top
+    ): void {
       const node = nonReactive.store.mapData[key]
       if (!node || !node.visible) return
       let index: number = -1
@@ -630,7 +720,7 @@ export default defineComponent({
     function updateUnloadStatus(): void {
       if (unloadCheckedNodes.length) {
         const unloadKeys = nonReactive.store.getUnloadCheckedKeys()
-        unloadCheckedNodes.forEach((node) => {
+        unloadCheckedNodes.forEach(node => {
           node.checked = unloadKeys.indexOf(node[props.keyField]) > -1
         })
       }
@@ -639,7 +729,13 @@ export default defineComponent({
     //#region Handle node events
     function handleNodeCheck(node: TreeNode): void {
       if (!props.cascade && props.enableLeafOnly && !node.isLeaf) return
-      nonReactive.store.setChecked(node[props.keyField], node.indeterminate ? false : !node.checked, true, true, true)
+      nonReactive.store.setChecked(
+        node[props.keyField],
+        node.indeterminate ? false : !node.checked,
+        true,
+        true,
+        true
+      )
     }
     function handleNodeSelect(node: TreeNode): void {
       if (props.enableLeafOnly && !node.isLeaf) return
@@ -648,20 +744,34 @@ export default defineComponent({
     function handleNodeExpand(node: TreeNode): void {
       nonReactive.store.setExpand(node[props.keyField], !node.expand)
     }
-    function handleNodeDrop(data: TreeNode, e: DragEvent, hoverPart: dragHoverPartEnum): void {
+    function handleNodeDrop(
+      data: TreeNode,
+      e: DragEvent,
+      hoverPart: dragHoverPartEnum
+    ): void {
       if (!props.droppable) return
       if (e.dataTransfer) {
         try {
           const targetNodeData = JSON.parse(e.dataTransfer.getData('node'))
           const targetKey = targetNodeData[props.keyField]
           const referenceKey = data[props.keyField]
-          const shouldDrop: boolean = props.beforeDropMethod(targetKey, referenceKey, hoverPart)
+          const shouldDrop: boolean = props.beforeDropMethod(
+            targetKey,
+            referenceKey,
+            hoverPart
+          )
           if (shouldDrop) {
             if (targetKey === referenceKey) return
-            if (hoverPart === dragHoverPartEnum.before) nonReactive.store.insertBefore(targetKey, referenceKey)
+            if (hoverPart === dragHoverPartEnum.before)
+              nonReactive.store.insertBefore(targetKey, referenceKey)
             // 如果是拖拽到父节点，并且父节点是展开的，则不管 hoverPart 是不是 after 都拖入为子节点
-            else if (hoverPart === dragHoverPartEnum.body || (!data.isLeaf && data.expand)) nonReactive.store.prepend(targetKey, referenceKey)
-            else if (hoverPart === dragHoverPartEnum.after) nonReactive.store.insertAfter(targetKey, referenceKey)
+            else if (
+              hoverPart === dragHoverPartEnum.body ||
+              (!data.isLeaf && data.expand)
+            )
+              nonReactive.store.prepend(targetKey, referenceKey)
+            else if (hoverPart === dragHoverPartEnum.after)
+              nonReactive.store.insertAfter(targetKey, referenceKey)
             content.emit('node-drop', data, e, hoverPart, getNode(targetKey))
           }
         } catch (err: any) {
@@ -674,7 +784,10 @@ export default defineComponent({
     /**
      * 触发多选 update:modelValue 事件
      */
-    function emitCheckableInput(checkedNodes: TreeNode[], checkedKeys: TreeNodeKeyType[]): void {
+    function emitCheckableInput(
+      checkedNodes: TreeNode[],
+      checkedKeys: TreeNodeKeyType[]
+    ): void {
       if (props.checkable) {
         // 多选
         let emitValue: TreeNodeKeyType[] | string = checkedKeys
@@ -693,7 +806,10 @@ export default defineComponent({
     /**
      * 触发单选 update:modelValue 事件
      */
-    function emitSelectableInput(selectedNode: TreeNode | null, selectedKey: TreeNodeKeyType | null): void {
+    function emitSelectableInput(
+      selectedNode: TreeNode | null,
+      selectedKey: TreeNodeKeyType | null
+    ): void {
       if (props.selectable && !props.checkable) {
         // 单选
         const emitValue: TreeNodeKeyType = selectedKey ? selectedKey : ''
@@ -709,7 +825,12 @@ export default defineComponent({
       for (let event in content.attrs) {
         if (storeEvents.indexOf(event as keyof IEventNames) > -1) {
           const e: keyof IEventNames = event as keyof IEventNames
-          nonReactive.store.on(e, content.attrs[event] as ListenerType<typeof e> | Array<ListenerType<typeof e>>)
+          nonReactive.store.on(
+            e,
+            content.attrs[event] as
+              | ListenerType<typeof e>
+              | Array<ListenerType<typeof e>>
+          )
         }
       }
     }
@@ -727,7 +848,9 @@ export default defineComponent({
      * 计算可见节点
      */
     function updateBlockNodes(): void {
-      nonReactive.blockNodes = nonReactive.store.flatData.filter((node) => node.visible)
+      nonReactive.blockNodes = nonReactive.store.flatData.filter(
+        node => node.visible
+      )
       updateBlockData()
       updateRender()
     }
@@ -750,7 +873,10 @@ export default defineComponent({
      */
     function updateRenderAmount(): void {
       const clientHeight = scrollArea.value.clientHeight
-      renderAmount.value = Math.max(props.renderNodeAmount, Math.ceil(clientHeight / props.nodeMinHeight) + props.bufferNodeAmount)
+      renderAmount.value = Math.max(
+        props.renderNodeAmount,
+        Math.ceil(clientHeight / props.nodeMinHeight) + props.bufferNodeAmount
+      )
     }
     /**
      * 计算渲染的节点，基于 scrollTop 计算当前应该渲染哪些节点
@@ -760,19 +886,30 @@ export default defineComponent({
         const scrollTop = scrollArea.value.scrollTop
         /** 当前滚动了多少节点 */
         const scrollNodeAmount = Math.floor(scrollTop / props.nodeMinHeight)
-        renderStart.value = Math.floor(scrollNodeAmount / props.bufferNodeAmount) * props.bufferNodeAmount
+        renderStart.value =
+          Math.floor(scrollNodeAmount / props.bufferNodeAmount) *
+          props.bufferNodeAmount
       } else {
         renderStart.value = 0
       }
-      if (isScroll && renderAmountCache.value === renderAmount.value && renderStartCache.value === renderStart.value) return
-      renderNodes.value = nonReactive.blockNodes.slice(renderStart.value, renderStart.value + renderAmount.value).map((blockNode) => {
-        return Object.assign({}, blockNode, {
-          _parent: null,
-          children: [],
-        })
-      }) as TreeNode[]
+      if (
+        isScroll &&
+        renderAmountCache.value === renderAmount.value &&
+        renderStartCache.value === renderStart.value
+      )
+        return
+      renderNodes.value = nonReactive.blockNodes
+        .slice(renderStart.value, renderStart.value + renderAmount.value)
+        .map(blockNode => {
+          return Object.assign({}, blockNode, {
+            _parent: null,
+            children: []
+          })
+        }) as TreeNode[]
       topSpaceHeight.value = renderStart.value * props.nodeMinHeight
-      bottomSpaceHeight.value = blockAreaHeight.value - (topSpaceHeight.value + renderNodes.value.length * props.nodeMinHeight)
+      bottomSpaceHeight.value =
+        blockAreaHeight.value -
+        (topSpaceHeight.value + renderNodes.value.length * props.nodeMinHeight)
     }
     //#endregion Calculate nodes
 
@@ -782,7 +919,9 @@ export default defineComponent({
       }
       renderAmountCache.value = renderAmount.value
       renderStartCache.value = renderStart.value
-      debounceTimer.value = window.requestAnimationFrame(updateRenderNodes.bind(null, true))
+      debounceTimer.value = window.requestAnimationFrame(
+        updateRenderNodes.bind(null, true)
+      )
       // props.updateRenderNodes(true)
     }
     const methods = {
@@ -889,10 +1028,13 @@ export default defineComponent({
     onMounted(() => {
       nonReactive.store.on('visible-data-change', updateBlockNodes)
       nonReactive.store.on('render-data-change', updateRender)
-      nonReactive.store.on('checked-change', (checkedNodes: TreeNode[], checkedKeys: TreeNodeKeyType[]) => {
-        emitCheckableInput(checkedNodes, checkedKeys)
-        updateUnloadStatus()
-      })
+      nonReactive.store.on(
+        'checked-change',
+        (checkedNodes: TreeNode[], checkedKeys: TreeNodeKeyType[]) => {
+          emitCheckableInput(checkedNodes, checkedKeys)
+          updateUnloadStatus()
+        }
+      )
       nonReactive.store.on('selected-change', emitSelectableInput)
       if (props.data.length) {
         setData(props.data)
@@ -909,7 +1051,7 @@ export default defineComponent({
       }
       attachStoreEvents()
     })
-    
+
     return {
       nonReactive,
       /** 未加载选中的节点，展示已选时生成，其他情况下没用 */

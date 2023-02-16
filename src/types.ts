@@ -1,4 +1,4 @@
-import {placementEnum, ignoreEnum} from './const'
+import { placementEnum, ignoreEnum } from './const'
 
 import { TreeNode } from './store'
 

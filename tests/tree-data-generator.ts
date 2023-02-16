@@ -1,20 +1,20 @@
 export interface ITreeNodeData {
-  title?: string | number,
-  id?: string | number,
-  checked?: boolean,
-  indeterminate?: boolean,
-  selected?: boolean,
-  disabled?: boolean,
-  children?: ITreeNodeData[],
-  [key: string]: any,
+  title?: string | number
+  id?: string | number
+  checked?: boolean
+  indeterminate?: boolean
+  selected?: boolean
+  disabled?: boolean
+  children?: ITreeNodeData[]
+  [key: string]: any
 }
 
 interface IGeneratorOptions {
-  treeDepth?: number,
-  nodesPerLevel?: number,
-  sameIdTitle?: boolean,
-  inOrder?: boolean,
-  forceString?: boolean,
+  treeDepth?: number
+  nodesPerLevel?: number
+  sameIdTitle?: boolean
+  inOrder?: boolean
+  forceString?: boolean
 }
 
 const genRandomStr = (): string => {
@@ -26,14 +26,16 @@ export default ({
   nodesPerLevel,
   sameIdTitle = false,
   inOrder = false,
-  forceString = false,
-}: IGeneratorOptions = {}): { data: ITreeNodeData[], total: number } => {
+  forceString = false
+}: IGeneratorOptions = {}): { data: ITreeNodeData[]; total: number } => {
   let data: ITreeNodeData[] = []
   let total = 0
   let orderCount = 0
   const genNodeData = (root: ITreeNodeData[], level: number = 0): void => {
     if (level >= treeDepth) return
-    const len: number = nodesPerLevel ? nodesPerLevel : Math.floor(Math.random() * 100)
+    const len: number = nodesPerLevel
+      ? nodesPerLevel
+      : Math.floor(Math.random() * 100)
     for (let i: number = 0; i < len; i++) {
       let title = inOrder ? orderCount++ : genRandomStr()
       if (forceString) title = title.toString()
@@ -41,7 +43,7 @@ export default ({
       const node = {
         title,
         id,
-        children: [],
+        children: []
       }
       root.push(node)
       total++
@@ -51,6 +53,6 @@ export default ({
   genNodeData(data)
   return {
     data,
-    total,
+    total
   }
 }

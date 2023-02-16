@@ -6,16 +6,22 @@
     <div class="control">
       <div class="desc-block">
         <p>说明：在 Chrome 下表现良好</p>
-        <p>在火狐浏览器下，因为其异步滚动策略 (scroll-linked) ，在快速滚动时会导致内容空白。</p>
-        <p>另：浏览器元素/文档是有最大高度限制的，过多数据会导致显示不正常(Chrome 下 100 万条可以正常显示，但是在火狐或 Edge 则不行)</p>
+        <p>
+          在火狐浏览器下，因为其异步滚动策略 (scroll-linked)
+          ，在快速滚动时会导致内容空白。
+        </p>
+        <p>
+          另：浏览器元素/文档是有最大高度限制的，过多数据会导致显示不正常(Chrome
+          下 100 万条可以正常显示，但是在火狐或 Edge 则不行)
+        </p>
       </div>
       <div class="controls">
         <label>节点深度：</label>
-        <input v-model="params.treeDepth" type="number">
+        <input v-model="params.treeDepth" type="number" />
       </div>
       <div class="controls">
         <label>每层节点个数：</label>
-        <input v-model="params.nodesPerLevel" type="number">
+        <input v-model="params.nodesPerLevel" type="number" />
       </div>
       <div class="controls">
         <label>总节点个数：</label>
@@ -33,8 +39,8 @@
           <button @click="handleSetData">设置树数据</button>
         </div>
         <div class="actions">
-          <span v-if="!isTreeSet" style="color: red;">树数据已生成</span>
-          <span v-else style="color: green;">树数据已设置</span>
+          <span v-if="!isTreeSet" style="color: red">树数据已生成</span>
+          <span v-else style="color: green">树数据已设置</span>
         </div>
       </div>
       <div class="controls">
@@ -75,35 +81,33 @@ interface TreeMockMeta {
 const dataAmountMap: Record<string, TreeMockMeta> = {
   '1w': {
     treeDepth: 2,
-    nodesPerLevel: 100,
+    nodesPerLevel: 100
   },
   '10w': {
     treeDepth: 2,
-    nodesPerLevel: 320,
+    nodesPerLevel: 320
   },
   '20w': {
     treeDepth: 2,
-    nodesPerLevel: 450,
+    nodesPerLevel: 450
   },
   '30w': {
     treeDepth: 2,
-    nodesPerLevel: 550,
-  },
+    nodesPerLevel: 550
+  }
 }
-
-
 
 export default defineComponent({
   name: 'Performance',
   components: {
-    VTree,
+    VTree
   },
   setup() {
     const cache = ref<any[]>([])
     const isTreeSet = ref(false)
     const params = ref({
       treeDepth: 2,
-      nodesPerLevel: 5,
+      nodesPerLevel: 5
     })
     const nodeTotal = ref(0)
     const treeData = ref([])
@@ -114,7 +118,13 @@ export default defineComponent({
     const scrollValue = ref(0)
     const tree = ref()
     const handleGenerate = () => {
-      const mock = treeDataGenerator(Object.assign({}, params.value, { inOrder: true, sameIdTitle: true, forceString: true }))
+      const mock = treeDataGenerator(
+        Object.assign({}, params.value, {
+          inOrder: true,
+          sameIdTitle: true,
+          forceString: true
+        })
+      )
       cache.value = mock.data
       nodeTotal.value = mock.total
       isTreeSet.value = false
@@ -130,7 +140,10 @@ export default defineComponent({
       isTreeSet.value = true
     }
     const handleScrollToNode = () => {
-      tree.value.scrollTo(scrollKey.value, scrollValue.value || scrollVerticalOption.value)
+      tree.value.scrollTo(
+        scrollKey.value,
+        scrollValue.value || scrollVerticalOption.value
+      )
     }
 
     return {
@@ -151,7 +164,7 @@ export default defineComponent({
   },
   created() {
     this.handleGenerate()
-  },
+  }
 })
 </script>
 

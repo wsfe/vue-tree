@@ -1,8 +1,15 @@
 <template>
   <div class="tab">
-    <button v-for="tab in tabList" :key="tab" :class="{
-      active: currentTab === tab
-    }" @click="currentTab = tab">{{ tab }}</button>
+    <button
+      v-for="tab in tabList"
+      :key="tab"
+      :class="{
+        active: currentTab === tab
+      }"
+      @click="currentTab = tab"
+    >
+      {{ tab }}
+    </button>
   </div>
   <div class="tab-panel">
     <component :is="currentTab"></component>
@@ -20,7 +27,6 @@ import DropDataChange from './DropDataChange.vue'
 import Feature from './Feature.vue'
 import Performance from './Performance.vue'
 import InsertRenderTree from './InsertRenderTree.vue'
-
 
 export default defineComponent({
   components: {
@@ -45,7 +51,7 @@ export default defineComponent({
       // DropRemote,
       Drag,
       // DropDataChange,
-      InsertRenderTree,
+      InsertRenderTree
     }
     const tabList = reactive(Object.keys(components)) as any[]
     const currentTab = ref(tabList[0])

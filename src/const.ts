@@ -2,7 +2,7 @@
 export enum ignoreEnum {
   none = 'none',
   parents = 'parents',
-  children = 'children',
+  children = 'children'
 }
 //#endregion ignoreMode
 
@@ -40,7 +40,7 @@ const enum apiEnum {
   'filter',
   'showCheckedNodes',
   'loadRootNodes',
-  'scrollTo',
+  'scrollTo'
 }
 
 export const API_METHODS = [
@@ -74,7 +74,7 @@ export const API_METHODS = [
   'filter',
   'showCheckedNodes',
   'loadRootNodes',
-  'scrollTo',
+  'scrollTo'
 ]
 
 export type ApiType = keyof typeof apiEnum
@@ -83,14 +83,10 @@ export type ApiType = keyof typeof apiEnum
 const enum treeSearchApiEnum {
   'clearKeyword',
   'getKeyword',
-  'search',
+  'search'
 }
 
-export const TREE_SEARCH_API_METHODS = [
-  'clearKeyword',
-  'getKeyword',
-  'search',
-]
+export const TREE_SEARCH_API_METHODS = ['clearKeyword', 'getKeyword', 'search']
 
 export type TreeSearchApiType = keyof typeof treeSearchApiEnum
 
@@ -100,14 +96,14 @@ export enum placementEnum {
   'bottom' = 'bottom',
   'top-start' = 'top-start',
   'top-end' = 'top-end',
-  'top' = 'top',
+  'top' = 'top'
 }
 
 //#region Scroll position
 export enum verticalPositionEnum {
   top = 'top',
   center = 'center',
-  bottom = 'bottom',
+  bottom = 'bottom'
 }
 
 export type VerticalPositionType = keyof typeof verticalPositionEnum
@@ -117,6 +113,6 @@ export type VerticalPositionType = keyof typeof verticalPositionEnum
 export enum dragHoverPartEnum {
   before = 'before',
   body = 'body',
-  after = 'after',
+  after = 'after'
 }
 //#endregion Drag

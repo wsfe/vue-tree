@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
-export default defineConfig(({mode})=>{
+export default defineConfig(({ mode }) => {
   return {
     // root: __dirname,
     base: './',
@@ -15,7 +15,7 @@ export default defineConfig(({mode})=>{
     optimizeDeps: {
       exclude: ['vue-demi']
     },
-    build:{
+    build: {
       outDir: 'docs'
     }
   }

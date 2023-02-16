@@ -16,6 +16,6 @@
 import { defineComponent } from 'vue-demi'
 
 export default defineComponent({
-  name: 'CLoadingIcon',
+  name: 'CLoadingIcon'
 })
 </script>

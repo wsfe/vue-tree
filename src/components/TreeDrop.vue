@@ -21,11 +21,22 @@
 
     <!-- 下拉框 -->
     <transition name="ctree-dropdown">
-      <div ref="dropdown" v-show="dropdownVisible" :class="dropdownCls" :style="{
-        height: `${dropHeight}px`,
-      }">
-        <CTreeSearch ref="treeSearch" :modelValue="modelValue" v-bind="$attrs" :set-data="handleSetData"
-          @checked-change="handleCheckedChange" @selected-change="handleSelectedChange">
+      <div
+        ref="dropdown"
+        v-show="dropdownVisible"
+        :class="dropdownCls"
+        :style="{
+          height: `${dropHeight}px`
+        }"
+      >
+        <CTreeSearch
+          ref="treeSearch"
+          :modelValue="modelValue"
+          v-bind="$attrs"
+          @set-data="handleSetData"
+          @checked-change="handleCheckedChange"
+          @selected-change="handleSelectedChange"
+        >
           <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
             <slot :name="slot" v-bind="scope"></slot>
           </template>
@@ -36,13 +47,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, computed, onMounted, watch, nextTick, PropType } from 'vue-demi'
+import {
+  defineComponent,
+  ref,
+  reactive,
+  computed,
+  onMounted,
+  watch,
+  nextTick,
+  PropType
+} from 'vue-demi'
 import CTreeSearch from './TreeSearch.vue'
 import { TreeNode } from '../store'
-import {
-  placementEnum
-} from '../const'
-import {PlacementType, TreeNodeKeyType, TreeDropSlotProps} from '../types'
+import { placementEnum } from '../const'
+import { PlacementType, TreeNodeKeyType, TreeDropSlotProps } from '../types'
 
 const prefixCls = 'ctree-tree-drop'
 
@@ -59,47 +77,49 @@ const treeSearchPrefixCls = 'ctree-tree-search'
 export default defineComponent({
   name: 'CTreeDrop',
   inheritAttrs: false,
-  emits:['clear','checked-change','dropdown-visible-change'],
+  emits: ['clear', 'checked-change', 'dropdown-visible-change'],
   components: {
-    CTreeSearch,
+    CTreeSearch
   },
   props: {
     /** 兼容 Vue 2.5.16 bug */
-    modelValue: [String, Number, Array] as PropType<string | number | TreeNodeKeyType[]>,
+    modelValue: [String, Number, Array] as PropType<
+      string | number | TreeNodeKeyType[]
+    >,
 
     /** 下拉内容高度 */
     dropHeight: {
       type: Number,
-      default: 300,
+      default: 300
     },
 
     /** 展示输入框 placeholder */
     dropPlaceholder: {
-      type: String,
+      type: String
     },
 
     /** 是否禁用 */
     dropDisabled: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     /** 允许清空 */
     clearable: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     /** 下拉弹出框位置 */
     placement: {
       type: String as PropType<PlacementType>,
-      default: placementEnum['bottom-start'],
+      default: placementEnum['bottom-start']
     },
 
     /** 将下拉 DOM 转移到 body 中 */
     transfer: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     /** 在下拉框容器上额外添加的 class */
@@ -107,14 +127,14 @@ export default defineComponent({
 
     /** 下拉框容器最小宽度，未指定则默认为展示输入框宽度 */
     dropdownMinWidth: {
-      type: Number,
+      type: Number
     },
 
     /** 固定下拉框容器宽度，当内容超出最小宽度不会伸长，而是出现横向滚动条 */
     dropdownWidthFixed: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   setup(props, { attrs, emit }) {
     const dropdownVisible = ref(false)
@@ -131,18 +151,14 @@ export default defineComponent({
       selectedNode: undefined,
 
       /** 单选选中的节点 key */
-      selectedKey: undefined,
+      selectedKey: undefined
     })
 
     const wrapperCls = computed(() => {
-      return [
-        `${prefixCls}__wrapper`,
-      ]
+      return [`${prefixCls}__wrapper`]
     })
     const referenceCls = computed(() => {
-      return [
-        `${prefixCls}__reference`,
-      ]
+      return [`${prefixCls}__reference`]
     })
 
     const displayInputCls = computed(() => {
@@ -151,8 +167,8 @@ export default defineComponent({
         `${prefixCls}__display-input`,
         {
           [`${prefixCls}__display-input_focus`]: dropdownVisible.value,
-          [`${treeSearchPrefixCls}__input_disabled`]: props.dropDisabled,
-        },
+          [`${treeSearchPrefixCls}__input_disabled`]: props.dropDisabled
+        }
       ]
     })
 
@@ -165,8 +181,8 @@ export default defineComponent({
       return [
         `${prefixCls}__display-input-text`,
         {
-          [`${prefixCls}__display-input-placeholder`]: showPlaceholder,
-        },
+          [`${prefixCls}__display-input-placeholder`]: showPlaceholder
+        }
       ]
     })
 
@@ -174,36 +190,41 @@ export default defineComponent({
       return [
         `${prefixCls}__display-icon-drop`,
         {
-          [`${prefixCls}__display-icon-drop_active`]: dropdownVisible.value,
-        },
+          [`${prefixCls}__display-icon-drop_active`]: dropdownVisible.value
+        }
       ]
     })
 
     const clearIconCls = computed(() => {
-      return [
-        `${prefixCls}__display-icon-clear`,
-      ]
+      return [`${prefixCls}__display-icon-clear`]
     })
 
     const dropdownCls = computed(() => {
-      const extraClassName = Array.isArray(props.dropdownClassName) ? props.dropdownClassName : [props.dropdownClassName]
-      return [
-        `${prefixCls}__dropdown`,
-        ...extraClassName,
-      ]
+      const extraClassName = Array.isArray(props.dropdownClassName)
+        ? props.dropdownClassName
+        : [props.dropdownClassName]
+      return [`${prefixCls}__dropdown`, ...extraClassName]
     })
     const checkable = computed(() => {
-      return ('checkable' in attrs) && (attrs.checkable as unknown) !== false
+      return 'checkable' in attrs && (attrs.checkable as unknown) !== false
     })
     const selectable = computed(() => {
-      return ('selectable' in attrs) && (attrs.selectable as unknown) !== false
+      return 'selectable' in attrs && (attrs.selectable as unknown) !== false
     })
     const displayValue = computed(() => {
       if (checkable.value) {
-        if (checkedCount.value === 0 && typeof props.dropPlaceholder === 'string') return props.dropPlaceholder
+        if (
+          checkedCount.value === 0 &&
+          typeof props.dropPlaceholder === 'string'
+        )
+          return props.dropPlaceholder
         return `已选 ${checkedCount.value} 个`
       } else if (selectable.value) {
-        if (selectedTitle.value === '' && typeof props.dropPlaceholder === 'string') return props.dropPlaceholder
+        if (
+          selectedTitle.value === '' &&
+          typeof props.dropPlaceholder === 'string'
+        )
+          return props.dropPlaceholder
         return selectedTitle.value
       } else return props.dropPlaceholder || ''
     })
@@ -220,14 +241,22 @@ export default defineComponent({
       const referenceHeight = referenceRect.height
 
       // Set dropdown width
-      const minWidth = `${typeof props.dropdownMinWidth === 'number' ? props.dropdownMinWidth : referenceWidth}px`
+      const minWidth = `${
+        typeof props.dropdownMinWidth === 'number'
+          ? props.dropdownMinWidth
+          : referenceWidth
+      }px`
       dropdown.value.style.minWidth = minWidth
       dropdown.value.style.width = props.dropdownWidthFixed ? minWidth : 'auto'
 
       const dropdownRect = dropdown.value.getBoundingClientRect()
       const dropdownStyleDeclaration = window.getComputedStyle(dropdown.value)
-      const dropdownMarginHorizontal = parseFloat(dropdownStyleDeclaration.marginLeft) + parseFloat(dropdownStyleDeclaration.marginRight)
-      const dropdownMarginVertical = parseFloat(dropdownStyleDeclaration.marginTop) + parseFloat(dropdownStyleDeclaration.marginBottom)
+      const dropdownMarginHorizontal =
+        parseFloat(dropdownStyleDeclaration.marginLeft) +
+        parseFloat(dropdownStyleDeclaration.marginRight)
+      const dropdownMarginVertical =
+        parseFloat(dropdownStyleDeclaration.marginTop) +
+        parseFloat(dropdownStyleDeclaration.marginBottom)
       const dropdownWidth = dropdownRect.width + dropdownMarginHorizontal
       // 0.8 这个值写在 css 里，因为有动画，所以获取到的是 scaleY 变换后的值
       const dropdownHeight = dropdownRect.height / 0.8 + dropdownMarginVertical
@@ -258,7 +287,10 @@ export default defineComponent({
         case 'bottom':
           if (props.transfer) {
             top = window.pageYOffset + referenceRect.bottom
-            left = window.pageXOffset + referenceRect.left + (referenceWidth - dropdownWidth) / 2
+            left =
+              window.pageXOffset +
+              referenceRect.left +
+              (referenceWidth - dropdownWidth) / 2
           } else {
             top = referenceHeight
             left = (referenceWidth - dropdownWidth) / 2
@@ -284,7 +316,10 @@ export default defineComponent({
         case 'top':
           if (props.transfer) {
             top = window.pageYOffset + referenceRect.top - dropdownHeight
-            left = window.pageXOffset + referenceRect.left + (referenceWidth - dropdownWidth) / 2
+            left =
+              window.pageXOffset +
+              referenceRect.left +
+              (referenceWidth - dropdownWidth) / 2
           } else {
             top = -dropdownHeight
             left = (referenceWidth - dropdownWidth) / 2
@@ -303,7 +338,10 @@ export default defineComponent({
     }
     function handleDocumentClick(e: MouseEvent): void {
       if (!reference.value && !dropdown.value && treeSearch.value) return
-      if (!reference.value.contains(e.target as Node) && !dropdown.value.contains(e.target as Node)) {
+      if (
+        !reference.value.contains(e.target as Node) &&
+        !dropdown.value.contains(e.target as Node)
+      ) {
         dropdownVisible.value = false
       }
     }
@@ -316,19 +354,25 @@ export default defineComponent({
         treeSearch.value.clearSelected()
       }
     }
-    function handleCheckedChange(nodes: TreeNode[], keys: TreeNodeKeyType[]): void {
+    function handleCheckedChange(
+      nodes: TreeNode[],
+      keys: TreeNodeKeyType[]
+    ): void {
       slotProps.checkedNodes = nodes
       slotProps.checkedKeys = keys
       checkedCount.value = keys.length
-      emit('checked-change',nodes,keys)
+      emit('checked-change', nodes, keys)
     }
-    function handleSelectedChange(node?: TreeNode, key?: TreeNodeKeyType): void {
+    function handleSelectedChange(
+      node?: TreeNode,
+      key?: TreeNodeKeyType
+    ): void {
       debugger
       slotProps.selectedNode = node
       slotProps.selectedKey = key
 
       if (node) {
-        const titleField = treeSearch.value.$refs.tree.methods.titleField
+        const titleField = treeSearch.value.$refs.treeRef.methods.titleField
         selectedTitle.value = node[titleField]
       } else if (key) {
         selectedTitle.value = key as string
@@ -340,19 +384,25 @@ export default defineComponent({
 
     /** 处理树数据更新 */
     function handleSetData(): void {
-      slotProps.checkedNodes = treeSearch.value.$refs.tree.methods.getCheckedNodes()
-      slotProps.checkedKeys = treeSearch.value.$refs.tree.methods.getCheckedKeys()
-      slotProps.selectedNode = treeSearch.value.$refs.tree.methods.getSelectedNode()
-      slotProps.selectedKey = treeSearch.value.$refs.tree.methods.getSelectedKey()
+      slotProps.checkedNodes =
+        treeSearch.value.$refs.treeRef.methods.getCheckedNodes()
+      slotProps.checkedKeys =
+        treeSearch.value.$refs.treeRef.methods.getCheckedKeys()
+      slotProps.selectedNode =
+        treeSearch.value.$refs.treeRef.methods.getSelectedNode()
+      slotProps.selectedKey =
+        treeSearch.value.$refs.treeRef.methods.getSelectedKey()
 
       if (checkable.value) {
         checkedCount.value = slotProps.checkedKeys.length
       }
       if (selectable.value) {
         if (props.modelValue != null) {
-          const node = treeSearch.value.getNode(props.modelValue as TreeNodeKeyType)
+          const node = treeSearch.value.getNode(
+            props.modelValue as TreeNodeKeyType
+          )
           if (node) {
-            const titleField = treeSearch.value.$refs.tree.titleField
+            const titleField = treeSearch.value.$refs.treeRef.titleField
             selectedTitle.value = node[titleField]
           } else {
             selectedTitle.value = props.modelValue as any
@@ -367,19 +417,22 @@ export default defineComponent({
       }
       handleSetData()
     })
-    watch(()=>dropdownVisible.value,(newVal)=>{
-      emit('dropdown-visible-change', newVal)
-      if (newVal) {
-        nextTick(() => {
-          locateDropdown()
-        })
-      } else {
-        if (treeSearch.value.getKeyword()) {
-          treeSearch.value.clearKeyword()
-          treeSearch.value.search()
+    watch(
+      () => dropdownVisible.value,
+      newVal => {
+        emit('dropdown-visible-change', newVal)
+        if (newVal) {
+          nextTick(() => {
+            locateDropdown()
+          })
+        } else {
+          if (treeSearch.value.getKeyword()) {
+            treeSearch.value.clearKeyword()
+            treeSearch.value.search()
+          }
         }
       }
-    })
+    )
     //#endr
     return {
       dropdownVisible,

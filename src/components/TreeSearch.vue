@@ -7,12 +7,22 @@
       </div>
       <div :class="inputWrapperCls">
         <slot name="search-input">
-          <input v-model="keyword" type="text" :class="inputCls" :placeholder="searchPlaceholder"
-            :disabled="searchDisabled" @input="handleSearch" />
+          <input
+            v-model="keyword"
+            type="text"
+            :class="inputCls"
+            :placeholder="searchPlaceholder"
+            :disabled="searchDisabled"
+            @input="handleSearch"
+          />
         </slot>
       </div>
       <div :class="actionWrapperCls">
-        <span v-if="showCheckedButton && checkable" :class="checkedButtonCls" @click="handleShowChecked">
+        <span
+          v-if="showCheckedButton && checkable"
+          :class="checkedButtonCls"
+          @click="handleShowChecked"
+        >
           {{ checkedButtonText }}
         </span>
         <slot name="actions"></slot>
@@ -21,8 +31,14 @@
 
     <!-- 树区域 -->
     <div :class="treeWrapperCls">
-      <CTree ref="tree" v-bind="$attrs" v-model="modelValue" @update:modelValue="updateCheckedCount" :set-data="setData"
-        :checked-change="checkedChange">
+      <CTree
+        ref="treeRef"
+        v-bind="$attrs"
+        v-model="modelValue"
+        @update:modelValue="updateCheckedCount"
+        @set-data="setData"
+        @checked-change="checkedChange"
+      >
         <template v-for="(_, slot) in $slots" :name="slot" v-slot="scope">
           <slot :name="slot" v-bind="scope"></slot>
         </template>
@@ -39,10 +55,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, Ref, computed, onMounted, PropType } from 'vue-demi'
+import {
+  defineComponent,
+  reactive,
+  ref,
+  Ref,
+  computed,
+  onMounted,
+  PropType
+} from 'vue-demi'
 import CTree from './Tree.vue'
 import { API_METHODS, ApiType } from '../const'
-import type {TreeNodeKeyType} from '../types'
+import type { TreeNodeKeyType } from '../types'
 
 const prefixCls = 'ctree-tree-search'
 
@@ -53,106 +77,104 @@ type CTreeApiMethodsType = { [key in ApiType]: CTreeInstanceType[key] }
 
 // Vue 2.6 内部没改变的话可以这样获取 Vue.extend 中的 methods。Vue 版本有升级的话需要注意这个特性有没有改变
 // 如果是对象的话可以直接 CTree.methods ，并且是安全的。
-let ctreeMethods: CTreeApiMethodsType = ({} as CTreeApiMethodsType)
+let ctreeMethods: CTreeApiMethodsType = {} as CTreeApiMethodsType
 
 export default defineComponent({
   name: 'CTreeSearch',
   inheritAttrs: false,
-  emits:['checked-change','search','set-Data'],
+  emits: ['checked-change', 'search', 'set-data'],
   components: {
-    CTree,
+    CTree
   },
   props: {
     /** 兼容 Vue 2.5.16 bug */
-    modelValue: [String, Number, Array] as PropType<string | number | TreeNodeKeyType[]>,
+    modelValue: [String, Number, Array] as PropType<
+      string | number | TreeNodeKeyType[]
+    >,
 
     /** 搜索输入框的 placeholder */
     searchPlaceholder: {
       type: String,
-      default: '搜索关键字',
+      default: '搜索关键字'
     },
 
     /** 是否显示全选复选框 */
     showCheckAll: {
       type: Boolean,
-      default: true,
+      default: true
     },
 
     /** 是否显示已选按钮 */
     showCheckedButton: {
       type: Boolean,
-      default: true,
+      default: true
     },
 
     /** 已选按钮文字 */
     checkedButtonText: {
       type: String,
-      default: '已选',
+      default: '已选'
     },
 
     /** 是否显示底部信息 */
     showFooter: {
       type: Boolean,
-      default: true,
+      default: true
     },
 
     //#region Search related
     /** 如果传入此 Prop ，触发 `search` 事件后将会执行此方法，否则会执行组件内置的搜索方法 */
-    searchMethod: Function as PropType<(keyword: string) => void | Promise<void>>,
+    searchMethod: Function as PropType<
+      (keyword: string) => void | Promise<void>
+    >,
 
     /** 触发搜索的字符长度 */
     searchLength: {
       type: Number,
-      default: 1,
+      default: 1
     },
 
     /** 禁用搜索功能 */
     searchDisabled: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     /** 是否远程搜索，传入 `searchMethod` 时无效 */
     searchRemote: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     /** 搜索防抖时间，单位为毫秒 */
     searchDebounceTime: {
       type: Number,
-      default: 300,
-    },
+      default: 300
+    }
     //#endregion Search related
   },
-  setup(props, { emit, attrs,expose }) {
+  setup(props, { emit, attrs, expose }) {
     const checkAllStatus = reactive({
       checked: false,
       /** 半选 */
       indeterminate: false,
       /** 禁用 */
-      disabled: false,
+      disabled: false
     })
     const isShowingChecked = ref(false)
     const keyword = ref('')
     const debounceTimer: Ref<number | undefined> = ref(undefined)
     const checkedCount = ref(0)
-    const tree = ref()
+    const treeRef = ref()
     const modelValue = props.modelValue
     const wrapperCls = computed(() => {
-      return [
-        `${prefixCls}__wrapper`,
-      ]
+      return [`${prefixCls}__wrapper`]
     })
     const searchCls = computed(() => {
-      return [
-        `${prefixCls}__search`,
-      ]
+      return [`${prefixCls}__search`]
     })
     const checkAllWrapperCls = computed(() => {
-      return [
-        `${prefixCls}__check-all-wrapper`,
-      ]
+      return [`${prefixCls}__check-all-wrapper`]
     })
     const checkboxCls = computed(() => {
       return [
@@ -160,49 +182,43 @@ export default defineComponent({
         `${treeNodePrefixCls}__checkbox`,
         {
           [`${treeNodePrefixCls}__checkbox_checked`]: checkAllStatus.checked,
-          [`${treeNodePrefixCls}__checkbox_indeterminate`]: checkAllStatus.indeterminate,
-          [`${treeNodePrefixCls}__checkbox_disabled`]: props.searchDisabled || checkAllStatus.disabled,
-        },
+          [`${treeNodePrefixCls}__checkbox_indeterminate`]:
+            checkAllStatus.indeterminate,
+          [`${treeNodePrefixCls}__checkbox_disabled`]:
+            props.searchDisabled || checkAllStatus.disabled
+        }
       ]
     })
     const inputWrapperCls = computed(() => {
-      return [
-        `${prefixCls}__input-wrapper`,
-      ]
+      return [`${prefixCls}__input-wrapper`]
     })
     const inputCls = computed(() => {
       return [
         `${prefixCls}__input`,
         {
-          [`${prefixCls}__input_disabled`]: props.searchDisabled,
-        },
+          [`${prefixCls}__input_disabled`]: props.searchDisabled
+        }
       ]
     })
     const actionWrapperCls = computed(() => {
-      return [
-        `${prefixCls}__action-wrapper`,
-      ]
+      return [`${prefixCls}__action-wrapper`]
     })
     const checkedButtonCls = computed(() => {
       return [
         `${prefixCls}__checked-button`,
         {
-          [`${prefixCls}__checked-button_active`]: isShowingChecked.value,
-        },
+          [`${prefixCls}__checked-button_active`]: isShowingChecked.value
+        }
       ]
     })
     const treeWrapperCls = computed(() => {
-      return [
-        `${prefixCls}__tree-wrapper`,
-      ]
+      return [`${prefixCls}__tree-wrapper`]
     })
     const footerCls = computed(() => {
-      return [
-        `${prefixCls}__footer`,
-      ]
+      return [`${prefixCls}__footer`]
     })
     const checkable = computed(() => {
-      return ('checkable' in attrs) && (attrs.checkable as unknown) !== false
+      return 'checkable' in attrs && (attrs.checkable as unknown) !== false
     })
 
     function clearKeyword(): void {
@@ -223,11 +239,16 @@ export default defineComponent({
       return new Promise((resolve, reject) => {
         clearTimeout(debounceTimer.value)
         debounceTimer.value = setTimeout(() => {
-          if (searchKeyword.length > 0 && searchKeyword.length < props.searchLength) return
+          if (
+            searchKeyword.length > 0 &&
+            searchKeyword.length < props.searchLength
+          )
+            return
           isShowingChecked.value = false
           emit('search', searchKeyword)
           if (typeof props.searchMethod === 'function') {
-            const searchReturnValue: void | Promise<void> = props.searchMethod(searchKeyword)
+            const searchReturnValue: void | Promise<void> =
+              props.searchMethod(searchKeyword)
             Promise.resolve(searchReturnValue).then(() => {
               updateCheckAllStatus()
               resolve()
@@ -235,13 +256,13 @@ export default defineComponent({
           } else {
             if (props.searchRemote) {
               // 远程搜索
-              tree.value.methods.loadRootNodes().then(() => {
+              treeRef.value.methods.loadRootNodes().then(() => {
                 updateCheckAllStatus()
                 resolve()
               })
             } else {
               // 本地搜索
-              tree.value.methods.filter(searchKeyword)
+              treeRef.value.methods.filter(searchKeyword)
               updateCheckAllStatus()
               resolve()
             }
@@ -256,13 +277,15 @@ export default defineComponent({
     function handleCheckAll(): void {
       if (props.searchDisabled || checkAllStatus.disabled) return
 
-      const currentVisibleKeys = tree.value.methods.getCurrentVisibleNodes().map((node: any) => node[tree.value.methods.keyField])
+      const currentVisibleKeys = treeRef.value.methods
+        .getCurrentVisibleNodes()
+        .map((node: any) => node[treeRef.value.methods.keyField])
       if (checkAllStatus.checked || checkAllStatus.indeterminate) {
         // 反选
-        tree.value.methods.setCheckedKeys(currentVisibleKeys, false)
+        treeRef.value.methods.setCheckedKeys(currentVisibleKeys, false)
       } else {
         // 全选
-        tree.value.methods.setCheckedKeys(currentVisibleKeys, true)
+        treeRef.value.methods.setCheckedKeys(currentVisibleKeys, true)
       }
 
       updateCheckAllStatus()
@@ -280,10 +303,10 @@ export default defineComponent({
         isShowingChecked.value = !isShowingChecked.value
         if (isShowingChecked.value) {
           // 展示已选
-          tree.value.methods.showCheckedNodes()
+          treeRef.value.methods.showCheckedNodes()
         } else {
           // 恢复展示
-          tree.value.methods.filter(keyword.value, () => true)
+          treeRef.value.methods.filter(keyword.value, () => true)
         }
 
         updateCheckAllStatus()
@@ -306,10 +329,10 @@ export default defineComponent({
       updateCheckAllStatus()
     }
     //#endregion Event handlers
-
+    console.log(treeRef)
     /** 更新全选复选框状态 */
     function updateCheckAllStatus(): void {
-      const currentVisibleNodes = tree.value.methods.getCurrentVisibleNodes()
+      const currentVisibleNodes = treeRef.value.methods.getCurrentVisibleNodes()
       const length = currentVisibleNodes.length
       let hasChecked = false
       let hasUnchecked = false
@@ -335,28 +358,36 @@ export default defineComponent({
     }
 
     function updateCheckedCount(): void {
-      checkedCount.value = tree.value.methods.getCheckedKeys().length
+      checkedCount.value = treeRef.value.methods.getCheckedKeys().length
     }
 
-    function checkedChange(value1:any,value2:any){
+    function checkedChange(value1: any, value2: any) {
       updateCheckAllStatus()
-      emit('checked-change',value1,value2)
+      emit('checked-change', value1, value2)
     }
 
-    function setData(){
-      emit('set-Data')
+    function setData() {
+      emit('set-data')
       handleSetData()
     }
     onMounted(() => {
       // 因为获取不到 CTree.methods 的类型，所以这边 methods 的类型不好写
-      const methods: { [key in keyof CTreeApiMethodsType]: CTreeApiMethodsType[key] } = tree.value.methods
+      const methods: {
+        [key in keyof CTreeApiMethodsType]: CTreeApiMethodsType[key]
+      } = treeRef.value.methods
       for (let key in methods) {
-        const keyCache: keyof CTreeApiMethodsType = (key as keyof CTreeApiMethodsType)
+        const keyCache: keyof CTreeApiMethodsType =
+          key as keyof CTreeApiMethodsType
         if (API_METHODS.indexOf(keyCache) > -1) {
           // 躲避 TypeScript 类型推断错误
           const _methods = ctreeMethods as any
-          _methods[keyCache] = function <T extends typeof ctreeMethods[typeof keyCache]>(...args: Parameters<T>): ReturnType<T> {
-            return (methods as any)[keyCache].apply(((this as any).$refs.tree as CTreeInstanceType), args)
+          _methods[keyCache] = function <
+            T extends (typeof ctreeMethods)[typeof keyCache]
+          >(...args: Parameters<T>): ReturnType<T> {
+            return (methods as any)[keyCache].apply(
+              (this as any).$refs.treeRef as CTreeInstanceType,
+              args
+            )
           }
         }
       }
@@ -364,8 +395,8 @@ export default defineComponent({
         handleSetData()
       }
     })
-    const setChecked = (a:any,b:any)=>{
-      tree.value.setChecked(a,b)
+    const setChecked = (a: any, b: any) => {
+      treeRef.value.setChecked(a, b)
     }
     // expose({
     //   setChecked,
@@ -377,7 +408,9 @@ export default defineComponent({
     //   updateCheckAllStatus,
     //   getKeyword
     // })
+    console.log(ctreeMethods)
     return {
+      ...ctreeMethods,
       modelValue,
       setChecked,
       checkAllStatus,
@@ -396,7 +429,7 @@ export default defineComponent({
       treeWrapperCls,
       footerCls,
       checkable,
-      tree,
+      treeRef,
       handleCheckAll,
       handleSearch,
       handleShowChecked,

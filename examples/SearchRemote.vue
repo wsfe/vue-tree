@@ -1,7 +1,13 @@
 <template>
-  <div style="height: 100%;">
-    <VTreeSearch v-model="value" :load="load" search-remote checkable @search="handleSearch"><span slot="empty">slot
-        传进来的暂无数据</span></VTreeSearch>
+  <div style="height: 100%">
+    <VTreeSearch
+      v-model="value"
+      :load="load"
+      search-remote
+      checkable
+      @search="handleSearch"
+      ><span slot="empty">slot 传进来的暂无数据</span></VTreeSearch
+    >
     {{ value }}
   </div>
 </template>
@@ -12,19 +18,24 @@ import treeDataGenerator from '../tests/tree-data-generator'
 import { defineComponent, reactive, ref } from 'vue'
 
 const genData = (extra = {}) => {
-  return treeDataGenerator(Object.assign({
-    treeDepth: 3,
-    nodesPerLevel: 5,
-    sameIdTitle: true,
-    inOrder: true,
-    forceString: true,
-  }, extra))
+  return treeDataGenerator(
+    Object.assign(
+      {
+        treeDepth: 3,
+        nodesPerLevel: 5,
+        sameIdTitle: true,
+        inOrder: true,
+        forceString: true
+      },
+      extra
+    )
+  )
 }
 
 export default defineComponent({
   name: 'Search',
   components: {
-    VTreeSearch,
+    VTreeSearch
   },
   setup() {
     const times = reactive([3, 2, 5])

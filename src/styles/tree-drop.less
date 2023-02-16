@@ -1,8 +1,8 @@
 #ctree-tree-drop-styles () {
   // prefix
-  @tree-drop-prefix: ~"@{ctree-prefix}-tree-drop";
-  @tree-search-prefix: ~"@{ctree-prefix}-tree-search";
-  @tree-dropdown-prefix: ~"@{ctree-prefix}-dropdown";
+  @tree-drop-prefix: ~'@{ctree-prefix}-tree-drop';
+  @tree-search-prefix: ~'@{ctree-prefix}-tree-search';
+  @tree-dropdown-prefix: ~'@{ctree-prefix}-dropdown';
 
   // TreeDrop
   .@{tree-drop-prefix} {
@@ -56,14 +56,15 @@
         &-drop {
           @scale: 0.5;
           @translate: -(@icon-size / 2) * @scale;
-          @transform-rest: scale(@scale) translateX(@translate) translateY(@translate);
+          @transform-rest: scale(@scale) translateX(@translate)
+            translateY(@translate);
 
           .icon();
           border: 3px solid @ctree-color-sub;
           border-top: none;
           border-left: none;
           transform: rotate(45deg) @transform-rest;
-          transition: transform .2s ease-in-out;
+          transition: transform 0.2s ease-in-out;
 
           &_active {
             transform: rotate(225deg) @transform-rest;
@@ -78,7 +79,7 @@
             @offset: (@icon-size - @thick) / 2;
             @diff: 7px;
 
-            content: "";
+            content: '';
             width: @thick;
             height: @icon-size - @diff;
             display: block;
@@ -142,14 +143,15 @@
 
   // Dropdown animation
   .@{tree-dropdown-prefix} {
-    &-enter, &-leave-to {
+    &-enter,
+    &-leave-to {
       opacity: 0;
-      transform: scaleY(0.8)
+      transform: scaleY(0.8);
     }
 
-    &-enter-active, &-leave-active {
-      transition: opacity .3s,
-                  transform .3s;
+    &-enter-active,
+    &-leave-active {
+      transition: opacity 0.3s, transform 0.3s;
     }
   }
 }

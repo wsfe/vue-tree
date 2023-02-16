@@ -1,40 +1,43 @@
 import TreeNode, { ITreeNodeOptions } from './tree-node'
 import { ignoreEnum } from '../const'
-import {TreeNodeKeyType, IgnoreType} from '../types'
+import { TreeNodeKeyType, IgnoreType } from '../types'
 
 //#region Interfaces
 
 interface ITreeStoreOptions {
-  [key: string]: any,
-  keyField: string,
-  ignoreMode?: IgnoreType,
-  filteredNodeCheckable?: boolean,
-  cascade?: boolean,
-  defaultExpandAll?: boolean,
-  load?: Function,
-  expandOnFilter?: boolean,
+  [key: string]: any
+  keyField: string
+  ignoreMode?: IgnoreType
+  filteredNodeCheckable?: boolean
+  cascade?: boolean
+  defaultExpandAll?: boolean
+  load?: Function
+  expandOnFilter?: boolean
 }
 
 interface IMapData {
-  [key: string]: TreeNode,
-  [key: number]: TreeNode,
+  [key: string]: TreeNode
+  [key: number]: TreeNode
 }
 
 interface IListenersMap {
-  [eventName: string]: Function[],
+  [eventName: string]: Function[]
 }
 
 export interface IEventNames {
-  'set-data': () => void,
-  'visible-data-change': () => void,
-  'render-data-change': () => void,
-  'expand': NodeGeneralListenerType,
-  'select': NodeGeneralListenerType,
-  'unselect': NodeGeneralListenerType,
-  'selected-change': (node: TreeNode | null, key: TreeNodeKeyType | null) => void,
-  'check': NodeGeneralListenerType,
-  'uncheck': NodeGeneralListenerType,
-  'checked-change': (nodes: TreeNode[], keys: TreeNodeKeyType[]) => void,
+  'set-data': () => void
+  'visible-data-change': () => void
+  'render-data-change': () => void
+  expand: NodeGeneralListenerType
+  select: NodeGeneralListenerType
+  unselect: NodeGeneralListenerType
+  'selected-change': (
+    node: TreeNode | null,
+    key: TreeNodeKeyType | null
+  ) => void
+  check: NodeGeneralListenerType
+  uncheck: NodeGeneralListenerType
+  'checked-change': (nodes: TreeNode[], keys: TreeNodeKeyType[]) => void
 }
 
 //#endregion Interfaces
@@ -75,11 +78,17 @@ export default class TreeStore {
 
   //#endregion Properties
 
-  constructor (private readonly options: ITreeStoreOptions) {
-  }
+  constructor(private readonly options: ITreeStoreOptions) {}
 
-  setData (data: ITreeNodeOptions[], selectableUnloadKey: TreeNodeKeyType | null = null, checkableUnloadKeys: TreeNodeKeyType[] | null = null): void {
-    this.data = data.map((nodeData: ITreeNodeOptions): TreeNode => new TreeNode(nodeData, null, this.options.keyField, !!this.options.load))
+  setData(
+    data: ITreeNodeOptions[],
+    selectableUnloadKey: TreeNodeKeyType | null = null,
+    checkableUnloadKeys: TreeNodeKeyType[] | null = null
+  ): void {
+    this.data = data.map(
+      (nodeData: ITreeNodeOptions): TreeNode =>
+        new TreeNode(nodeData, null, this.options.keyField, !!this.options.load)
+    )
     // 清空 mapData
     for (let key in this.mapData) delete this.mapData[key]
     // 扁平化之前清空单选选中，如果 value 有值，则是 selectableUnloadKey 有值，会重新设置 currentSelectedKey ；多选选中没有存储在 store 中，因此不必事先清空。
@@ -107,9 +116,16 @@ export default class TreeStore {
    * @param triggerDataChange 是否触发 `data-change` 事件以通知外部刷新视图
    * @param filtering 是否正在过滤，如果是，则考虑 `filteredNodeCheckable` Prop，用于判断是否是用户点击节点触发的勾选
    */
-  setChecked (key: TreeNodeKeyType, value: boolean, triggerEvent: boolean = true, triggerDataChange: boolean = true, filtering: boolean = false): void {
+  setChecked(
+    key: TreeNodeKeyType,
+    value: boolean,
+    triggerEvent: boolean = true,
+    triggerDataChange: boolean = true,
+    filtering: boolean = false
+  ): void {
     const node = this.mapData[key]
-    if (!node) return this.setUnloadChecked(key, value, triggerEvent, triggerDataChange)
+    if (!node)
+      return this.setUnloadChecked(key, value, triggerEvent, triggerDataChange)
     if (node.disabled) return
 
     // 首先确定没有变化的情况
@@ -139,7 +155,12 @@ export default class TreeStore {
   /**
    * 设置单个未加载节点选中，不公开此 API
    */
-  private setUnloadChecked (key: TreeNodeKeyType, value: boolean,  triggerEvent: boolean = true, triggerDataChange: boolean = true): void {
+  private setUnloadChecked(
+    key: TreeNodeKeyType,
+    value: boolean,
+    triggerEvent: boolean = true,
+    triggerDataChange: boolean = true
+  ): void {
     const index = this.findIndex(key, this.unloadCheckedKeys)
     if (value) {
       if (index === -1) {
@@ -160,8 +181,13 @@ export default class TreeStore {
    * @param value 是否选中
    * @param triggerEvent 是否触发事件
    */
-  setCheckedKeys (keys: TreeNodeKeyType[], value: boolean, triggerEvent: boolean = true, triggerDataChange: boolean = true): void {
-    keys.forEach((key) => {
+  setCheckedKeys(
+    keys: TreeNodeKeyType[],
+    value: boolean,
+    triggerEvent: boolean = true,
+    triggerDataChange: boolean = true
+  ): void {
+    keys.forEach(key => {
       this.setChecked(key, value, false, false)
     })
 
@@ -173,11 +199,14 @@ export default class TreeStore {
    * @param triggerEvent 是否触发事件
    * @param triggerDataChange 是否触发视图刷新
    */
-  checkAll (triggerEvent: boolean = true, triggerDataChange: boolean = true): void {
+  checkAll(
+    triggerEvent: boolean = true,
+    triggerDataChange: boolean = true
+  ): void {
     if (this.options.cascade) {
       // 级联时，只要勾选第一层节点即可，如果第一层被禁用了，则往下一层勾选
       const checkCascade = (nodes: TreeNode[]): void => {
-        nodes.forEach((node) => {
+        nodes.forEach(node => {
           if (node.disabled) {
             checkCascade(node.children)
           } else {
@@ -202,9 +231,12 @@ export default class TreeStore {
    * @param triggerEvent 是否触发事件
    * @param triggerDataChange 是否触发视图刷新
    */
-  clearChecked (triggerEvent: boolean = true, triggerDataChange: boolean = true): void {
+  clearChecked(
+    triggerEvent: boolean = true,
+    triggerDataChange: boolean = true
+  ): void {
     const currentCheckedNodes = this.getCheckedNodes()
-    currentCheckedNodes.forEach((checkedNode) => {
+    currentCheckedNodes.forEach(checkedNode => {
       this.setChecked(checkedNode[this.options.keyField], false, false, false)
     })
     // 清空未加载多选选中节点
@@ -218,7 +250,10 @@ export default class TreeStore {
    * @param triggerEvent 是否触发事件
    * @param triggerDataChange 是否触发视图刷新
    */
-  private triggerCheckedChange (triggerEvent: boolean = true, triggerDataChange: boolean = true) {
+  private triggerCheckedChange(
+    triggerEvent: boolean = true,
+    triggerDataChange: boolean = true
+  ) {
     if (triggerEvent) {
       this.emit('checked-change', this.getCheckedNodes(), this.getCheckedKeys())
     }
@@ -234,24 +269,35 @@ export default class TreeStore {
    * @param value 是否选中
    * @param triggerEvent 是否触发事件
    */
-  setSelected (key: TreeNodeKeyType, value: boolean, triggerEvent: boolean = true, triggerDataChange: boolean = true): void {
+  setSelected(
+    key: TreeNodeKeyType,
+    value: boolean,
+    triggerEvent: boolean = true,
+    triggerDataChange: boolean = true
+  ): void {
     const node = this.mapData[key]
-    if (!node) return this.setUnloadSelected(key, value, triggerEvent, triggerDataChange)
+    if (!node)
+      return this.setUnloadSelected(key, value, triggerEvent, triggerDataChange)
     if (node.disabled) return
 
     if (node.selected === value) return // 当前节点已经是将要设置的状态，直接返回
 
-    if (key === this.currentSelectedKey) { // 设置的节点即当前已选中节点
-      if (!value) { // 取消当前选中节点
+    if (key === this.currentSelectedKey) {
+      // 设置的节点即当前已选中节点
+      if (!value) {
+        // 取消当前选中节点
         node.selected = value
         this.currentSelectedKey = null
       }
-    } else { // 设置的节点不是当前已选中节点，要么当前没有选中节点，要么当前有选中节点
+    } else {
+      // 设置的节点不是当前已选中节点，要么当前没有选中节点，要么当前有选中节点
       if (value) {
-        if (this.currentSelectedKey === null) { // 当前没有选中节点
+        if (this.currentSelectedKey === null) {
+          // 当前没有选中节点
           node.selected = value
           this.currentSelectedKey = node[this.options.keyField]
-        } else { // 取消当前已选中，设置新的选中节点
+        } else {
+          // 取消当前已选中，设置新的选中节点
           if (this.mapData[this.currentSelectedKey]) {
             this.mapData[this.currentSelectedKey].selected = false
           }
@@ -268,7 +314,11 @@ export default class TreeStore {
         this.emit('unselect', node)
       }
 
-      this.emit('selected-change', this.getSelectedNode(), this.getSelectedKey())
+      this.emit(
+        'selected-change',
+        this.getSelectedNode(),
+        this.getSelectedKey()
+      )
     }
 
     if (triggerDataChange) {
@@ -279,7 +329,12 @@ export default class TreeStore {
   /**
    * 设置未加载单选选中节点，不公开此 API
    */
-  private setUnloadSelected (key: TreeNodeKeyType, value: boolean, triggerEvent: boolean = true, triggerDataChange: boolean = true): void {
+  private setUnloadSelected(
+    key: TreeNodeKeyType,
+    value: boolean,
+    triggerEvent: boolean = true,
+    triggerDataChange: boolean = true
+  ): void {
     if (value) {
       if (this.currentSelectedKey) {
         this.setSelected(this.currentSelectedKey, false, false, false)
@@ -292,7 +347,11 @@ export default class TreeStore {
     }
 
     if (triggerEvent) {
-      this.emit('selected-change', this.getSelectedNode(), this.getSelectedKey())
+      this.emit(
+        'selected-change',
+        this.getSelectedNode(),
+        this.getSelectedKey()
+      )
     }
 
     if (triggerDataChange) {
@@ -305,14 +364,26 @@ export default class TreeStore {
    * @param triggerEvent 是否触发事件
    * @param triggerDataChange 是否触发视图刷新
    */
-  clearSelected (triggerEvent: boolean = true, triggerDataChange: boolean = true): void {
+  clearSelected(
+    triggerEvent: boolean = true,
+    triggerDataChange: boolean = true
+  ): void {
     if (this.currentSelectedKey && this.mapData[this.currentSelectedKey]) {
-      this.setSelected(this.currentSelectedKey, false, triggerEvent, triggerDataChange)
+      this.setSelected(
+        this.currentSelectedKey,
+        false,
+        triggerEvent,
+        triggerDataChange
+      )
     } else if (this.unloadSelectedKey !== null) {
       this.unloadSelectedKey = null
 
       if (triggerEvent) {
-        this.emit('selected-change', this.getSelectedNode(), this.getSelectedKey())
+        this.emit(
+          'selected-change',
+          this.getSelectedNode(),
+          this.getSelectedKey()
+        )
       }
 
       if (triggerDataChange) {
@@ -329,7 +400,13 @@ export default class TreeStore {
    * @param triggerEvent 是否触发事件
    * @param triggerDataChange 是否触发 `data-change` 事件以通知外部刷新视图
    */
-  setExpand (key: TreeNodeKeyType, value: boolean, expandParent: boolean = false, triggerEvent: boolean = true, triggerDataChange: boolean = true): void {
+  setExpand(
+    key: TreeNodeKeyType,
+    value: boolean,
+    expandParent: boolean = false,
+    triggerEvent: boolean = true,
+    triggerDataChange: boolean = true
+  ): void {
     const node = this.mapData[key]
     if (!node || (!expandParent && node.isLeaf)) return
 
@@ -344,44 +421,50 @@ export default class TreeStore {
             this.emit('visible-data-change')
           }
           new Promise((resolve, reject) => {
-            const load = (this.options.load as Function)
+            const load = this.options.load as Function
             load(node, resolve, reject)
-          }).then((children) => {
-            if (Array.isArray(children)) {
-              const parentIndex: number = this.findIndex(node)
-              if (parentIndex === -1) return
-              node._loaded = true
-              node.expand = value
-              node.setChildren(children)
-              // 如果单选选中的值为空，则允许后续数据覆盖单选 value
-              const currentCheckedKeys = this.getCheckedKeys()
-              const flattenChildren = this.flattenData(node.children, this.getSelectedKey === null)
-              this.flatData.splice(parentIndex + 1, 0, ...flattenChildren)
-              // 如果有未加载的选中节点，判断其是否已加载
-              this.setUnloadCheckedKeys(currentCheckedKeys)
-              if (this.unloadSelectedKey !== null) {
-                this.setUnloadSelectedKey(this.unloadSelectedKey)
-              }
-              this.emit('set-data')
-            }
-          }).catch((e: Error | string) => {
-            let err = e
-            if (!(e instanceof Error)) {
-              err = new Error(e)
-            }
-            // tslint:disable-next-line: no-console
-            console.error(err)
-          }).then(() => {
-            node._loading = false
-
-            if (triggerEvent) {
-              this.emit('expand', node)
-            }
-
-            if (triggerDataChange) {
-              this.emit('visible-data-change')
-            }
           })
+            .then(children => {
+              if (Array.isArray(children)) {
+                const parentIndex: number = this.findIndex(node)
+                if (parentIndex === -1) return
+                node._loaded = true
+                node.expand = value
+                node.setChildren(children)
+                // 如果单选选中的值为空，则允许后续数据覆盖单选 value
+                const currentCheckedKeys = this.getCheckedKeys()
+                const flattenChildren = this.flattenData(
+                  node.children,
+                  this.getSelectedKey === null
+                )
+                this.flatData.splice(parentIndex + 1, 0, ...flattenChildren)
+                // 如果有未加载的选中节点，判断其是否已加载
+                this.setUnloadCheckedKeys(currentCheckedKeys)
+                if (this.unloadSelectedKey !== null) {
+                  this.setUnloadSelectedKey(this.unloadSelectedKey)
+                }
+                this.emit('set-data')
+              }
+            })
+            .catch((e: Error | string) => {
+              let err = e
+              if (!(e instanceof Error)) {
+                err = new Error(e)
+              }
+              // tslint:disable-next-line: no-console
+              console.error(err)
+            })
+            .then(() => {
+              node._loading = false
+
+              if (triggerEvent) {
+                this.emit('expand', node)
+              }
+
+              if (triggerDataChange) {
+                this.emit('visible-data-change')
+              }
+            })
           return
         } else if (node._loading) return // 正在加载的节点，直接返回
       }
@@ -396,7 +479,9 @@ export default class TreeStore {
         if (queue[0]._filterVisible === false) {
           queue[0].visible = false
         } else {
-          queue[0].visible = queue[0]._parent === null || (queue[0]._parent.expand && queue[0]._parent.visible)
+          queue[0].visible =
+            queue[0]._parent === null ||
+            (queue[0]._parent.expand && queue[0]._parent.visible)
         }
         queue.shift()
       }
@@ -411,7 +496,13 @@ export default class TreeStore {
     }
 
     if (expandParent && node._parent && value) {
-      this.setExpand(node._parent[this.options.keyField], value, expandParent, false, triggerDataChange)
+      this.setExpand(
+        node._parent[this.options.keyField],
+        value,
+        expandParent,
+        false,
+        triggerDataChange
+      )
     }
   }
 
@@ -420,8 +511,12 @@ export default class TreeStore {
    * @param keys 展开的节点 key 数组
    * @param value 是否展开
    */
-  setExpandKeys (keys: TreeNodeKeyType[], value: boolean, triggerDataChange: boolean = true): void {
-    keys.forEach((key) => {
+  setExpandKeys(
+    keys: TreeNodeKeyType[],
+    value: boolean,
+    triggerDataChange: boolean = true
+  ): void {
+    keys.forEach(key => {
       this.setExpand(key, value, false, false, false)
     })
 
@@ -430,8 +525,8 @@ export default class TreeStore {
     }
   }
 
-  setExpandAll (value: boolean, triggerDataChange: boolean = true): void {
-    this.flatData.forEach((node) => {
+  setExpandAll(value: boolean, triggerDataChange: boolean = true): void {
+    this.flatData.forEach(node => {
       if (!this.options.load || node._loaded) {
         this.setExpand(node[this.options.keyField], value, false, false, false)
       }
@@ -450,11 +545,11 @@ export default class TreeStore {
    * 获取多选选中节点
    * @param ignoreMode 忽略模式，可选择忽略父节点或子节点，默认值是 CTree 的 ignoreMode Prop
    */
-  getCheckedNodes (ignoreMode = this.options.ignoreMode): TreeNode[] {
+  getCheckedNodes(ignoreMode = this.options.ignoreMode): TreeNode[] {
     if (ignoreMode === ignoreEnum.children) {
       const result: TreeNode[] = []
       const traversal = (nodes: TreeNode[]) => {
-        nodes.forEach((node) => {
+        nodes.forEach(node => {
           if (node.checked) {
             result.push(node)
           } else if (!node.isLeaf && node.indeterminate) {
@@ -465,8 +560,9 @@ export default class TreeStore {
       traversal(this.data)
       return result
     } else {
-      return this.flatData.filter((node) => {
-        if (ignoreMode === ignoreEnum.parents) return node.checked && node.isLeaf
+      return this.flatData.filter(node => {
+        if (ignoreMode === ignoreEnum.parents)
+          return node.checked && node.isLeaf
         return node.checked
       })
     }
@@ -476,21 +572,23 @@ export default class TreeStore {
    * 获取多选选中的节点 key ，包括未加载的 key
    * @param ignoreMode 忽略模式，同 `getCheckedNodes`
    */
-  getCheckedKeys (ignoreMode = this.options.ignoreMode): TreeNodeKeyType[] {
-    return this.getCheckedNodes(ignoreMode).map((checkedNodes) => checkedNodes[this.options.keyField]).concat(this.unloadCheckedKeys)
+  getCheckedKeys(ignoreMode = this.options.ignoreMode): TreeNodeKeyType[] {
+    return this.getCheckedNodes(ignoreMode)
+      .map(checkedNodes => checkedNodes[this.options.keyField])
+      .concat(this.unloadCheckedKeys)
   }
 
   /**
    * 获取多选半选状态节点
    */
-  getIndeterminateNodes (): TreeNode[] {
-    return this.flatData.filter((node) => node.indeterminate)
+  getIndeterminateNodes(): TreeNode[] {
+    return this.flatData.filter(node => node.indeterminate)
   }
 
   /**
    * 获取当前单选选中节点
    */
-  getSelectedNode (): TreeNode | null {
+  getSelectedNode(): TreeNode | null {
     if (this.currentSelectedKey === null) return null
     return this.mapData[this.currentSelectedKey] || null
   }
@@ -498,36 +596,36 @@ export default class TreeStore {
   /**
    * 获取当前单选选中节点 key ，有可能是未加载的选中项
    */
-  getSelectedKey (): TreeNodeKeyType | null {
+  getSelectedKey(): TreeNodeKeyType | null {
     return this.currentSelectedKey || this.unloadSelectedKey || null
   }
 
   /**
    * 获取未加载但多选选中的节点
    */
-  getUnloadCheckedKeys (): TreeNodeKeyType[] {
+  getUnloadCheckedKeys(): TreeNodeKeyType[] {
     return this.unloadCheckedKeys
   }
 
   /**
    * 获取展开节点
    */
-  getExpandNodes (): TreeNode[] {
-    return this.flatData.filter((node) => !node.isLeaf && node.expand)
+  getExpandNodes(): TreeNode[] {
+    return this.flatData.filter(node => !node.isLeaf && node.expand)
   }
 
   /**
    * 获取展开节点 keys
    */
-  getExpandKeys (): TreeNodeKeyType[] {
-    return this.getExpandNodes().map((node) => node[this.options.keyField])
+  getExpandKeys(): TreeNodeKeyType[] {
+    return this.getExpandNodes().map(node => node[this.options.keyField])
   }
 
   /**
    * 根据节点 key  获取节点
    * @param key 节点 key
    */
-  getNode (key: TreeNodeKeyType): TreeNode | null {
+  getNode(key: TreeNodeKeyType): TreeNode | null {
     return this.mapData[key] || null
   }
 
@@ -537,7 +635,10 @@ export default class TreeStore {
 
   // 这边的 referenceKey 都是被执行的节点，比如 insertBefore ，在这里 referenceKey 就是指要插入到 referenceKey 节点前面
 
-  insertBefore (insertedNode: TreeNodeKeyType | ITreeNodeOptions, referenceKey: TreeNodeKeyType): TreeNode | null {
+  insertBefore(
+    insertedNode: TreeNodeKeyType | ITreeNodeOptions,
+    referenceKey: TreeNodeKeyType
+  ): TreeNode | null {
     const node = this.getInsertedNode(insertedNode, referenceKey)
     if (!node) return null
 
@@ -545,17 +646,24 @@ export default class TreeStore {
 
     const referenceNode = this.mapData[referenceKey]
     const parentNode = referenceNode._parent
-    const childIndex = this.findIndex(referenceKey, parentNode && parentNode.children)
+    const childIndex = this.findIndex(
+      referenceKey,
+      parentNode && parentNode.children
+    )
     const flatIndex = this.findIndex(referenceKey)
 
-    const dataIndex = (parentNode && -1) || this.findIndex(referenceKey, this.data)
+    const dataIndex =
+      (parentNode && -1) || this.findIndex(referenceKey, this.data)
 
     this.insertIntoStore(node, parentNode, childIndex, flatIndex, dataIndex)
     this.emit('visible-data-change')
     return node
   }
 
-  insertAfter (insertedNode: TreeNodeKeyType | ITreeNodeOptions, referenceKey: TreeNodeKeyType): TreeNode | null {
+  insertAfter(
+    insertedNode: TreeNodeKeyType | ITreeNodeOptions,
+    referenceKey: TreeNodeKeyType
+  ): TreeNode | null {
     const node = this.getInsertedNode(insertedNode, referenceKey)
     if (!node) return null
 
@@ -563,7 +671,8 @@ export default class TreeStore {
 
     const referenceNode = this.mapData[referenceKey]
     const parentNode = referenceNode._parent
-    const childIndex = this.findIndex(referenceKey, parentNode && parentNode.children) + 1
+    const childIndex =
+      this.findIndex(referenceKey, parentNode && parentNode.children) + 1
 
     const length = this.flatData.length
     const referenceIndex = this.findIndex(referenceKey)
@@ -581,18 +690,25 @@ export default class TreeStore {
       }
     }
 
-    const dataIndex = (parentNode && -1) || (this.findIndex(referenceKey, this.data) + 1)
+    const dataIndex =
+      (parentNode && -1) || this.findIndex(referenceKey, this.data) + 1
 
     this.insertIntoStore(node, parentNode, childIndex, flatIndex, dataIndex)
     this.emit('visible-data-change')
     return node
   }
 
-  append (insertedNode: TreeNodeKeyType | ITreeNodeOptions, parentKey: TreeNodeKeyType): TreeNode | null {
+  append(
+    insertedNode: TreeNodeKeyType | ITreeNodeOptions,
+    parentKey: TreeNodeKeyType
+  ): TreeNode | null {
     const parentNode = this.mapData[parentKey]
     if (!parentNode.isLeaf) {
       const childrenLength = parentNode.children.length
-      return this.insertAfter(insertedNode, parentNode.children[childrenLength - 1][this.options.keyField])
+      return this.insertAfter(
+        insertedNode,
+        parentNode.children[childrenLength - 1][this.options.keyField]
+      )
     }
 
     const node = this.getInsertedNode(insertedNode, parentKey, true)
@@ -607,10 +723,16 @@ export default class TreeStore {
     return node
   }
 
-  prepend (insertedNode: TreeNodeKeyType | ITreeNodeOptions, parentKey: TreeNodeKeyType): TreeNode | null {
+  prepend(
+    insertedNode: TreeNodeKeyType | ITreeNodeOptions,
+    parentKey: TreeNodeKeyType
+  ): TreeNode | null {
     const parentNode = this.mapData[parentKey]
     if (!parentNode.isLeaf) {
-      return this.insertBefore(insertedNode, parentNode.children[0][this.options.keyField])
+      return this.insertBefore(
+        insertedNode,
+        parentNode.children[0][this.options.keyField]
+      )
     }
 
     const node = this.getInsertedNode(insertedNode, parentKey, true)
@@ -629,7 +751,10 @@ export default class TreeStore {
    * 删除节点
    * @param removedKey 要删除的节点 key
    */
-  remove (removedKey: TreeNodeKeyType, triggerDataChange: boolean = true): TreeNode | null {
+  remove(
+    removedKey: TreeNodeKeyType,
+    triggerDataChange: boolean = true
+  ): TreeNode | null {
     const node = this.mapData[removedKey]
     if (!node) return null
 
@@ -649,7 +774,7 @@ export default class TreeStore {
     const deleteInMap = (key: TreeNodeKeyType): void => {
       const node = this.mapData[key]
       delete this.mapData[key]
-      node.children.forEach((child) => deleteInMap(child[this.options.keyField]))
+      node.children.forEach(child => deleteInMap(child[this.options.keyField]))
     }
     deleteInMap(removedKey)
 
@@ -685,7 +810,11 @@ export default class TreeStore {
     return node
   }
 
-  private getInsertedNode (insertedNode: TreeNodeKeyType | ITreeNodeOptions, referenceKey: TreeNodeKeyType, isParent: boolean = false): TreeNode | null {
+  private getInsertedNode(
+    insertedNode: TreeNodeKeyType | ITreeNodeOptions,
+    referenceKey: TreeNodeKeyType,
+    isParent: boolean = false
+  ): TreeNode | null {
     const referenceNode = this.mapData[referenceKey]
     if (!referenceNode) return null
     const parentNode = isParent ? referenceNode : referenceNode._parent
@@ -697,9 +826,15 @@ export default class TreeStore {
       if (insertedNode[this.options.keyField] === referenceKey) return null
       const mapNode = this.mapData[insertedNode[this.options.keyField]]
       if (mapNode) return mapNode
-      return new TreeNode(insertedNode, parentNode, this.options.keyField, !!this.options.load)
+      return new TreeNode(
+        insertedNode,
+        parentNode,
+        this.options.keyField,
+        !!this.options.load
+      )
     } else {
-      if (!this.mapData[insertedNode] || insertedNode === referenceKey) return null
+      if (!this.mapData[insertedNode] || insertedNode === referenceKey)
+        return null
       return this.mapData[insertedNode]
     }
   }
@@ -712,7 +847,13 @@ export default class TreeStore {
    * @param flatIndex 在 flatData 中的索引
    * @param dataIndex 如果没有父节点，需要提供节点在 data 中的索引
    */
-  private insertIntoStore (node: TreeNode, parentNode: TreeNode | null, childIndex: number, flatIndex: number, dataIndex?: number): void {
+  private insertIntoStore(
+    node: TreeNode,
+    parentNode: TreeNode | null,
+    childIndex: number,
+    flatIndex: number,
+    dataIndex?: number
+  ): void {
     if (flatIndex === -1) return
 
     // 插入父节点 children 中
@@ -726,7 +867,13 @@ export default class TreeStore {
     // 更新父节点 isLeaf, expand
     if (parentNode) {
       parentNode.isLeaf = false
-      this.setExpand(parentNode[this.options.keyField], true, false, false, false)
+      this.setExpand(
+        parentNode[this.options.keyField],
+        true,
+        false,
+        false,
+        false
+      )
     } else if (typeof dataIndex === 'number' && dataIndex > -1) {
       // 没有父节点，则需要插入到 this.data 中以保证数据正确
       this.data.splice(dataIndex, 0, node)
@@ -736,14 +883,19 @@ export default class TreeStore {
     const nodes: TreeNode[] = this.flattenData([node])
     // 处理自身及子节点 _level
     node._level = parentNode ? parentNode._level + 1 : 0
-    nodes.forEach((childNode) => childNode._level = childNode._parent ? childNode._parent._level + 1 : 0)
+    nodes.forEach(
+      childNode =>
+        (childNode._level = childNode._parent
+          ? childNode._parent._level + 1
+          : 0)
+    )
     this.flatData.splice(flatIndex, 0, ...nodes)
 
     // 更新被移除处父节点状态
     this.updateMovingNodeStatus(node)
   }
 
-  private updateMovingNodeStatus (movingNode: TreeNode): void {
+  private updateMovingNodeStatus(movingNode: TreeNode): void {
     // 处理多选
     this.checkNodeUpward(movingNode)
     this.triggerCheckedChange()
@@ -760,11 +912,13 @@ export default class TreeStore {
    * @param keyword 过滤关键词
    * @param filterMethod 过滤方法
    */
-  filter (keyword: string, filterMethod: FilterFunctionType): void {
+  filter(keyword: string, filterMethod: FilterFunctionType): void {
     // 使用树形结构数据进行遍历
     const filterVisibleNodes: TreeNode[] = []
-    this.flatData.forEach((node) => {
-      node._filterVisible = node._parent && node._parent._filterVisible || filterMethod(keyword, node)
+    this.flatData.forEach(node => {
+      node._filterVisible =
+        (node._parent && node._parent._filterVisible) ||
+        filterMethod(keyword, node)
       node.visible = node._filterVisible
 
       if (node._filterVisible) {
@@ -772,21 +926,32 @@ export default class TreeStore {
       }
     })
     // 对于临时列表中的节点，都是可见的，因此将它们的父节点都设为可见并展开
-    filterVisibleNodes.forEach((node) => {
+    filterVisibleNodes.forEach(node => {
       const stack = []
       let parent = node._parent
       while (parent) {
         stack.unshift(parent)
         parent = parent._parent
       }
-      stack.forEach((parent) => {
+      stack.forEach(parent => {
         parent._filterVisible = true
         // parent.visible = parent._filterVisible
         // _filterVisible 且 无父级或者父级展开且可见，则设为可见
-        parent.visible = (parent._parent === null || (parent._parent.expand && parent._parent.visible)) && parent._filterVisible
-        this.options.expandOnFilter && this.setExpand(parent[this.options.keyField], true, false, false, false)
+        parent.visible =
+          (parent._parent === null ||
+            (parent._parent.expand && parent._parent.visible)) &&
+          parent._filterVisible
+        this.options.expandOnFilter &&
+          this.setExpand(
+            parent[this.options.keyField],
+            true,
+            false,
+            false,
+            false
+          )
       })
-      node.visible = node._parent === null || (node._parent.expand && node._parent.visible)
+      node.visible =
+        node._parent === null || (node._parent.expand && node._parent.visible)
     })
 
     this.emit('visible-data-change')
@@ -796,7 +961,7 @@ export default class TreeStore {
    * 过滤未加载多选节点，对比最终勾选节点是否有变化并触发 checked-change 事件
    * @param keys 全量选中节点 key 数组，包括加载与未加载选中节点
    */
-  private setUnloadCheckedKeys (keys: TreeNodeKeyType[]): void {
+  private setUnloadCheckedKeys(keys: TreeNodeKeyType[]): void {
     this.unloadCheckedKeys = keys
     const checkedKeysCache = keys.concat()
     const length = this.unloadCheckedKeys.length
@@ -809,7 +974,13 @@ export default class TreeStore {
     }
 
     const newCheckedKeys = this.getCheckedKeys()
-    if (newCheckedKeys.length === checkedKeysCache.length && newCheckedKeys.every((val) => (checkedKeysCache as TreeNodeKeyType[]).some((cache) => cache === val))) return
+    if (
+      newCheckedKeys.length === checkedKeysCache.length &&
+      newCheckedKeys.every(val =>
+        (checkedKeysCache as TreeNodeKeyType[]).some(cache => cache === val)
+      )
+    )
+      return
     // 因为多选模式下，value 传过来的数据跟数据上标识 checked: true 的结果可能不一致，因此需要触发一个事件告诉外部最终勾选了哪些节点
     this.emit('checked-change', this.getCheckedNodes(), newCheckedKeys)
   }
@@ -818,13 +989,16 @@ export default class TreeStore {
    * 过滤未加载单选选中节点，对比是否有变化并触发 selected-change 事件
    * @param key 节点 key
    */
-  private setUnloadSelectedKey (key: TreeNodeKeyType): void {
+  private setUnloadSelectedKey(key: TreeNodeKeyType): void {
     const selectedKeyCache = this.getSelectedKey()
-    if (this.mapData[key]) { // 如果节点已加载
+    if (this.mapData[key]) {
+      // 如果节点已加载
       this.setSelected(key, true, false)
       this.unloadSelectedKey = null
-    } else { // 节点未加载
-      this.currentSelectedKey && this.setSelected(this.currentSelectedKey, false, false)
+    } else {
+      // 节点未加载
+      this.currentSelectedKey &&
+        this.setSelected(this.currentSelectedKey, false, false)
       this.unloadSelectedKey = key
     }
 
@@ -838,7 +1012,11 @@ export default class TreeStore {
    * @param nodes 树状节点数据
    * @param overrideSelected 是否根据数据设置 `selected`
    */
-  private flattenData (nodes: TreeNode[], overrideSelected: boolean = true, result: TreeNode[] = []): TreeNode[] {
+  private flattenData(
+    nodes: TreeNode[],
+    overrideSelected: boolean = true,
+    result: TreeNode[] = []
+  ): TreeNode[] {
     const length = nodes.length
     for (let i = 0; i < length; i++) {
       const node = nodes[i]
@@ -863,7 +1041,11 @@ export default class TreeStore {
         this.emit('selected-change', node, this.currentSelectedKey)
       }
 
-      if ((this.options.defaultExpandAll || node.expand) && !this.options.load && !node.isLeaf) {
+      if (
+        (this.options.defaultExpandAll || node.expand) &&
+        !this.options.load &&
+        !node.isLeaf
+      ) {
         node.expand = false
         this.setExpand(node[this.options.keyField], true, false, false, false)
       }
@@ -883,14 +1065,23 @@ export default class TreeStore {
    * @param value 勾选或取消勾选
    * @param filtering 是否正在过滤，如果是，则考虑 `filteredNodeCheckable` Prop
    */
-  private checkNodeDownward (node: TreeNode, value: boolean, filtering: boolean = false): void {
-    node.children.forEach((child) => {
+  private checkNodeDownward(
+    node: TreeNode,
+    value: boolean,
+    filtering: boolean = false
+  ): void {
+    node.children.forEach(child => {
       this.checkNodeDownward(child, value, filtering)
     })
     if (node.isLeaf || (this.options.load && !node.children.length)) {
       if (!node.disabled) {
         // 正在过滤，若被过滤节点不可勾选，且节点过滤后不可见，则直接返回
-        if (filtering && !this.options.filteredNodeCheckable && !node._filterVisible) return
+        if (
+          filtering &&
+          !this.options.filteredNodeCheckable &&
+          !node._filterVisible
+        )
+          return
         node.checked = value
         node.indeterminate = false
       }
@@ -903,7 +1094,7 @@ export default class TreeStore {
    * 向上勾选/取消勾选父节点，不包括自身
    * @param node 需要勾选的节点
    */
-  private checkNodeUpward (node: TreeNode) {
+  private checkNodeUpward(node: TreeNode) {
     let parent = node._parent
     while (parent) {
       this.checkParentNode(parent)
@@ -915,7 +1106,7 @@ export default class TreeStore {
    * 根据子节点的勾选状态更新当前父节点的勾选状态
    * @param node 需要勾选的节点
    */
-  private checkParentNode (node: TreeNode): void {
+  private checkParentNode(node: TreeNode): void {
     const length = node.children.length
     if (!length) return
     let hasChecked = false
@@ -948,9 +1139,15 @@ export default class TreeStore {
   /**
    * 搜索节点在指定数组中的位置
    */
-  private findIndex (keyOrNode: TreeNode | TreeNodeKeyType, searchList: TreeNode[] | TreeNodeKeyType[] | null = this.flatData): number {
+  private findIndex(
+    keyOrNode: TreeNode | TreeNodeKeyType,
+    searchList: TreeNode[] | TreeNodeKeyType[] | null = this.flatData
+  ): number {
     if (searchList !== null) {
-      let key: TreeNodeKeyType = keyOrNode instanceof TreeNode ? keyOrNode[this.options.keyField] : keyOrNode
+      let key: TreeNodeKeyType =
+        keyOrNode instanceof TreeNode
+          ? keyOrNode[this.options.keyField]
+          : keyOrNode
       const length = searchList.length
       for (let i = 0; i < length; i++) {
         if (searchList[0] instanceof TreeNode) {
@@ -970,7 +1167,10 @@ export default class TreeStore {
   //#endregion Utils
 
   //#region Mini EventTarget
-  on<T extends keyof IEventNames> (eventName: T, listener: ListenerType<T> | Array<ListenerType<T>>): void {
+  on<T extends keyof IEventNames>(
+    eventName: T,
+    listener: ListenerType<T> | Array<ListenerType<T>>
+  ): void {
     if (!this.listenersMap[eventName]) {
       this.listenersMap[eventName] = []
     }
@@ -980,14 +1180,17 @@ export default class TreeStore {
     } else {
       listeners = listener
     }
-    listeners.forEach((listener) => {
+    listeners.forEach(listener => {
       if (this.listenersMap[eventName].indexOf(listener) === -1) {
         this.listenersMap[eventName].push(listener)
       }
     })
   }
 
-  off<T extends keyof IEventNames> (eventName: T, listener?: ListenerType<T>): void {
+  off<T extends keyof IEventNames>(
+    eventName: T,
+    listener?: ListenerType<T>
+  ): void {
     if (!this.listenersMap[eventName]) return
     if (!listener) {
       this.listenersMap[eventName] = []
@@ -999,7 +1202,10 @@ export default class TreeStore {
     }
   }
 
-  emit<T extends keyof IEventNames> (eventName: T, ...args: Parameters<IEventNames[T]>): void {
+  emit<T extends keyof IEventNames>(
+    eventName: T,
+    ...args: Parameters<IEventNames[T]>
+  ): void {
     if (!this.listenersMap[eventName]) return
     const length: number = this.listenersMap[eventName].length
     for (let i: number = 0; i < length; i++) {

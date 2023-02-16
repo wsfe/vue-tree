@@ -10,8 +10,16 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "lib": ["ESNext", "DOM"],
-    "skipLibCheck": true,
+    "skipLibCheck": true
   },
-  "include": ["examples/**/*.ts", "examples/**/*.d.ts", "examples/**/*.tsx", "examples/**/*.vue"],
-  "references": [{ "path": "../tsconfig.json" }, { "path": "./tsconfig.node.json" }]
+  "include": [
+    "examples/**/*.ts",
+    "examples/**/*.d.ts",
+    "examples/**/*.tsx",
+    "examples/**/*.vue"
+  ],
+  "references": [
+    { "path": "../tsconfig.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
 }

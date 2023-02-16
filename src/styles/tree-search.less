@@ -1,6 +1,6 @@
 #ctree-tree-search-styles () {
   // prefix
-  @tree-search-prefix: ~"@{ctree-prefix}-tree-search";
+  @tree-search-prefix: ~'@{ctree-prefix}-tree-search';
 
   // TreeSearch
   .@{tree-search-prefix} {
@@ -12,7 +12,7 @@
       align-items: center;
       justify-content: center;
     }
-    
+
     // 容器
     &__wrapper {
       width: 100%;
@@ -58,9 +58,8 @@
       border-radius: 4px;
       padding: 4px 7px;
       outline: none;
-      transition: border .2s ease-in-out,
-                  box-shadow .2s ease-in-out;
-      
+      transition: border 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
       &::placeholder {
         color: @ctree-color-input-placeholder;
       }

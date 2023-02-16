@@ -1,7 +1,7 @@
 #ctree-tree-styles () {
   // prefix
-  @tree-prefix: ~"@{ctree-prefix}-tree";
-  @tree-node-prefix: ~"@{tree-prefix}-node";
+  @tree-prefix: ~'@{ctree-prefix}-tree';
+  @tree-node-prefix: ~'@{tree-prefix}-node';
 
   // Tree
   .@{tree-prefix} {
@@ -50,7 +50,7 @@
     // 加载中
     &__loading {
       .wrap-tree();
-      background-color: rgba(255, 255, 255, .95);
+      background-color: rgba(255, 255, 255, 0.95);
       &-wrapper {
         width: 100%;
         text-align: center;
@@ -134,10 +134,10 @@
       width: @icon-clickable-size;
       height: @icon-clickable-size;
       position: relative;
-      transition: transform .2s linear;
+      transition: transform 0.2s linear;
 
       // 展开状态，顺时针旋转 90 度
-      &_active{
+      &_active {
         transform: rotate(90deg);
       }
     }
@@ -165,12 +165,11 @@
       border-color: @ctree-color-border;
       border-radius: 2px;
       background-color: #fff;
-      transition: border-color .2s ease-in-out,
-                  background-color .2s ease-in-out,
-                  box-shadow .2s ease-in-out;
-      
+      transition: border-color 0.2s ease-in-out,
+        background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
       &::after {
-        content: "";
+        content: '';
         display: table;
         position: absolute;
         box-sizing: border-box;
@@ -182,7 +181,7 @@
         top: 1px;
         left: 4px;
         transform: rotate(45deg) scale(0);
-        transition: all .2s ease-in-out;
+        transition: all 0.2s ease-in-out;
       }
 
       &:hover {
