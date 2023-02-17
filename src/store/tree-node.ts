@@ -1,11 +1,11 @@
-import { TreeNodeKeyType } from '../const'
+import { TreeNodeKeyType } from '../types'
 
 interface IKeyOption {
-  [key: string]: TreeNodeKeyType,
+  [key: string]: TreeNodeKeyType
 }
 
 export interface ITreeNodeOptions extends IKeyOption {
-  [key: string]: any,
+  [key: string]: any
 }
 
 const notAllowOverrideList: string[] = [
@@ -17,7 +17,7 @@ const notAllowOverrideList: string[] = [
   '_remote',
   '_keyField',
   'children',
-  'setChildren',
+  'setChildren'
 ]
 
 export default class TreeNode {
@@ -66,7 +66,12 @@ export default class TreeNode {
 
   //#endregion Properties
 
-  constructor (options: ITreeNodeOptions, parent: null | TreeNode = null, readonly _keyField: string = 'id', readonly _remote: boolean = false) {
+  constructor(
+    options: ITreeNodeOptions,
+    parent: null | TreeNode = null,
+    readonly _keyField: string = 'id',
+    readonly _remote: boolean = false
+  ) {
     for (let option in options) {
       if (notAllowOverrideList.indexOf(option) === -1) {
         this[option] = options[option]
@@ -84,7 +89,8 @@ export default class TreeNode {
       this._level = this._parent._level + 1
     }
 
-    this.visible = this._parent === null || (this._parent.expand && this._parent.visible)
+    this.visible =
+      this._parent === null || (this._parent.expand && this._parent.visible)
 
     if (Array.isArray(options.children)) {
       this.setChildren(options.children)
@@ -103,9 +109,14 @@ export default class TreeNode {
    * 设置子节点
    * @param children 子节点数据数组
    */
-  setChildren (children: ITreeNodeOptions[]): void {
-    this.children = children.map((child) => {
-      return new TreeNode(Object.assign({}, child), this, this._keyField, this._remote)
+  setChildren(children: ITreeNodeOptions[]): void {
+    this.children = children.map(child => {
+      return new TreeNode(
+        Object.assign({}, child),
+        this,
+        this._keyField,
+        this._remote
+      )
     })
   }
 }

@@ -1,6 +1,6 @@
 <template>
-  <div style="width: 200px;">
-    <CTreeDrop
+  <div style="width: 200px">
+    <VTreeDrop
       v-model="value"
       :data="data"
       checkable
@@ -9,48 +9,50 @@
       :dropdown-min-width="300"
       dropdown-width-fixed
     >
-      <span slot="empty">slot 传进来的暂无数据</span>
-    </CTreeDrop>
+      <template #empty>slot 传进来的暂无数据</template>
+    </VTreeDrop>
     {{ value }}
   </div>
 </template>
 
-<script>
-import { CTreeDrop } from '../src'
+<script lang="ts">
+import { VTreeDrop } from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
-
+import { defineComponent, ref, watch } from 'vue-demi'
 const genData = (extra = {}) => {
-  return treeDataGenerator(Object.assign({
-    treeDepth: 3,
-    nodesPerLevel: 5,
-    sameIdTitle: true,
-    inOrder: true,
-    forceString: true,
-  }, extra))
+  return treeDataGenerator(
+    Object.assign(
+      {
+        treeDepth: 3,
+        nodesPerLevel: 5,
+        sameIdTitle: true,
+        inOrder: true,
+        forceString: true
+      },
+      extra
+    )
+  )
 }
-
-const data = genData().data
-
-export default {
+export default defineComponent({
   name: 'DropDataChange',
   components: {
-    CTreeDrop,
+    VTreeDrop
   },
-  data () {
-    return {
-      data: [],
-      value: '2',
-    }
-  },
-  watch: {
-    value: {
-      handler (newVal) {
+  setup() {
+    const data = ref(genData().data)
+    const value = ref('2')
+    watch(
+      () => value,
+      () => {
         setTimeout(() => {
-          this.data = data
+          data.value = genData().data
         }, 3000)
-      },
-      immediate: true,
-    },
-  },
-}
+      }
+    )
+    return {
+      data,
+      value
+    }
+  }
+})
 </script>

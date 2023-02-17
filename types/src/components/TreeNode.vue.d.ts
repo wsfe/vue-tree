@@ -1,57 +1,96 @@
-import Vue, { VueConstructor, CreateElement, VNode } from 'vue';
+import { VNode, PropType } from 'vue-demi';
 import { TreeNode } from '../store';
-import { dragHoverPartEnum } from '../const';
-declare const _default: import("vue/types/vue").ExtendedVue<Vue & {
-    $refs: {
-        nodeBody: HTMLDivElement;
-    };
+import type { GetNodeFn } from '../types';
+declare const _default: import("vue-demi").DefineComponent<{
+    /** 节点数据，注意！！为了性能，不让 Vue 监听过多属性，这个 data 不是完整的 TreeNode ，不包括 _parent 和 children 属性 */
+    data: PropType<TreeNode>;
+    /** 节点标题字段 */
+    titleField: StringConstructor;
+    /** 节点唯一标识字段 */
+    keyField: StringConstructor;
+    /** 节点渲染 render 函数 */
+    render: PropType<(node: TreeNode) => VNode>;
+    /** 是否可多选 */
+    checkable: BooleanConstructor;
+    /** 是否可单选 */
+    selectable: BooleanConstructor;
+    /** 点击已选中节点是否取消选中 */
+    unselectOnClick: BooleanConstructor;
+    /** 是否禁用所有节点 */
+    disableAll: BooleanConstructor;
+    /** 是否可拖拽 */
+    draggable: BooleanConstructor;
+    /** 是否可放置 */
+    droppable: BooleanConstructor;
+    getNode: PropType<GetNodeFn>;
 }, {
     /** 节点拖拽 dragover */
-    dragoverBody: boolean;
+    dragoverBody: import("vue-demi").Ref<boolean>;
     /** 节点前拖拽 dragover */
-    dragoverBefore: boolean;
+    dragoverBefore: import("vue-demi").Ref<boolean>;
     /** 节点后拖拽 dragover */
-    dragoverAfter: boolean;
-}, {
-    handleExpand(): void;
-    handleCheck(): void;
-    handleSelect(): void;
-    handleDblclick(): void;
-    handleRightClick(): void;
-    /** 计算拖拽到节点的哪个部分 */
-    getHoverPart(e: DragEvent): dragHoverPartEnum;
-    /**
-     * 重置 dragover 标志位
-     * @param hoverPart 计算出的拖拽部分
-     * @param isLeaveOrDrop 是否是 dragleave 或者 drop 事件，如果是则不再把标志位置为 true
-     */
-    resetDragoverFlags(hoverPart: dragHoverPartEnum, isLeaveOrDrop?: boolean): void;
-    handleDragStart(e: DragEvent): void;
-    handleDragEnter(e: DragEvent): void;
-    handleDragOver(e: DragEvent): void;
-    handleDragLeave(e: DragEvent): void;
-    handleDrop(e: DragEvent): void;
-}, {
-    wrapperCls: (string | object)[];
-    nodeBodyCls: (string | object)[];
-    dropBeforeCls: (string | object)[];
-    dropAfterCls: (string | object)[];
-    squareCls: string[];
-    expandCls: (string | object)[];
-    loadingIconCls: string[];
-    checkboxCls: (string | object)[];
-    titleCls: (string | object)[];
-    fullData: TreeNode;
-    showCheckbox: boolean;
-    renderFunction: ((h: CreateElement, data: TreeNode) => VNode) | null;
-    renderComponent: VueConstructor<Vue>;
-    dragListeners: object;
-    dropListeners: object;
-}, {
-    data: TreeNode;
+    dragoverAfter: import("vue-demi").Ref<boolean>;
+    wrapperCls: import("vue-demi").ComputedRef<(string | {
+        [x: string]: boolean | undefined;
+    })[]>;
+    nodeBodyCls: import("vue-demi").ComputedRef<(string | {
+        [x: string]: boolean;
+    })[]>;
+    dropBeforeCls: import("vue-demi").ComputedRef<(string | {
+        [x: string]: boolean;
+    })[]>;
+    dropAfterCls: import("vue-demi").ComputedRef<(string | {
+        [x: string]: boolean;
+    })[]>;
+    squareCls: import("vue-demi").ComputedRef<string[]>;
+    expandCls: import("vue-demi").ComputedRef<(string | {
+        [x: string]: boolean | undefined;
+    })[]>;
+    loadingIconCls: import("vue-demi").ComputedRef<string[]>;
+    checkboxCls: import("vue-demi").ComputedRef<(string | {
+        [x: string]: boolean | undefined;
+    })[]>;
+    titleCls: import("vue-demi").ComputedRef<(string | {
+        [x: string]: boolean | undefined;
+    })[]>;
+    fullData: import("vue-demi").ComputedRef<any>;
+    showCheckbox: import("vue-demi").ComputedRef<boolean>;
+    renderFunction: any;
+    renderComponent: import("vue-demi").ComputedRef<import("vue-demi").DefineComponent<{}, {}, {}, {}, {}, import("vue-demi").ComponentOptionsMixin, import("vue-demi").ComponentOptionsMixin, {}, string, import("vue-demi").VNodeProps & import("vue-demi").AllowedComponentProps & import("vue-demi").ComponentCustomProps, Readonly<import("vue-demi").ExtractPropTypes<{}>>, {}>>;
+    dragListeners: import("vue-demi").ComputedRef<{}>;
+    dropListeners: import("vue-demi").ComputedRef<{}>;
     titleField: string;
-    keyField: string;
-    render: (h: CreateElement, node: TreeNode) => VNode;
+    handleExpand: () => void;
+    handleCheck: () => void;
+    handleSelect: () => void;
+    handleDblclick: () => void;
+    handleRightClick: () => void;
+    nodeBody: import("vue-demi").Ref<any>;
+}, unknown, {}, {}, import("vue-demi").ComponentOptionsMixin, import("vue-demi").ComponentOptionsMixin, string[], string, import("vue-demi").VNodeProps & import("vue-demi").AllowedComponentProps & import("vue-demi").ComponentCustomProps, Readonly<import("vue-demi").ExtractPropTypes<{
+    /** 节点数据，注意！！为了性能，不让 Vue 监听过多属性，这个 data 不是完整的 TreeNode ，不包括 _parent 和 children 属性 */
+    data: PropType<TreeNode>;
+    /** 节点标题字段 */
+    titleField: StringConstructor;
+    /** 节点唯一标识字段 */
+    keyField: StringConstructor;
+    /** 节点渲染 render 函数 */
+    render: PropType<(node: TreeNode) => VNode>;
+    /** 是否可多选 */
+    checkable: BooleanConstructor;
+    /** 是否可单选 */
+    selectable: BooleanConstructor;
+    /** 点击已选中节点是否取消选中 */
+    unselectOnClick: BooleanConstructor;
+    /** 是否禁用所有节点 */
+    disableAll: BooleanConstructor;
+    /** 是否可拖拽 */
+    draggable: BooleanConstructor;
+    /** 是否可放置 */
+    droppable: BooleanConstructor;
+    getNode: PropType<GetNodeFn>;
+}>> & {
+    [x: `on${Capitalize<string>}`]: ((...args: any[]) => any) | undefined;
+}, {
     checkable: boolean;
     selectable: boolean;
     unselectOnClick: boolean;

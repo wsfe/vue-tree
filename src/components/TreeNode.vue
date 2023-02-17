@@ -1,34 +1,21 @@
 <template>
   <div :class="wrapperCls">
     <div :class="dropBeforeCls"></div>
-    <div
-      ref="nodeBody"
-      :class="nodeBodyCls"
-      v-on="dropListeners"
-    >
+    <div ref="nodeBody" :class="nodeBodyCls" v-on="dropListeners">
       <!-- 展开按钮 -->
       <div :class="squareCls">
         <!-- 外层用于占位，icon 用于点击 -->
         <i
-          v-show="!data.isLeaf && !data._loading"
+          v-show="!data?.isLeaf && !data?._loading"
           :class="expandCls"
           @click="handleExpand"
         ></i>
-        <LoadingIcon
-          v-if="data._loading"
-          :class="loadingIconCls"
-        />
+        <LoadingIcon v-if="data?._loading" :class="loadingIconCls" />
       </div>
 
       <!-- 复选框 -->
-      <div
-        v-if="showCheckbox"
-        :class="squareCls"
-      >
-        <div
-          :class="checkboxCls"
-          @click="handleCheck"
-        ></div>
+      <div v-if="showCheckbox" :class="squareCls">
+        <div :class="checkboxCls" @click="handleCheck"></div>
       </div>
 
       <!-- 标题 -->
@@ -38,13 +25,10 @@
         @dblclick="handleDblclick"
         @contextmenu="handleRightClick"
         v-on="dragListeners"
-        :draggable="draggable && !disableAll && !data.disabled"
+        :draggable="draggable && !disableAll && !data?.disabled"
       >
-        <component
-          v-if="renderFunction"
-          :is="renderComponent"
-        ></component>
-        <template v-else>{{ data[titleField] }}</template>
+        <component v-if="renderFunction" :is="renderComponent"></component>
+        <template v-else>{{ data ? data[titleField] : '' }}</template>
       </div>
     </div>
     <div :class="dropAfterCls"></div>
@@ -52,27 +36,29 @@
 </template>
 
 <script lang="ts">
-import Vue, { VueConstructor, CreateElement, VNode } from 'vue'
+import {
+  VNode,
+  defineComponent,
+  ref,
+  computed,
+  getCurrentInstance,
+  h,
+  PropType
+} from 'vue-demi'
 import { TreeNode } from '../store'
 import LoadingIcon from './LoadingIcon.vue'
-import { dragHoverPartEnum } from '../const'
-import CTree from './Tree.vue'
-
+import { dragHoverPartEnum, TREE_NODE_EVENTS } from '../const'
+import type { GetNodeFn } from '../types'
 const prefixCls = 'ctree-tree-node'
 
-export default (Vue as VueConstructor<Vue & {
-  $refs: {
-    nodeBody: HTMLDivElement,
-  },
-}>).extend({
+export default defineComponent({
   name: 'CTreeNode',
-  inheritAttrs: false,
   components: {
-    LoadingIcon,
+    LoadingIcon
   },
   props: {
     /** 节点数据，注意！！为了性能，不让 Vue 监听过多属性，这个 data 不是完整的 TreeNode ，不包括 _parent 和 children 属性 */
-    data: Object as () => TreeNode,
+    data: Object as PropType<TreeNode>,
 
     /** 节点标题字段 */
     titleField: String,
@@ -81,7 +67,7 @@ export default (Vue as VueConstructor<Vue & {
     keyField: String,
 
     /** 节点渲染 render 函数 */
-    render: Function as any as () => (h: CreateElement, node: TreeNode) => VNode,
+    render: Function as PropType<(node: TreeNode) => VNode>,
 
     /** 是否可多选 */
     checkable: Boolean,
@@ -100,231 +86,249 @@ export default (Vue as VueConstructor<Vue & {
 
     /** 是否可放置 */
     droppable: Boolean,
+    getNode: Function as PropType<GetNodeFn>
   },
-  data () {
-    return {
-      /** 节点拖拽 dragover */
-      dragoverBody: false,
-
-      /** 节点前拖拽 dragover */
-      dragoverBefore: false,
-
-      /** 节点后拖拽 dragover */
-      dragoverAfter: false,
-    }
-  },
-  computed: {
-    //#region Classes
-    wrapperCls (): Array<string | object> {
+  emits: [...TREE_NODE_EVENTS],
+  setup(props, { emit }) {
+    const dragoverBody = ref(false)
+    const dragoverBefore = ref(false)
+    const dragoverAfter = ref(false)
+    const keyField = props.keyField as string
+    const getNode = props.getNode as Function
+    const titleField = props.titleField as string
+    const wrapperCls = computed(() => {
       return [
         `${prefixCls}__wrapper`,
         {
-          [`${prefixCls}__wrapper_is-leaf`]: this.data.isLeaf,
-        },
+          [`${prefixCls}__wrapper_is-leaf`]: props.data?.isLeaf
+        }
       ]
-    },
-    nodeBodyCls (): Array<string | object> {
+    })
+    const nodeBodyCls = computed(() => {
       return [
         `${prefixCls}__node-body`,
         {
-          [`${prefixCls}__drop_active`]: this.dragoverBody,
-        },
+          [`${prefixCls}__drop_active`]: dragoverBody.value
+        }
       ]
-    },
-    dropBeforeCls (): Array<string | object> {
+    })
+    const dropBeforeCls = computed(() => {
       return [
         `${prefixCls}__drop`,
         {
-          [`${prefixCls}__drop_active`]: this.dragoverBefore,
-        },
+          [`${prefixCls}__drop_active`]: dragoverBefore.value
+        }
       ]
-    },
-    dropAfterCls (): Array<string | object> {
+    })
+    const dropAfterCls = computed(() => {
       return [
         `${prefixCls}__drop`,
         {
-          [`${prefixCls}__drop_active`]: this.dragoverAfter,
-        },
+          [`${prefixCls}__drop_active`]: dragoverAfter.value
+        }
       ]
-    },
-    squareCls (): string[] {
-      return [
-        `${prefixCls}__square`,
-      ]
-    },
-    expandCls (): Array<string | object> {
+    })
+    const squareCls = computed(() => {
+      return [`${prefixCls}__square`]
+    })
+    const expandCls = computed(() => {
       return [
         `${prefixCls}__expand`,
         {
-          [`${prefixCls}__expand_active`]: this.data.expand,
-        },
+          [`${prefixCls}__expand_active`]: props.data?.expand
+        }
       ]
-    },
-    loadingIconCls (): string[] {
-      return [
-        `${prefixCls}__loading-icon`,
-      ]
-    },
-    checkboxCls (): Array<string | object> {
+    })
+    const loadingIconCls = computed(() => {
+      return [`${prefixCls}__loading-icon`]
+    })
+    const checkboxCls = computed(() => {
       return [
         `${prefixCls}__checkbox`,
         {
-          [`${prefixCls}__checkbox_checked`]: this.data.checked,
-          [`${prefixCls}__checkbox_indeterminate`]: this.data.indeterminate,
-          [`${prefixCls}__checkbox_disabled`]: this.disableAll || this.data.disabled,
-        },
+          [`${prefixCls}__checkbox_checked`]: props.data?.checked,
+          [`${prefixCls}__checkbox_indeterminate`]: props.data?.indeterminate,
+          [`${prefixCls}__checkbox_disabled`]:
+            props.disableAll || props.data?.disabled
+        }
       ]
-    },
-    titleCls (): Array<string | object> {
+    })
+    const titleCls = computed(() => {
       return [
         `${prefixCls}__title`,
         {
-          [`${prefixCls}__title_selected`]: this.data.selected,
-          [`${prefixCls}__title_disabled`]: this.disableAll || this.data.disabled,
-        },
+          [`${prefixCls}__title_selected`]: props.data?.selected,
+          [`${prefixCls}__title_disabled`]:
+            props.disableAll || props.data?.disabled
+        }
       ]
-    },
-    //#endregion Classes
-
-    /** 完整的节点 */
-    fullData (): TreeNode {
-      return (this.$parent as InstanceType<typeof CTree>).getNode(this.data[this.keyField]) || ({} as TreeNode)
-    },
-    showCheckbox (): boolean {
-      return this.checkable
-    },
-    renderFunction (): ((h: CreateElement, data: TreeNode) => VNode) | null {
-      return this.data.render || this.render || null
-    },
-    renderComponent (): VueConstructor {
-      return Vue.extend({
+    })
+    const fullData = computed(() => {
+      return getNode(props.data ? props.data[keyField] : '') || ({} as TreeNode)
+    })
+    const showCheckbox = computed(() => {
+      return props.checkable
+    })
+    const renderFunction = props.data?.render || props.render || null
+    const renderComponent = computed(() => {
+      return defineComponent({
         name: 'Render',
         functional: true,
-        render: (h: CreateElement): VNode => {
-          if (typeof this.renderFunction !== 'function') return h('div')
-          return this.renderFunction(h, this.fullData)
-        },
+        render() {
+          if (typeof renderFunction !== 'function') return h('div')
+          return renderFunction(fullData.value)
+        }
       })
-    },
-
-    //#region Drag events
-    dragListeners (): object {
+    })
+    const dragListeners = computed(() => {
       let result = {}
-      if (this.draggable && !this.disableAll && !this.data.disabled) {
+      if (props.draggable && !props.disableAll && !props.data?.disabled) {
         result = {
-          dragstart: this.handleDragStart,
+          dragstart: handleDragStart
         }
       }
       return result
-    },
-
-    dropListeners (): object {
+    })
+    const dropListeners = computed(() => {
       let result = {}
-      if (this.droppable) {
+      if (props.droppable) {
         result = {
-          dragenter: this.handleDragEnter.bind(this),
-          dragover: this.handleDragOver.bind(this),
-          dragleave: this.handleDragLeave.bind(this),
-          drop: this.handleDrop.bind(this),
+          dragenter: handleDragEnter.bind(getCurrentInstance()),
+          dragover: handleDragOver.bind(getCurrentInstance()),
+          dragleave: handleDragLeave.bind(getCurrentInstance()),
+          drop: handleDrop.bind(getCurrentInstance())
         }
       }
       return result
-    },
-    //#endregion Drag events
-  },
-  methods: {
-    handleExpand (): void {
-      if (this.data.isLeaf) return
-      this.$emit('expand', this.fullData)
-    },
+    })
 
-    handleCheck (): void {
-      if (this.disableAll || this.data.disabled || !this.checkable) return
-      this.$emit('check', this.fullData)
-    },
+    function handleExpand(): void {
+      if (props.data?.isLeaf) return
+      emit('expand', fullData.value)
+    }
 
-    handleSelect (): void {
-      this.$emit('click', this.fullData)
-      if (this.selectable) {
-        if (this.disableAll || this.data.disabled) return
-        if (this.data.selected && !this.unselectOnClick) return
-        this.$emit('select', this.fullData)
-      } else if (this.checkable) {
-        this.handleCheck()
+    function handleCheck(): void {
+      if (props.disableAll || props.data?.disabled || !props.checkable) return
+      emit('check', fullData.value)
+    }
+
+    function handleSelect(): void {
+      emit('click', fullData.value)
+      if (props.selectable) {
+        if (props.disableAll || props.data?.disabled) return
+        if (props.data?.selected && !props.unselectOnClick) return
+        emit('select', fullData.value)
+      } else if (props.checkable) {
+        handleCheck()
       } else {
-        this.handleExpand()
+        handleExpand()
       }
-    },
+    }
 
-    handleDblclick (): void {
-      this.$emit('node-dblclick', this.fullData)
-    },
+    function handleDblclick(): void {
+      emit('node-dblclick', fullData.value)
+    }
 
-    handleRightClick (): void {
-      this.$emit('node-right-click', this.fullData)
-    },
+    function handleRightClick(): void {
+      emit('node-right-click', fullData.value)
+    }
 
     //#region Drag handlers
     /** 计算拖拽到节点的哪个部分 */
-    getHoverPart (e: DragEvent) {
-      const boundingClientRect = this.$refs.nodeBody.getBoundingClientRect()
+    const nodeBody = ref()
+    function getHoverPart(e: DragEvent) {
+      const boundingClientRect = nodeBody.value.getBoundingClientRect()
       const height = boundingClientRect.height
       const y = e.clientY - boundingClientRect.top
       if (y <= height * 0.3) return dragHoverPartEnum.before
       if (y <= height * (0.3 + 0.4)) return dragHoverPartEnum.body
       return dragHoverPartEnum.after
-    },
+    }
 
     /**
      * 重置 dragover 标志位
      * @param hoverPart 计算出的拖拽部分
      * @param isLeaveOrDrop 是否是 dragleave 或者 drop 事件，如果是则不再把标志位置为 true
      */
-    resetDragoverFlags (hoverPart: dragHoverPartEnum, isLeaveOrDrop = false) {
-      this.dragoverBefore = false
-      this.dragoverBody = false
-      this.dragoverAfter = false
+    function resetDragoverFlags(
+      hoverPart: dragHoverPartEnum,
+      isLeaveOrDrop = false
+    ) {
+      dragoverBefore.value = false
+      dragoverBody.value = false
+      dragoverAfter.value = false
       if (!isLeaveOrDrop) {
-        if (hoverPart === dragHoverPartEnum.before) this.dragoverBefore = true
-        else if (hoverPart === dragHoverPartEnum.body) this.dragoverBody = true
-        else if (hoverPart === dragHoverPartEnum.after) this.dragoverAfter = true
+        if (hoverPart === dragHoverPartEnum.before) dragoverBefore.value = true
+        else if (hoverPart === dragHoverPartEnum.body) dragoverBody.value = true
+        else if (hoverPart === dragHoverPartEnum.after)
+          dragoverAfter.value = true
       }
-    },
+    }
 
-    handleDragStart (e: DragEvent): void {
+    function handleDragStart(e: DragEvent): void {
       if (e.dataTransfer) {
-        e.dataTransfer.setData('node', JSON.stringify(this.data))
+        e.dataTransfer.setData('node', JSON.stringify(props.data))
       }
-      if (this.data.expand) this.handleExpand()
-      this.$emit('node-dragstart', this.fullData, e)
-    },
+      if (props.data?.expand) handleExpand()
+      emit('node-dragstart', fullData.value, e)
+    }
 
-    handleDragEnter (e: DragEvent): void {
+    function handleDragEnter(e: DragEvent): void {
       e.preventDefault()
-      const hoverPart = this.getHoverPart(e)
-      this.resetDragoverFlags(hoverPart)
-      this.$emit('node-dragenter', this.fullData, e, hoverPart)
-    },
+      const hoverPart = getHoverPart(e)
+      resetDragoverFlags(hoverPart)
+      emit('node-dragenter', fullData.value, e, hoverPart)
+    }
 
-    handleDragOver (e: DragEvent): void {
+    function handleDragOver(e: DragEvent): void {
       e.preventDefault()
-      const hoverPart = this.getHoverPart(e)
-      this.resetDragoverFlags(hoverPart)
-      this.$emit('node-dragover', this.fullData, e, hoverPart)
-    },
+      const hoverPart = getHoverPart(e)
+      resetDragoverFlags(hoverPart)
+      emit('node-dragover', fullData.value, e, hoverPart)
+    }
 
-    handleDragLeave (e: DragEvent): void {
-      const hoverPart = this.getHoverPart(e)
-      this.resetDragoverFlags(hoverPart, true)
-      this.$emit('node-dragleave', this.fullData, e, hoverPart)
-    },
+    function handleDragLeave(e: DragEvent): void {
+      const hoverPart = getHoverPart(e)
+      resetDragoverFlags(hoverPart, true)
+      emit('node-dragleave', fullData.value, e, hoverPart)
+    }
 
-    handleDrop (e: DragEvent): void {
-      const hoverPart = this.getHoverPart(e)
-      this.resetDragoverFlags(hoverPart, true)
-      this.$emit('node-drop', this.fullData, e, hoverPart)
-    },
-    //#endregion Drag handlers
-  },
+    function handleDrop(e: DragEvent): void {
+      const hoverPart = getHoverPart(e)
+      resetDragoverFlags(hoverPart, true)
+      emit('node-drop', fullData.value, e, hoverPart)
+    }
+
+    return {
+      /** 节点拖拽 dragover */
+      dragoverBody,
+      /** 节点前拖拽 dragover */
+      dragoverBefore,
+      /** 节点后拖拽 dragover */
+      dragoverAfter,
+      wrapperCls,
+      nodeBodyCls,
+      dropBeforeCls,
+      dropAfterCls,
+      squareCls,
+      expandCls,
+      loadingIconCls,
+      checkboxCls,
+      titleCls,
+      fullData,
+      showCheckbox,
+      renderFunction,
+      renderComponent,
+      dragListeners,
+      dropListeners,
+      titleField,
+      handleExpand,
+      handleCheck,
+      handleSelect,
+      handleDblclick,
+      handleRightClick,
+      nodeBody
+    }
+  }
 })
 </script>

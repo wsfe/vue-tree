@@ -38,7 +38,7 @@
 
 # 功能
 
-### 普通树结构 `CTree` 组件
+### 普通树结构 `VTree` 组件
 
 #### 树查看
 
@@ -98,11 +98,11 @@
 
 1.
 
-外部修改 -> CTree -> TreeStore (-> TreeNode) -> (事件等)通知 CTree -> CTreeNode 视图改变
+外部修改 -> VTree -> TreeStore (-> TreeNode) -> (事件等)通知 VTree -> VTreeNode 视图改变
 
 2.
 
-CTreeNode -> CTree -> TreeStore (-> TreeNode) -> (事件等)通知 CTree -> CTreeNode 视图改变
+VTreeNode -> VTree -> TreeStore (-> TreeNode) -> (事件等)通知 VTree -> VTreeNode 视图改变
 
 # 选中实现流程
 
@@ -119,7 +119,7 @@ CTreeNode -> CTree -> TreeStore (-> TreeNode) -> (事件等)通知 CTree -> CTre
 ## 多选
 
 1. 一开始进来时， value 的值全都当做未加载的选中节点，在执行拍平数据后（data 未改变时不执行拍平），遍历 value 数据，将树数据中存在的节点 checked 置为 true
-2. 因为树数据上也可能存在初始就是 checked true 的节点（初始化情况），或者选中的节点与父子节点有级联选中关系（value 改变情况），因此触发一次自定义的 `checked-change` 事件通知 CTree 把最终勾选的结果通过 input 事件同步到 value
+2. 因为树数据上也可能存在初始就是 checked true 的节点（初始化情况），或者选中的节点与父子节点有级联选中关系（value 改变情况），因此触发一次自定义的 `checked-change` 事件通知 VTree 把最终勾选的结果通过 input 事件同步到 value
 3. value 改变时，先清空当前选中的节点（包括加载与未加载的选中节点），然后重新把 value 的值设置为未加载的选中节点，重复1、2步骤
 4. data 改变时，重复1、2步骤
 

@@ -1,91 +1,95 @@
 <template>
-  <div class="app">
-    <div class="tab">
-      <button
-        v-for="tab in tabList"
-        :key="tab"
-        :class="{
-          active: currentTab === tab
-        }"
-        @click="currentTab = tab"
-      >{{ tab }}</button>
-    </div>
-    <div class="tab-panel">
-      <component :is="currentTab"></component>
-    </div>
+  <div class="tab">
+    <button
+      v-for="tab in tabList"
+      :key="tab"
+      :class="{
+        active: currentTab === tab
+      }"
+      @click="currentTab = tab"
+    >
+      {{ tab }}
+    </button>
+  </div>
+  <div class="tab-panel">
+    <component :is="currentTab"></component>
   </div>
 </template>
 
-<script>
-import Feature from './Feature'
-import Performance from './Performance'
-import Loading from './Loading'
-import Search from './Search'
-import SearchRemote from './SearchRemote'
-import SearchRootRemote from './SearchRootRemote'
-import Drop from './Drop'
-import DropRemote from './DropRemote'
-import Drag from './Drag'
-import DropDataChange from './DropDataChange'
-import InsertRenderTree from './InsertRenderTree'
+<script lang="ts">
+import { defineComponent, reactive, ref } from 'vue-demi'
+import Drag from './Drag.vue'
 
-const components = {
-  Feature,
-  Performance,
-  Loading,
-  Search,
-  // SearchRemote,
-  // SearchRootRemote,
-  Drop,
-  // DropRemote,
-  Drag,
-  // DropDataChange,
-  InsertRenderTree,
-}
+import Loading from './Loading.vue'
+import Search from './Search.vue'
+import Drop from './Drop.vue'
+import DropDataChange from './DropDataChange.vue'
+import Feature from './Feature.vue'
+import Performance from './Performance.vue'
+import InsertRenderTree from './InsertRenderTree.vue'
 
-export default {
-  name: 'App',
-  components,
-  data () {
-    const tabList = Object.keys(components)
-    return {
-      currentTab: tabList[0],
-      tabList,
-    }
+export default defineComponent({
+  components: {
+    Loading,
+    Search,
+    Drop,
+    Drag,
+    // DropDataChange,
+    Feature,
+    Performance,
+    InsertRenderTree
   },
-}
+  setup(props) {
+    const components = {
+      Feature,
+      Performance,
+      Loading,
+      Search,
+      // SearchRemote,
+      // SearchRootRemote,
+      Drop,
+      // DropRemote,
+      Drag,
+      // DropDataChange,
+      InsertRenderTree
+    }
+    const tabList = reactive(Object.keys(components)) as any[]
+    const currentTab = ref(tabList[0])
+    return {
+      tabList,
+      currentTab
+    }
+  }
+})
 </script>
 
 <style lang="less" scoped>
-.app {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  .tab {
-    height: 90px;
-    padding: 10px 50px;
-    border-bottom: 1px solid lightgray;
-    button {
-      cursor: pointer;
-      width: 100px;
-      height: 38px;
-      margin-right: 30px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      background: lightcyan;
+.tab {
+  height: 90px;
+  padding: 10px 50px;
+  border-bottom: 1px solid lightgray;
 
-      &:focus {
-        outline: none;
-      }
-    }
-    .active {
-      background: lightblue;
+  button {
+    cursor: pointer;
+    width: 100px;
+    height: 38px;
+    margin-right: 30px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background: lightcyan;
+
+    &:focus {
+      outline: none;
     }
   }
-  .tab-panel {
-    flex: 1;
-    overflow-y: auto;
+
+  .active {
+    background: lightblue;
   }
+}
+
+.tab-panel {
+  flex: 1;
+  overflow-y: auto;
 }
 </style>

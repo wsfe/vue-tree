@@ -1,40 +1,46 @@
 <template>
   <div>
-    <CTree
-      :data="basicUsage"
-      :loading="loading"
-    ></CTree>
+    <VTree ref="tree" :data="basicUsage" :loading="loading"></VTree>
     <button @click="handleToggle">Toggle Loading</button>
   </div>
 </template>
 
-<script>
-import CTree from '@'
+<script lang="ts">
+import VTree from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
+import { defineComponent, ref } from 'vue-demi'
 
 const genData = (extra = {}) => {
-  return treeDataGenerator(Object.assign({
-    treeDepth: 3,
-    nodesPerLevel: 5,
-    sameIdTitle: true,
-  }, extra))
+  return treeDataGenerator(
+    Object.assign(
+      {
+        treeDepth: 3,
+        nodesPerLevel: 5,
+        sameIdTitle: true
+      },
+      extra
+    )
+  )
 }
 
-export default {
+export default defineComponent({
   name: 'Loading',
   components: {
-    CTree,
+    VTree
   },
-  data () {
-    return {
-      basicUsage: genData().data,
-      loading: false,
+  setup() {
+    const basicUsage = ref(genData().data)
+    const loading = ref(false)
+    const tree = ref()
+    function handleToggle() {
+      loading.value = !loading.value
     }
-  },
-  methods: {
-    handleToggle () {
-      this.loading = !this.loading
-    },
-  },
-}
+    return {
+      basicUsage,
+      loading,
+      tree,
+      handleToggle
+    }
+  }
+})
 </script>

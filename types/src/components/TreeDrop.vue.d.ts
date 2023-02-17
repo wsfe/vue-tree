@@ -1,305 +1,178 @@
-import Vue from 'vue';
+import { PropType } from 'vue-demi';
 import { TreeNode } from '../store';
-import { TreeNodeKeyType } from '../const';
-declare const _default: import("vue/types/vue").ExtendedVue<Vue & {
-    $refs: {
-        reference: HTMLDivElement;
-        dropdown: HTMLDivElement;
-        treeSearch: import("vue/types/vue").CombinedVueInstance<{
-            checkAllStatus: {
-                checked: boolean;
-                indeterminate: boolean; /** 多选选中节点个数 */
-                disabled: boolean;
-            };
-            isShowingChecked: boolean;
-            /** 展示 slot 的 props */
-            keyword: string;
-            debounceTimer: number | undefined; /** 多选选中的节点 key */
-            checkedCount: number;
-        } & {
-            clearKeyword(): void;
-            getKeyword(): string;
-            search(keyword?: string | undefined): Promise<void>;
-            handleCheckAll(): void;
-            handleSearch(): void;
-            handleShowChecked(): void;
-            handleSetData(): void;
-            updateCheckAllStatus(): void;
-            updateCheckedCount(): void;
-            setData: (data: {
-                [key: string]: any;
-            }[]) => void;
-            setChecked: (key: TreeNodeKeyType, value: boolean) => void;
-            setCheckedKeys: (keys: TreeNodeKeyType[], value: boolean) => void;
-            checkAll: () => void;
-            clearChecked: () => void;
-            setSelected: (key: TreeNodeKeyType, value: boolean) => void;
-            clearSelected: () => void;
-            setExpand: (key: TreeNodeKeyType, value: boolean, expandParent?: boolean) => void;
-            setExpandKeys: (keys: TreeNodeKeyType[], value: boolean) => void;
-            setExpandAll: (value: boolean) => void;
-            getCheckedNodes: (ignoreMode?: "children" | "none" | "parents" | undefined) => TreeNode[];
-            getCheckedKeys: (ignoreMode?: "children" | "none" | "parents" | undefined) => TreeNodeKeyType[];
-            getIndeterminateNodes: () => TreeNode[];
-            getSelectedNode: () => TreeNode | null;
-            getSelectedKey: () => string | number | null;
-            getExpandNodes: () => TreeNode[];
-            getExpandKeys: () => TreeNodeKeyType[];
-            getCurrentVisibleNodes: () => TreeNode[];
-            getNode: (key: TreeNodeKeyType) => TreeNode | null;
-            getTreeData: () => TreeNode[];
-            getFlatData: () => TreeNode[];
-            getNodesCount: () => number;
-            insertBefore: (insertedNode: string | number | import("../store/tree-node").ITreeNodeOptions, referenceKey: TreeNodeKeyType) => TreeNode | null;
-            insertAfter: (insertedNode: string | number | import("../store/tree-node").ITreeNodeOptions, referenceKey: TreeNodeKeyType) => TreeNode | null;
-            append: (insertedNode: string | number | import("../store/tree-node").ITreeNodeOptions, parentKey: TreeNodeKeyType) => TreeNode | null;
-            prepend: (insertedNode: string | number | import("../store/tree-node").ITreeNodeOptions, parentKey: TreeNodeKeyType) => TreeNode | null;
-            remove: (removedKey: TreeNodeKeyType) => TreeNode | null;
-            filter: (keyword: string, filterMethod?: import("../store/tree-store").FilterFunctionType | undefined) => void;
-            showCheckedNodes: (showUnloadCheckedNodes?: boolean | undefined) => void;
-            loadRootNodes: () => Promise<void>;
-            scrollTo: (key: TreeNodeKeyType, verticalPosition?: number | "top" | "center" | "bottom") => void;
-        } & {
-            wrapperCls: string[];
-            searchCls: string[];
-            checkAllWrapperCls: string[];
-            checkboxCls: (string | object)[];
-            inputWrapperCls: string[];
-            inputCls: (string | object)[];
-            actionWrapperCls: string[];
-            checkedButtonCls: (string | object)[];
-            treeWrapperCls: string[];
-            footerCls: string[];
-            checkable: boolean;
-        } & {
-            value: unknown;
-            searchPlaceholder: string;
-            showCheckAll: boolean;
-            showCheckedButton: boolean;
-            checkedButtonText: string;
-            showFooter: boolean;
-            searchMethod: (keyword: string) => void | Promise<void>;
-            searchLength: number;
-            searchDisabled: boolean;
-            searchRemote: boolean;
-            searchDebounceTime: number;
-        } & Vue & {
-            $refs: {
-                tree: import("vue/types/vue").CombinedVueInstance<{
-                    unloadCheckedNodes: TreeNode[];
-                    blockLength: number;
-                    blockAreaHeight: number;
-                    topSpaceHeight: number;
-                    bottomSpaceHeight: number;
-                    renderAmount: number;
-                    renderAmountCache: number;
-                    renderNodes: TreeNode[];
-                    renderStart: number;
-                    renderStartCache: number;
-                    isRootLoading: boolean;
-                    valueCache: string | number | TreeNodeKeyType[];
-                    debounceTimer: number | undefined;
-                } & {
-                    setData(data: {
-                        [key: string]: any;
-                    }[]): void;
-                    setChecked(key: TreeNodeKeyType, value: boolean): void;
-                    setCheckedKeys(keys: TreeNodeKeyType[], value: boolean): void;
-                    checkAll(): void;
-                    clearChecked(): void;
-                    setSelected(key: TreeNodeKeyType, value: boolean): void;
-                    clearSelected(): void;
-                    setExpand(key: TreeNodeKeyType, value: boolean, expandParent?: boolean): void;
-                    setExpandKeys(keys: TreeNodeKeyType[], value: boolean): void;
-                    setExpandAll(value: boolean): void;
-                    getCheckedNodes(ignoreMode?: "children" | "none" | "parents" | undefined): TreeNode[];
-                    getCheckedKeys(ignoreMode?: "children" | "none" | "parents" | undefined): TreeNodeKeyType[];
-                    getIndeterminateNodes(): TreeNode[];
-                    getSelectedNode(): TreeNode | null;
-                    getSelectedKey(): string | number | null;
-                    getExpandNodes(): TreeNode[];
-                    getExpandKeys(): TreeNodeKeyType[];
-                    getCurrentVisibleNodes(): TreeNode[];
-                    getNode(key: TreeNodeKeyType): TreeNode | null;
-                    getTreeData(): TreeNode[];
-                    getFlatData(): TreeNode[];
-                    getNodesCount(): number;
-                    insertBefore(insertedNode: string | number | import("../store/tree-node").ITreeNodeOptions, referenceKey: TreeNodeKeyType): TreeNode | null;
-                    insertAfter(insertedNode: string | number | import("../store/tree-node").ITreeNodeOptions, referenceKey: TreeNodeKeyType): TreeNode | null;
-                    append(insertedNode: string | number | import("../store/tree-node").ITreeNodeOptions, parentKey: TreeNodeKeyType): TreeNode | null;
-                    prepend(insertedNode: string | number | import("../store/tree-node").ITreeNodeOptions, parentKey: TreeNodeKeyType): TreeNode | null;
-                    remove(removedKey: TreeNodeKeyType): TreeNode | null;
-                    filter(keyword: string, filterMethod?: import("../store/tree-store").FilterFunctionType | undefined): void;
-                    showCheckedNodes(showUnloadCheckedNodes?: boolean | undefined): void;
-                    loadRootNodes(): Promise<void>;
-                    scrollTo(key: TreeNodeKeyType, verticalPosition?: number | "top" | "center" | "bottom"): void;
-                    updateExpandedKeys(): void;
-                    updateUnloadStatus(): void;
-                    handleNodeCheck(node: TreeNode): void;
-                    handleNodeSelect(node: TreeNode): void;
-                    handleNodeExpand(node: TreeNode): void;
-                    handleNodeDrop(data: TreeNode, e: DragEvent, hoverPart: import("../const").dragHoverPartEnum): void;
-                    emitCheckableInput(checkedNodes: TreeNode[], checkedKeys: TreeNodeKeyType[]): void;
-                    emitSelectableInput(selectedNode: TreeNode | null, selectedKey: string | number | null): void;
-                    attachStoreEvents(): void;
-                    resetSpaceHeights(): void;
-                    updateBlockNodes(): void;
-                    updateBlockData(): void;
-                    updateRender(): void;
-                    updateRenderAmount(): void;
-                    updateRenderNodes(isScroll?: boolean): void;
-                    handleTreeScroll(): void;
-                } & {
-                    topSpaceStyles: object;
-                    bottomSpaceStyles: object;
-                    wrapperCls: string[];
-                    scrollAreaCls: string[];
-                    blockAreaCls: string[];
-                    emptyCls: string[];
-                    emptyTextDefaultCls: string[];
-                    loadingCls: string[];
-                    loadingWrapperCls: string[];
-                    loadingIconCls: string[];
-                    iframeCls: string[];
-                    treeNodeListeners: object;
-                } & {
-                    value: string | number | TreeNodeKeyType[];
-                    data: {
-                        [key: string]: any;
-                    }[];
-                    unloadDataList: {
-                        [key: string]: any;
-                    }[];
-                    showUnloadCheckedNodes: boolean;
-                    emptyText: string;
-                    titleField: string;
-                    keyField: string;
-                    separator: string;
-                    checkable: boolean;
-                    selectable: boolean;
-                    filteredNodeCheckable: boolean;
-                    cascade: boolean;
-                    enableLeafOnly: boolean;
-                    disableAll: boolean;
-                    defaultExpandAll: boolean;
-                    defaultExpandedKeys: TreeNodeKeyType[];
-                    expandedKeys: TreeNodeKeyType[];
-                    draggable: boolean;
-                    droppable: boolean;
-                    beforeDropMethod: (dragKey: TreeNodeKeyType, dropKey: TreeNodeKeyType, hoverPart: import("../const").dragHoverPartEnum) => boolean;
-                    ignoreMode: "children" | "none" | "parents";
-                    autoLoad: boolean;
-                    load: (node: TreeNode | null, resolve: Function, reject: Function) => any;
-                    render: (h: import("vue").CreateElement, node: TreeNode) => import("vue").VNode;
-                    filterMethod: import("../store/tree-store").FilterFunctionType;
-                    expandOnFilter: boolean;
-                    unselectOnClick: boolean;
-                    loading: boolean;
-                    nodeMinHeight: number;
-                    nodeIndent: number;
-                    renderNodeAmount: number;
-                    bufferNodeAmount: number;
-                    nodeClassName: any;
-                    usePadding: boolean;
-                } & Vue & {
-                    $refs: {
-                        scrollArea: HTMLDivElement;
-                        iframe: HTMLIFrameElement;
-                    };
-                    nonReactive: {
-                        store: import("../store").default;
-                        blockNodes: TreeNode[];
-                    };
-                }, object, object, object, Record<never, any>>;
-            };
-        }, object, object, object, Record<never, any>>;
+import { placementEnum } from '../const';
+import { TreeNodeKeyType } from '../types';
+declare const _default: import("vue-demi").DefineComponent<{
+    /** 兼容 Vue 2.5.16 bug */
+    modelValue: PropType<string | number | TreeNodeKeyType[]>;
+    /** 下拉内容高度 */
+    dropHeight: {
+        type: NumberConstructor;
+        default: number;
+    };
+    /** 展示输入框 placeholder */
+    dropPlaceholder: {
+        type: StringConstructor;
+    };
+    /** 是否禁用 */
+    dropDisabled: {
+        type: BooleanConstructor;
+        default: boolean;
+    };
+    /** 允许清空 */
+    clearable: {
+        type: BooleanConstructor;
+        default: boolean;
+    };
+    /** 下拉弹出框位置 */
+    placement: {
+        type: PropType<"top" | "bottom" | "bottom-start" | "bottom-end" | "top-start" | "top-end">;
+        default: placementEnum;
+    };
+    /** 将下拉 DOM 转移到 body 中 */
+    transfer: {
+        type: BooleanConstructor;
+        default: boolean;
+    };
+    /** 在下拉框容器上额外添加的 class */
+    dropdownClassName: PropType<string | string[]>;
+    /** 下拉框容器最小宽度，未指定则默认为展示输入框宽度 */
+    dropdownMinWidth: {
+        type: NumberConstructor;
+    };
+    /** 固定下拉框容器宽度，当内容超出最小宽度不会伸长，而是出现横向滚动条 */
+    dropdownWidthFixed: {
+        type: BooleanConstructor;
+        default: boolean;
     };
 }, {
-    /** 下拉框是否可见 */
-    dropdownVisible: boolean;
-    /** 多选选中节点个数 */
-    checkedCount: number;
-    /** 单选选中节点名称 */
-    selectedTitle: TreeNodeKeyType;
-    /** 展示 slot 的 props */
+    treeSearchValue: import("vue-demi").WritableComputedRef<string | number | TreeNodeKeyType[] | undefined>;
+    dropdownVisible: import("vue-demi").Ref<boolean>;
+    checkedCount: import("vue-demi").Ref<number>;
+    selectedTitle: import("vue-demi").Ref<string>;
     slotProps: {
-        /** 多选选中的节点 */
-        checkedNodes: TreeNode[];
-        /** 多选选中的节点 key */
+        checkedNodes: {
+            [x: string]: any;
+            _level: number;
+            checked: boolean;
+            selected: boolean;
+            indeterminate: boolean;
+            disabled: boolean;
+            expand: boolean;
+            visible: boolean;
+            _filterVisible: boolean;
+            _parent: any | null;
+            children: any[];
+            isLeaf: boolean;
+            _loading: boolean;
+            _loaded: boolean;
+            readonly _keyField: string;
+            readonly _remote: boolean;
+            setChildren: (children: import("../store/tree-node").ITreeNodeOptions[]) => void;
+        }[];
         checkedKeys: TreeNodeKeyType[];
-        /** 单选选中的节点 */
-        selectedNode: TreeNode | null;
-        /** 单选选中的节点 key */
-        selectedKey: string | number | null;
+        selectedNode?: {
+            [x: string]: any;
+            _level: number;
+            checked: boolean;
+            selected: boolean;
+            indeterminate: boolean;
+            disabled: boolean;
+            expand: boolean;
+            visible: boolean;
+            _filterVisible: boolean;
+            _parent: any | null;
+            children: any[];
+            isLeaf: boolean;
+            _loading: boolean;
+            _loaded: boolean;
+            readonly _keyField: string;
+            readonly _remote: boolean;
+            setChildren: (children: import("../store/tree-node").ITreeNodeOptions[]) => void;
+        } | undefined;
+        selectedKey?: TreeNodeKeyType | undefined;
     };
+    wrapperCls: import("vue-demi").ComputedRef<string[]>;
+    referenceCls: import("vue-demi").ComputedRef<string[]>;
+    displayInputCls: import("vue-demi").ComputedRef<(string | {
+        [x: string]: boolean;
+    })[]>;
+    displayInputTextCls: import("vue-demi").ComputedRef<(string | {
+        [x: string]: boolean;
+    })[]>;
+    dropIconCls: import("vue-demi").ComputedRef<(string | {
+        [x: string]: boolean;
+    })[]>;
+    clearIconCls: import("vue-demi").ComputedRef<string[]>;
+    dropdownCls: import("vue-demi").ComputedRef<(string | undefined)[]>;
+    checkable: import("vue-demi").ComputedRef<boolean>;
+    selectable: import("vue-demi").ComputedRef<boolean>;
+    displayValue: import("vue-demi").ComputedRef<string>;
+    showClearIcon: import("vue-demi").ComputedRef<boolean>;
+    referenceRef: import("vue-demi").Ref<any>;
+    dropdownRef: import("vue-demi").Ref<any>;
+    treeSearchRef: import("vue-demi").Ref<any>;
+    locateDropdown: () => void;
+    handleRefClick: () => void;
+    handleDocumentClick: (e: MouseEvent) => void;
+    handleClear: () => void;
+    handleCheckedChange: (nodes: TreeNode[], keys: TreeNodeKeyType[]) => void;
+    handleSelectedChange: (node?: TreeNode, key?: TreeNodeKeyType) => void;
+    handleSetData: () => void;
+}, unknown, {}, {}, import("vue-demi").ComponentOptionsMixin, import("vue-demi").ComponentOptionsMixin, ("checked-change" | "update:modelValue" | "clear" | "dropdown-visible-change")[], "checked-change" | "update:modelValue" | "clear" | "dropdown-visible-change", import("vue-demi").VNodeProps & import("vue-demi").AllowedComponentProps & import("vue-demi").ComponentCustomProps, Readonly<import("vue-demi").ExtractPropTypes<{
+    /** 兼容 Vue 2.5.16 bug */
+    modelValue: PropType<string | number | TreeNodeKeyType[]>;
+    /** 下拉内容高度 */
+    dropHeight: {
+        type: NumberConstructor;
+        default: number;
+    };
+    /** 展示输入框 placeholder */
+    dropPlaceholder: {
+        type: StringConstructor;
+    };
+    /** 是否禁用 */
+    dropDisabled: {
+        type: BooleanConstructor;
+        default: boolean;
+    };
+    /** 允许清空 */
+    clearable: {
+        type: BooleanConstructor;
+        default: boolean;
+    };
+    /** 下拉弹出框位置 */
+    placement: {
+        type: PropType<"top" | "bottom" | "bottom-start" | "bottom-end" | "top-start" | "top-end">;
+        default: placementEnum;
+    };
+    /** 将下拉 DOM 转移到 body 中 */
+    transfer: {
+        type: BooleanConstructor;
+        default: boolean;
+    };
+    /** 在下拉框容器上额外添加的 class */
+    dropdownClassName: PropType<string | string[]>;
+    /** 下拉框容器最小宽度，未指定则默认为展示输入框宽度 */
+    dropdownMinWidth: {
+        type: NumberConstructor;
+    };
+    /** 固定下拉框容器宽度，当内容超出最小宽度不会伸长，而是出现横向滚动条 */
+    dropdownWidthFixed: {
+        type: BooleanConstructor;
+        default: boolean;
+    };
+}>> & {
+    "onChecked-change"?: ((...args: any[]) => any) | undefined;
+    "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
+    onClear?: ((...args: any[]) => any) | undefined;
+    "onDropdown-visible-change"?: ((...args: any[]) => any) | undefined;
 }, {
-    /** 定位下拉框 */
-    locateDropdown(): void;
-    handleRefClick(): void;
-    handleDocumentClick(e: MouseEvent): void;
-    handleClear(): void;
-    handleCheckedChange(nodes: TreeNode[], keys: TreeNodeKeyType[]): void;
-    handleSelectedChange(node: TreeNode | null, key: string | number | null): void;
-    /** 处理树数据更新 */
-    handleSetData(): void;
-    setData: (data: {
-        [key: string]: any;
-    }[]) => void;
-    setChecked: (key: TreeNodeKeyType, value: boolean) => void;
-    setCheckedKeys: (keys: TreeNodeKeyType[], value: boolean) => void;
-    checkAll: () => void;
-    clearChecked: () => void;
-    setSelected: (key: TreeNodeKeyType, value: boolean) => void;
-    clearSelected: () => void;
-    setExpand: (key: TreeNodeKeyType, value: boolean, expandParent?: boolean) => void;
-    setExpandKeys: (keys: TreeNodeKeyType[], value: boolean) => void;
-    setExpandAll: (value: boolean) => void;
-    getCheckedNodes: (ignoreMode?: "children" | "none" | "parents" | undefined) => TreeNode[];
-    getCheckedKeys: (ignoreMode?: "children" | "none" | "parents" | undefined) => TreeNodeKeyType[];
-    getIndeterminateNodes: () => TreeNode[];
-    getSelectedNode: () => TreeNode | null;
-    getSelectedKey: () => string | number | null;
-    getExpandNodes: () => TreeNode[];
-    getExpandKeys: () => TreeNodeKeyType[];
-    getCurrentVisibleNodes: () => TreeNode[];
-    getNode: (key: TreeNodeKeyType) => TreeNode | null;
-    getTreeData: () => TreeNode[];
-    getFlatData: () => TreeNode[];
-    getNodesCount: () => number;
-    insertBefore: (insertedNode: string | number | import("../store/tree-node").ITreeNodeOptions, referenceKey: TreeNodeKeyType) => TreeNode | null;
-    insertAfter: (insertedNode: string | number | import("../store/tree-node").ITreeNodeOptions, referenceKey: TreeNodeKeyType) => TreeNode | null;
-    append: (insertedNode: string | number | import("../store/tree-node").ITreeNodeOptions, parentKey: TreeNodeKeyType) => TreeNode | null;
-    prepend: (insertedNode: string | number | import("../store/tree-node").ITreeNodeOptions, parentKey: TreeNodeKeyType) => TreeNode | null;
-    remove: (removedKey: TreeNodeKeyType) => TreeNode | null;
-    filter: (keyword: string, filterMethod?: import("../store/tree-store").FilterFunctionType | undefined) => void;
-    showCheckedNodes: (showUnloadCheckedNodes?: boolean | undefined) => void;
-    loadRootNodes: () => Promise<void>;
-    scrollTo: (key: TreeNodeKeyType, verticalPosition?: number | "top" | "center" | "bottom") => void;
-    clearKeyword: () => void;
-    getKeyword: () => string;
-    search: (keyword?: string | undefined) => Promise<void>;
-}, {
-    wrapperCls: string[];
-    referenceCls: string[];
-    displayInputCls: (string | object)[];
-    displayInputTextCls: (string | object)[];
-    dropIconCls: (string | object)[];
-    clearIconCls: string[];
-    dropdownCls: string[];
-    checkable: boolean;
-    selectable: boolean;
-    displayValue: TreeNodeKeyType;
-    showClearIcon: boolean;
-}, {
-    value: unknown;
     dropHeight: number;
-    dropPlaceholder: string;
     dropDisabled: boolean;
     clearable: boolean;
     placement: "top" | "bottom" | "bottom-start" | "bottom-end" | "top-start" | "top-end";
     transfer: boolean;
-    dropdownClassName: string | string[];
-    dropdownMinWidth: number;
     dropdownWidthFixed: boolean;
 }>;
 export default _default;

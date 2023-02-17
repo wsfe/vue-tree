@@ -1,33 +1,42 @@
 import { shallowMount, mount } from '@vue/test-utils'
-import CTreeSearch from '../../src/components/TreeSearch.vue'
-import CTree from '../../src/components/Tree.vue'
+import VTreeSearch from '../../src/components/TreeSearch.vue'
+import VTree from '../../src/components/Tree.vue'
 import treeDataGenerator, { ITreeNodeData } from '../tree-data-generator'
 import TreeStore, { TreeNode } from '../../src/store'
 
 //#region 通用方法
 
 const genData = (extra: object = {}) => {
-  return treeDataGenerator(Object.assign({
-    treeDepth: 3,
-    nodesPerLevel: 5,
-    sameIdTitle: true,
-  }, extra))
+  return treeDataGenerator(
+    Object.assign(
+      {
+        treeDepth: 3,
+        nodesPerLevel: 5,
+        sameIdTitle: true
+      },
+      extra
+    )
+  )
 }
 
-const asyncLoadData = (node: TreeNode | null, resolve: Function, reject: Function) => {
+const asyncLoadData = (
+  node: TreeNode | null,
+  resolve: Function,
+  reject: Function
+) => {
   setTimeout(() => {
-    let result = []
+    let result = [] as any[]
     if (node === null) {
       result = genData({
         treeDepth: 1,
         nodesPerLevel: 5,
-        sameIdTitle: true,
+        sameIdTitle: true
       }).data
     } else {
       result = genData({
         treeDepth: 1,
         nodesPerLevel: 2,
-        sameIdTitle: true,
+        sameIdTitle: true
       }).data
     }
     resolve(result)
@@ -37,13 +46,13 @@ const asyncLoadData = (node: TreeNode | null, resolve: Function, reject: Functio
 //#endregion 通用方法
 
 describe('树搜索测试', () => {
-  it('本地搜索', (done) => {
+  it('本地搜索', done => {
     const data = genData({ inOrder: true }).data
-    const wrapper = mount(CTreeSearch, {
-      propsData: { data },
+    const wrapper = mount(VTreeSearch as any, {
+      propsData: { data }
     })
     const vm = wrapper.vm
-    const tree = wrapper.find(CTree).vm
+    const tree = wrapper.findComponent({ ref: 'tree' }).vm
 
     const input = wrapper.find('.ctree-tree-search__input')
     const inputElement = input.element as HTMLInputElement
@@ -52,62 +61,142 @@ describe('树搜索测试', () => {
 
     setTimeout(() => {
       vm.$nextTick(() => {
-        expect((tree as any).nonReactive.store.flatData.filter((node: TreeNode) => node.visible).map((node: TreeNode) => node.id))
-        .toEqual([0, 25, 30, 124, 125, 130])
+        expect(
+          (tree as any).nonReactive.store.flatData
+            .filter((node: TreeNode) => node.visible)
+            .map((node: TreeNode) => node.id)
+        ).toEqual([0, 25, 30, 124, 125, 130])
 
         inputElement.value = ''
         input.trigger('input')
 
         setTimeout(() => {
           vm.$nextTick(() => {
-            expect((tree as any).nonReactive.store.flatData.filter((node: TreeNode) => node.visible).map((node: TreeNode) => node.id))
-            .toEqual((tree as any).nonReactive.store.flatData.map((node: TreeNode) => node.id))
+            expect(
+              (tree as any).nonReactive.store.flatData
+                .filter((node: TreeNode) => node.visible)
+                .map((node: TreeNode) => node.id)
+            ).toEqual(
+              (tree as any).nonReactive.store.flatData.map(
+                (node: TreeNode) => node.id
+              )
+            )
 
             done()
           })
         }, 300)
       })
     }, 300)
-
   })
 })
 
 describe('树远程搜索增强测试包', () => {
-  it('远程搜索', (done) => {
+  it('远程搜索', done => {
     const times = [3, 2, 5]
     let index = 0
-    const load = (node: TreeNode | null, resolve: Function, reject: Function) => {
+    const load = (
+      node: TreeNode | null,
+      resolve: Function,
+      reject: Function
+    ) => {
       setTimeout(() => {
-        const data = genData({ inOrder: true, forceString: true, nodesPerLevel: times[index] }).data
+        const data = genData({
+          inOrder: true,
+          forceString: true,
+          nodesPerLevel: times[index]
+        }).data
         resolve(data)
       }, 10)
     }
-    const wrapper = mount(CTreeSearch, {
+    const wrapper = mount(VTreeSearch as any, {
       propsData: {
         load,
         searchRemote: true,
         checkable: true,
-        value: ['93', '124'],
+        modelValue: ['93', '124']
       },
       listeners: {
         input: (emitValue: Array<string | number>) => {
-          wrapper.setProps({ value: emitValue })
-        },
-      },
-    })
+          wrapper.setProps({ modelValue: emitValue })
+        }
+      }
+    }) as any
     const vm = wrapper.vm
-    const treeWrapper = wrapper.find(CTree)
+    const treeWrapper = wrapper.findComponent({ ref: 'tree' }) as any
 
     const input = wrapper.find('.ctree-tree-search__input')
     const inputElement = input.element as HTMLInputElement
     inputElement.value = '30'
 
-    const initValue = [ '93', '94', '95', '96', '97', '98', '99', '100', '101', '102', '103', '104', '105', '106', '107', '108', '109', '110', '111', '112', '113', '114', '115', '116', '117', '118', '119', '120', '121', '122', '123', '124', '125', '126', '127', '128', '129', '130', '131', '132', '133', '134', '135', '136', '137', '138', '139', '140', '141', '142', '143', '144', '145', '146', '147', '148', '149', '150', '151', '152', '153', '154' ]
+    const initValue = [
+      '93',
+      '94',
+      '95',
+      '96',
+      '97',
+      '98',
+      '99',
+      '100',
+      '101',
+      '102',
+      '103',
+      '104',
+      '105',
+      '106',
+      '107',
+      '108',
+      '109',
+      '110',
+      '111',
+      '112',
+      '113',
+      '114',
+      '115',
+      '116',
+      '117',
+      '118',
+      '119',
+      '120',
+      '121',
+      '122',
+      '123',
+      '124',
+      '125',
+      '126',
+      '127',
+      '128',
+      '129',
+      '130',
+      '131',
+      '132',
+      '133',
+      '134',
+      '135',
+      '136',
+      '137',
+      '138',
+      '139',
+      '140',
+      '141',
+      '142',
+      '143',
+      '144',
+      '145',
+      '146',
+      '147',
+      '148',
+      '149',
+      '150',
+      '151',
+      '152',
+      '153',
+      '154'
+    ]
 
     setTimeout(() => {
       vm.$nextTick(() => {
         // index = 0
-        expect(treeWrapper.props('value')).toEqual(['93', '124'])
+        expect(treeWrapper.props('modelValue')).toEqual(['93', '124'])
 
         index = 1
 
@@ -115,15 +204,17 @@ describe('树远程搜索增强测试包', () => {
 
         setTimeout(() => {
           vm.$nextTick(() => {
-            expect(treeWrapper.props('value')).toEqual(['93', '124'])
-
+            expect(treeWrapper.props('modelValue')).toEqual(['93', '124'])
             setTimeout(() => {
-              const vmOfAny = vm as any
-
-              vmOfAny.setChecked('4', true)
-
+              vm.setChecked('4', true)
               vm.$nextTick(() => {
-                expect(treeWrapper.props('value')).toEqual(['4', '5', '6', '93', '124'])
+                expect(treeWrapper.vm.modelValue).toEqual([
+                  '4',
+                  '5',
+                  '6',
+                  '93',
+                  '124'
+                ])
 
                 index = 2
 
@@ -132,7 +223,9 @@ describe('树远程搜索增强测试包', () => {
                 setTimeout(() => {
                   vm.$nextTick(() => {
                     // 5
-                    expect(treeWrapper.props('value')).toEqual(['4', '5', '6'].concat(initValue))
+                    expect(treeWrapper.props('modelValue')).toEqual(
+                      ['4', '5', '6'].concat(initValue)
+                    )
 
                     done()
                   })

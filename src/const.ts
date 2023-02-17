@@ -2,10 +2,8 @@
 export enum ignoreEnum {
   none = 'none',
   parents = 'parents',
-  children = 'children',
+  children = 'children'
 }
-
-export type IgnoreType = keyof typeof ignoreEnum
 //#endregion ignoreMode
 
 //#region API
@@ -42,7 +40,7 @@ const enum apiEnum {
   'filter',
   'showCheckedNodes',
   'loadRootNodes',
-  'scrollTo',
+  'scrollTo'
 }
 
 export const API_METHODS = [
@@ -76,7 +74,7 @@ export const API_METHODS = [
   'filter',
   'showCheckedNodes',
   'loadRootNodes',
-  'scrollTo',
+  'scrollTo'
 ]
 
 export type ApiType = keyof typeof apiEnum
@@ -85,36 +83,27 @@ export type ApiType = keyof typeof apiEnum
 const enum treeSearchApiEnum {
   'clearKeyword',
   'getKeyword',
-  'search',
+  'search'
 }
 
-export const TREE_SEARCH_API_METHODS = [
-  'clearKeyword',
-  'getKeyword',
-  'search',
-]
+export const TREE_SEARCH_API_METHODS = ['clearKeyword', 'getKeyword', 'search']
 
 export type TreeSearchApiType = keyof typeof treeSearchApiEnum
-//#endregion API
 
-//#region Placement
 export enum placementEnum {
   'bottom-start' = 'bottom-start',
   'bottom-end' = 'bottom-end',
   'bottom' = 'bottom',
   'top-start' = 'top-start',
   'top-end' = 'top-end',
-  'top' = 'top',
+  'top' = 'top'
 }
-
-export type PlacementType = keyof typeof placementEnum
-//#endregion Placement
 
 //#region Scroll position
 export enum verticalPositionEnum {
   top = 'top',
   center = 'center',
-  bottom = 'bottom',
+  bottom = 'bottom'
 }
 
 export type VerticalPositionType = keyof typeof verticalPositionEnum
@@ -124,8 +113,20 @@ export type VerticalPositionType = keyof typeof verticalPositionEnum
 export enum dragHoverPartEnum {
   before = 'before',
   body = 'body',
-  after = 'after',
+  after = 'after'
 }
 //#endregion Drag
 
-export type TreeNodeKeyType = string | number
+export const TREE_NODE_EVENTS = [
+    'expand',
+    'check',
+    'click',
+    'select',
+    'node-dblclick',
+    'node-right-click',
+    'node-dragstart',
+    'node-dragenter',
+    'node-dragover',
+    'node-dragleave',
+    'node-drop'
+  ]
