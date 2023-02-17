@@ -51,7 +51,7 @@ declare const _default: import("vue-demi").DefineComponent<{
         default: number;
     };
 }, {
-    modelValue: string | number | TreeNodeKeyType[] | undefined;
+    treeModelValue: import("vue-demi").WritableComputedRef<string | number | TreeNodeKeyType[] | undefined>;
     setChecked: (a: any, b: any) => void;
     checkAllStatus: {
         checked: boolean;
@@ -79,7 +79,7 @@ declare const _default: import("vue-demi").DefineComponent<{
     treeWrapperCls: import("vue-demi").ComputedRef<string[]>;
     footerCls: import("vue-demi").ComputedRef<string[]>;
     checkable: import("vue-demi").ComputedRef<boolean>;
-    tree: Ref<any>;
+    treeRef: Ref<any>;
     handleCheckAll: () => void;
     handleSearch: () => void;
     handleShowChecked: () => void;
@@ -89,7 +89,9 @@ declare const _default: import("vue-demi").DefineComponent<{
     getKeyword: () => string;
     checkedChange: (value1: any, value2: any) => void;
     setData: () => void;
-}, unknown, {}, {}, import("vue-demi").ComponentOptionsMixin, import("vue-demi").ComponentOptionsMixin, ("search" | "checked-change" | "set-Data")[], "search" | "checked-change" | "set-Data", import("vue-demi").VNodeProps & import("vue-demi").AllowedComponentProps & import("vue-demi").ComponentCustomProps, Readonly<import("vue-demi").ExtractPropTypes<{
+    clearKeyword: () => void;
+    search: (keyword1?: string) => Promise<void>;
+}, unknown, {}, {}, import("vue-demi").ComponentOptionsMixin, import("vue-demi").ComponentOptionsMixin, ("search" | "set-data" | "checked-change" | "update:ModelValue")[], "search" | "set-data" | "checked-change" | "update:ModelValue", import("vue-demi").VNodeProps & import("vue-demi").AllowedComponentProps & import("vue-demi").ComponentCustomProps, Readonly<import("vue-demi").ExtractPropTypes<{
     /** 兼容 Vue 2.5.16 bug */
     modelValue: PropType<string | number | TreeNodeKeyType[]>;
     /** 搜索输入框的 placeholder */
@@ -141,8 +143,9 @@ declare const _default: import("vue-demi").DefineComponent<{
     };
 }>> & {
     onSearch?: ((...args: any[]) => any) | undefined;
+    "onSet-data"?: ((...args: any[]) => any) | undefined;
     "onChecked-change"?: ((...args: any[]) => any) | undefined;
-    "onSet-Data"?: ((...args: any[]) => any) | undefined;
+    "onUpdate:ModelValue"?: ((...args: any[]) => any) | undefined;
 }, {
     searchPlaceholder: string;
     showCheckAll: boolean;
