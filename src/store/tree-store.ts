@@ -452,7 +452,7 @@ export default class TreeStore {
                 err = new Error(e)
               }
               // tslint:disable-next-line: no-console
-              console.error(err)
+              // console.error(err)
             })
             .then(() => {
               node._loading = false

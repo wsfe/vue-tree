@@ -76,16 +76,16 @@
           @scale: 0.9;
           .pseudo () {
             @thick: 1px;
-            @offset: (@icon-size - @thick) / 2;
+            @offset: ((@icon-size - @thick) / 2);
             @diff: 7px;
 
             content: '';
             width: @thick;
-            height: @icon-size - @diff;
+            height: (@icon-size - @diff);
             display: block;
             background-color: #fff;
             position: absolute;
-            top: @diff / 2;
+            top: (@diff / 2);
             left: @offset;
           }
 

@@ -47,7 +47,7 @@ import {
 } from 'vue-demi'
 import { TreeNode } from '../store'
 import LoadingIcon from './LoadingIcon.vue'
-import { dragHoverPartEnum } from '../const'
+import { dragHoverPartEnum, TREE_NODE_EVENTS } from '../const'
 import type { GetNodeFn } from '../types'
 const prefixCls = 'ctree-tree-node'
 
@@ -88,6 +88,7 @@ export default defineComponent({
     droppable: Boolean,
     getNode: Function as PropType<GetNodeFn>
   },
+  emits: [...TREE_NODE_EVENTS],
   setup(props, { emit }) {
     const dragoverBody = ref(false)
     const dragoverBefore = ref(false)

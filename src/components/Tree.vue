@@ -70,17 +70,14 @@ import {
 import TreeStore, { TreeNode } from '../store'
 import CTreeNode from './TreeNode.vue'
 import LoadingIcon from './LoadingIcon.vue'
-import {
-  IEventNames,
-  ListenerType,
-  FilterFunctionType
-} from '../store/tree-store'
+import { IEventNames, FilterFunctionType } from '../store/tree-store'
 import { ITreeNodeOptions } from '../store/tree-node'
 import {
   ignoreEnum,
   verticalPositionEnum,
   VerticalPositionType,
-  dragHoverPartEnum
+  dragHoverPartEnum,
+  TREE_NODE_EVENTS
 } from '../const'
 import { TreeNodeKeyType, IgnoreType } from '../types'
 type AnyPropsArrayType = Array<{ [key: string]: any }>
@@ -95,13 +92,15 @@ const storeEvents: Array<keyof IEventNames> = [
   'checked-change',
   'set-data'
 ]
+const EXCLUDED_TREE_NODE_EVENTS = ['node-drop', 'check', 'select', 'expand']
+
 export default defineComponent({
   name: 'CTree',
   components: {
     CTreeNode,
     LoadingIcon
   },
-  emits: ['update:modelValue', 'node-drop'],
+  emits: ['update:modelValue', ...TREE_NODE_EVENTS, ...storeEvents],
   props: {
     /** 单选模式下为字符串或数字，多选模式下为数组或者以 separator 分隔的字符串。当即可单选又可多选时，value 是多选的值 */
     modelValue: [String, Number, Array] as PropType<
@@ -329,9 +328,8 @@ export default defineComponent({
       default: false
     }
   },
-  setup(props, content) {
+  setup(props, ctx) {
     const prefixCls = 'ctree-tree'
-    const excludedEvents = ['node-drop']
     const sameValue = (newVal: VModelType, valueCache: VModelType): boolean => {
       if (Array.isArray(newVal) && Array.isArray(valueCache)) {
         if (
@@ -401,18 +399,14 @@ export default defineComponent({
     const iframeCls = computed(() => {
       return [`${prefixCls}__iframe`]
     })
-    const treeNodeListeners = computed(() => {
-      let result: { [key: string]: any } = {}
-      for (let event in content.attrs) {
-        if (
-          storeEvents.indexOf(event as keyof IEventNames) === -1 &&
-          excludedEvents.indexOf(event) === -1
-        ) {
-          result[event] = content.attrs[event]
+    const treeNodeListeners = TREE_NODE_EVENTS.reduce((prev, eventName) => {
+      if (EXCLUDED_TREE_NODE_EVENTS.indexOf(eventName) < 0) {
+        prev[eventName] = (...args: any[]) => {
+          ctx.emit.apply(ctx, [eventName, ...args])
         }
       }
-      return result
-    })
+      return prev
+    }, {} as Record<string, Function>)
     //watch
     const nonReactive = {
       store: new TreeStore({
@@ -469,12 +463,12 @@ export default defineComponent({
         updateExpandedKeys()
       }
     )
-    watch(
-      () => content.attrs,
-      () => {
-        attachStoreEvents()
-      }
-    )
+    // watch(
+    //   () => ctx.attrs,
+    //   () => {
+    //     attachStoreEvents()
+    //   }
+    // )
     //methods
     //#region Public API
     /** 使用此方法重置树数据，可避免大量数据被 vue 监听 */
@@ -728,6 +722,7 @@ export default defineComponent({
 
     //#region Handle node events
     function handleNodeCheck(node: TreeNode): void {
+      ctx.emit('check', node)
       if (!props.cascade && props.enableLeafOnly && !node.isLeaf) return
       nonReactive.store.setChecked(
         node[props.keyField],
@@ -738,10 +733,12 @@ export default defineComponent({
       )
     }
     function handleNodeSelect(node: TreeNode): void {
+      ctx.emit('select', node)
       if (props.enableLeafOnly && !node.isLeaf) return
       nonReactive.store.setSelected(node[props.keyField], !node.selected)
     }
     function handleNodeExpand(node: TreeNode): void {
+      ctx.emit('expand', node)
       nonReactive.store.setExpand(node[props.keyField], !node.expand)
     }
     function handleNodeDrop(
@@ -772,7 +769,7 @@ export default defineComponent({
               nonReactive.store.prepend(targetKey, referenceKey)
             else if (hoverPart === dragHoverPartEnum.after)
               nonReactive.store.insertAfter(targetKey, referenceKey)
-            content.emit('node-drop', data, e, hoverPart, getNode(targetKey))
+            ctx.emit('node-drop', data, e, hoverPart, getNode(targetKey))
           }
         } catch (err: any) {
           throw new Error(err)
@@ -799,7 +796,7 @@ export default defineComponent({
         } else {
           valueCache.value = emitValue
         }
-        content.emit('update:modelValue', emitValue)
+        ctx.emit('update:modelValue', emitValue)
       }
     }
 
@@ -814,7 +811,7 @@ export default defineComponent({
         // 单选
         const emitValue: TreeNodeKeyType = selectedKey ? selectedKey : ''
         valueCache.value = emitValue
-        content.emit('update:modelValue', emitValue)
+        ctx.emit('update:modelValue', emitValue)
       }
     }
 
@@ -822,17 +819,23 @@ export default defineComponent({
      * 转发 store 所触发的事件，通过 vue 组件触发事件可被其他组件监听
      */
     function attachStoreEvents(): void {
-      for (let event in content.attrs) {
-        if (storeEvents.indexOf(event as keyof IEventNames) > -1) {
-          const e: keyof IEventNames = event as keyof IEventNames
-          nonReactive.store.on(
-            e,
-            content.attrs[event] as
-              | ListenerType<typeof e>
-              | Array<ListenerType<typeof e>>
-          )
-        }
-      }
+      storeEvents.forEach(eventName => {
+        nonReactive.store.on(eventName, (...args: any[]) => {
+          ctx.emit.apply(ctx, [eventName, ...args])
+          // ctx.emit(eventName, ...args)
+        })
+      })
+      // for (let event in ctx.attrs) {
+      //   if (storeEvents.indexOf(event as keyof IEventNames) > -1) {
+      //     const e: keyof IEventNames = event as keyof IEventNames
+      //     nonReactive.store.on(
+      //       e,
+      //       ctx.attrs[event] as
+      //         | ListenerType<typeof e>
+      //         | Array<ListenerType<typeof e>>
+      //     )
+      //   }
+      // }
     }
 
     //#region Calculate nodes
@@ -964,7 +967,7 @@ export default defineComponent({
       handleNodeDrop,
       emitCheckableInput,
       emitSelectableInput,
-      attachStoreEvents,
+      // attachStoreEvents,
       resetSpaceHeights,
       updateBlockNodes,
       updateBlockData,
@@ -973,7 +976,7 @@ export default defineComponent({
       updateRenderNodes,
       getNode
     }
-    // content.expose({
+    // ctx.expose({
     //   methods,
     //   titleField:props.titleField,
     //   nonReactive,
@@ -1049,9 +1052,9 @@ export default defineComponent({
       if ($iframe.contentWindow) {
         $iframe.contentWindow.addEventListener('resize', updateRender)
       }
-      attachStoreEvents()
     })
 
+    attachStoreEvents()
     return {
       nonReactive,
       /** 未加载选中的节点，展示已选时生成，其他情况下没用 */
