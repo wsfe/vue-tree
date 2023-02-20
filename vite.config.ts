@@ -26,8 +26,12 @@ export default defineConfig((): UserConfig => {
         fileName: 'vue-tree'
       },
       rollupOptions: {
+        external: ['vue'],
         output: {
-          exports: 'named'
+          exports: 'named',
+          globals: {
+            vue: 'Vue'
+          }
         }
       }
     }
