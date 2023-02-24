@@ -75,7 +75,7 @@ const treeNodePrefixCls = 'ctree-tree-node'
 export default defineComponent({
   name: 'CTreeSearch',
   inheritAttrs: false,
-  emits: ['checked-change', 'search', 'set-data', 'update:ModelValue'],
+  emits: ['checked-change', 'search', 'set-data', 'update:modelValue'],
   components: {
     CTree
   },
@@ -167,7 +167,7 @@ export default defineComponent({
       },
       set: newVal => {
         updateCheckedCount()
-        emit('update:ModelValue', newVal)
+        emit('update:modelValue', newVal)
       }
     })
     const wrapperCls = computed(() => {

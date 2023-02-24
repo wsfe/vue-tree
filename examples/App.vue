@@ -22,6 +22,7 @@ import Drag from './Drag.vue'
 
 import Loading from './Loading.vue'
 import Search from './Search.vue'
+import SearchRemote from './SearchRemote.vue'
 import Drop from './Drop.vue'
 import DropDataChange from './DropDataChange.vue'
 import Feature from './Feature.vue'
@@ -34,6 +35,7 @@ export default defineComponent({
     Search,
     Drop,
     Drag,
+    SearchRemote,
     // DropDataChange,
     Feature,
     Performance,
@@ -45,7 +47,7 @@ export default defineComponent({
       Performance,
       Loading,
       Search,
-      // SearchRemote,
+      SearchRemote,
       // SearchRootRemote,
       Drop,
       // DropRemote,

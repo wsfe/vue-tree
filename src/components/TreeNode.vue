@@ -164,7 +164,11 @@ export default defineComponent({
       ]
     })
     const fullData = computed(() => {
-      return getNode(props.data ? props.data[keyField] : '') || ({} as TreeNode)
+      return (
+        getNode(props.data ? props.data[keyField] : '') ||
+        props.data ||
+        ({} as TreeNode)
+      )
     })
     const showCheckbox = computed(() => {
       return props.checkable

@@ -1,8 +1,7 @@
 <template>
   <VTreeSearch
-    ref="treeSearch"
+    ref="treeSearchRef"
     v-model="value"
-    :data="data"
     checkable
     :expandOnFilter="false"
   >
@@ -18,7 +17,7 @@
 <script lang="ts">
 import { VTreeSearch } from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
-import { defineComponent, reactive, ref } from 'vue-demi'
+import { defineComponent, onMounted, reactive, ref } from 'vue-demi'
 const genData = (extra = {}) => {
   return treeDataGenerator(
     Object.assign(
@@ -40,10 +39,16 @@ export default defineComponent({
     VTreeSearch
   },
   setup(props) {
-    const data = reactive(genData().data)
+    // const data = reactive(genData().data)
+    const data = genData().data
     const value = ref('2')
+    const treeSearchRef = ref()
+    onMounted(() => {
+      console.log(treeSearchRef.value.setData(data))
+    })
     return {
-      data,
+      treeSearchRef,
+      // data,
       value
     }
   }

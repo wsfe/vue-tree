@@ -1,11 +1,6 @@
 <template>
   <div style="height: 100%">
-    <VTreeSearch
-      v-model="value"
-      :load="load"
-      search-remote
-      checkable
-      @search="handleSearch"
+    <VTreeSearch v-model="value" :load="load" checkable
       ><span slot="empty">slot 传进来的暂无数据</span></VTreeSearch
     >
     {{ value }}
@@ -44,9 +39,9 @@ export default defineComponent({
       setTimeout(() => {
         const data = genData({ nodesPerLevel: times[index.value] }).data
         resolve(data)
-      }, 10)
+      }, 1000)
     }
-    const value = reactive(['93', '124'])
+    const value = ref(['93', '124'])
     function handleSearch() {
       index.value++
       if (index.value >= times.length) index.value = 0

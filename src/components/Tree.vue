@@ -822,20 +822,8 @@ export default defineComponent({
       storeEvents.forEach(eventName => {
         nonReactive.store.on(eventName, (...args: any[]) => {
           ctx.emit.apply(ctx, [eventName, ...args])
-          // ctx.emit(eventName, ...args)
         })
       })
-      // for (let event in ctx.attrs) {
-      //   if (storeEvents.indexOf(event as keyof IEventNames) > -1) {
-      //     const e: keyof IEventNames = event as keyof IEventNames
-      //     nonReactive.store.on(
-      //       e,
-      //       ctx.attrs[event] as
-      //         | ListenerType<typeof e>
-      //         | Array<ListenerType<typeof e>>
-      //     )
-      //   }
-      // }
     }
 
     //#region Calculate nodes
