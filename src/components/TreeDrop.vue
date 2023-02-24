@@ -62,6 +62,7 @@ import CTreeSearch from './TreeSearch.vue'
 import { TreeNode } from '../store'
 import { placementEnum } from '../const'
 import { PlacementType, TreeNodeKeyType, TreeDropSlotProps } from '../types'
+import { getCtreeMethods } from '../utils'
 
 const prefixCls = 'ctree-tree-drop'
 
@@ -449,6 +450,7 @@ export default defineComponent({
     )
     //#endr
     return {
+      ...getCtreeMethods(treeSearchRef),
       treeSearchValue,
       dropdownVisible,
       checkedCount,

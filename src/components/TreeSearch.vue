@@ -35,7 +35,7 @@
         ref="treeRef"
         v-bind="$attrs"
         v-model="treeModelValue"
-        @set-data="setData"
+        @set-data="onSetData"
         @checked-change="checkedChange"
       >
         <template v-for="(_, slot) in $slots" :name="slot" v-slot="scope">
@@ -64,32 +64,13 @@ import {
   PropType
 } from 'vue-demi'
 import CTree from './Tree.vue'
-import { API_METHODS, ApiType } from '../const'
+import { ApiType } from '../const'
 import type { TreeNodeKeyType } from '../types'
+import { getCtreeMethods } from '../utils'
 
 const prefixCls = 'ctree-tree-search'
 
 const treeNodePrefixCls = 'ctree-tree-node'
-
-type CTreeInstanceType = InstanceType<typeof CTree>
-type CTreeApiMethodsType = { [key in ApiType]: CTreeInstanceType[key] }
-type CtreeInstanceKeyType = keyof CTreeInstanceType
-
-// Vue 2.6 内部没改变的话可以这样获取 Vue.extend 中的 methods。Vue 版本有升级的话需要注意这个特性有没有改变
-// 如果是对象的话可以直接 CTree.methods ，并且是安全的。
-// let ctreeMethods: CTreeApiMethodsType = {} as CTreeApiMethodsType
-
-function getCtreeMethods(treeRef: Ref<CTreeInstanceType>) {
-  return API_METHODS.reduce((prev, cur) => {
-    prev[cur] = function (...args: any[]) {
-      return treeRef.value[cur as CtreeInstanceKeyType].apply(
-        treeRef.value,
-        args
-      )
-    }
-    return prev
-  }, {} as Record<string, Function>)
-}
 
 export default defineComponent({
   name: 'CTreeSearch',
@@ -278,13 +259,13 @@ export default defineComponent({
           } else {
             if (props.searchRemote) {
               // 远程搜索
-              treeRef.value.methods.loadRootNodes().then(() => {
+              treeRef.value.loadRootNodes().then(() => {
                 updateCheckAllStatus()
                 resolve()
               })
             } else {
               // 本地搜索
-              treeRef.value.methods.filter(searchKeyword)
+              treeRef.value.filter(searchKeyword)
               updateCheckAllStatus()
               resolve()
             }
@@ -299,15 +280,15 @@ export default defineComponent({
     function handleCheckAll(): void {
       if (props.searchDisabled || checkAllStatus.disabled) return
 
-      const currentVisibleKeys = treeRef.value.methods
+      const currentVisibleKeys = treeRef.value
         .getCurrentVisibleNodes()
-        .map((node: any) => node[treeRef.value.methods.keyField])
+        .map((node: any) => node[treeRef.value.keyField])
       if (checkAllStatus.checked || checkAllStatus.indeterminate) {
         // 反选
-        treeRef.value.methods.setCheckedKeys(currentVisibleKeys, false)
+        treeRef.value.setCheckedKeys(currentVisibleKeys, false)
       } else {
         // 全选
-        treeRef.value.methods.setCheckedKeys(currentVisibleKeys, true)
+        treeRef.value.setCheckedKeys(currentVisibleKeys, true)
       }
 
       updateCheckAllStatus()
@@ -325,10 +306,10 @@ export default defineComponent({
         isShowingChecked.value = !isShowingChecked.value
         if (isShowingChecked.value) {
           // 展示已选
-          treeRef.value.methods.showCheckedNodes()
+          treeRef.value.showCheckedNodes()
         } else {
           // 恢复展示
-          treeRef.value.methods.filter(keyword.value, () => true)
+          treeRef.value.filter(keyword.value, () => true)
         }
 
         updateCheckAllStatus()
@@ -353,7 +334,7 @@ export default defineComponent({
     //#endregion Event handlers
     /** 更新全选复选框状态 */
     function updateCheckAllStatus(): void {
-      const currentVisibleNodes = treeRef.value.methods.getCurrentVisibleNodes()
+      const currentVisibleNodes = treeRef.value.getCurrentVisibleNodes()
       const length = currentVisibleNodes.length
       let hasChecked = false
       let hasUnchecked = false
@@ -379,7 +360,7 @@ export default defineComponent({
     }
 
     function updateCheckedCount(): void {
-      checkedCount.value = treeRef.value.methods.getCheckedKeys().length
+      checkedCount.value = treeRef.value.getCheckedKeys().length
     }
 
     function checkedChange(value1: any, value2: any) {
@@ -387,31 +368,11 @@ export default defineComponent({
       emit('checked-change', value1, value2)
     }
 
-    function setData() {
+    function onSetData() {
       emit('set-data')
       handleSetData()
     }
     onMounted(() => {
-      // 因为获取不到 CTree.methods 的类型，所以这边 methods 的类型不好写
-      // const methods: {
-      //   [key in keyof CTreeApiMethodsType]: CTreeApiMethodsType[key]
-      // } = treeRef.value.methods
-      // for (let key in methods) {
-      //   const keyCache: keyof CTreeApiMethodsType =
-      //     key as keyof CTreeApiMethodsType
-      //   if (API_METHODS.indexOf(keyCache) > -1) {
-      //     // 躲避 TypeScript 类型推断错误
-      //     const _methods = ctreeMethods as any
-      //     _methods[keyCache] = function <
-      //       T extends (typeof ctreeMethods)[typeof keyCache]
-      //     >(...args: Parameters<T>): ReturnType<T> {
-      //       return (methods as any)[keyCache].apply(
-      //         (this as any).$refs.treeRef.value as CTreeInstanceType,
-      //         args
-      //       )
-      //     }
-      //   }
-      // }
       if (checkable.value && !checkedCount.value) {
         handleSetData()
       }
@@ -458,7 +419,7 @@ export default defineComponent({
       updateCheckAllStatus,
       getKeyword,
       checkedChange,
-      setData,
+      onSetData,
       clearKeyword,
       search
     }
