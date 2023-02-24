@@ -1046,6 +1046,9 @@ export default defineComponent({
         }
       } else if (typeof props.load === 'function' && props.autoLoad) {
         // Load root data from remote
+        if (props.modelValue || props.unloadDataList) {
+          setData([])
+        }
         loadRootNodes()
       }
       const $iframe: any = iframe
