@@ -13,6 +13,7 @@
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
     "declaration": true,
+    "rootDir": "./src",
     "declarationDir": "types",
     "paths": {
       "@/*": ["./src/*"]

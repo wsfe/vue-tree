@@ -66,7 +66,7 @@ declare const _default: import("vue-demi").DefineComponent<{
     handleDblclick: () => void;
     handleRightClick: () => void;
     nodeBody: import("vue-demi").Ref<any>;
-}, unknown, {}, {}, import("vue-demi").ComponentOptionsMixin, import("vue-demi").ComponentOptionsMixin, {}, string, import("vue-demi").VNodeProps & import("vue-demi").AllowedComponentProps & import("vue-demi").ComponentCustomProps, Readonly<import("vue-demi").ExtractPropTypes<{
+}, unknown, {}, {}, import("vue-demi").ComponentOptionsMixin, import("vue-demi").ComponentOptionsMixin, string[], string, import("vue-demi").VNodeProps & import("vue-demi").AllowedComponentProps & import("vue-demi").ComponentCustomProps, Readonly<import("vue-demi").ExtractPropTypes<{
     /** 节点数据，注意！！为了性能，不让 Vue 监听过多属性，这个 data 不是完整的 TreeNode ，不包括 _parent 和 children 属性 */
     data: PropType<TreeNode>;
     /** 节点标题字段 */
@@ -88,7 +88,9 @@ declare const _default: import("vue-demi").DefineComponent<{
     /** 是否可放置 */
     droppable: BooleanConstructor;
     getNode: PropType<GetNodeFn>;
-}>>, {
+}>> & {
+    [x: `on${Capitalize<string>}`]: ((...args: any[]) => any) | undefined;
+}, {
     checkable: boolean;
     selectable: boolean;
     unselectOnClick: boolean;

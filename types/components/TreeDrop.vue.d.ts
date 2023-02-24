@@ -46,6 +46,7 @@ declare const _default: import("vue-demi").DefineComponent<{
         default: boolean;
     };
 }, {
+    treeSearchValue: import("vue-demi").WritableComputedRef<string | number | TreeNodeKeyType[] | undefined>;
     dropdownVisible: import("vue-demi").Ref<boolean>;
     checkedCount: import("vue-demi").Ref<number>;
     selectedTitle: import("vue-demi").Ref<string>;
@@ -108,9 +109,9 @@ declare const _default: import("vue-demi").DefineComponent<{
     selectable: import("vue-demi").ComputedRef<boolean>;
     displayValue: import("vue-demi").ComputedRef<string>;
     showClearIcon: import("vue-demi").ComputedRef<boolean>;
-    reference: import("vue-demi").Ref<any>;
-    dropdown: import("vue-demi").Ref<any>;
-    treeSearch: import("vue-demi").Ref<any>;
+    referenceRef: import("vue-demi").Ref<any>;
+    dropdownRef: import("vue-demi").Ref<any>;
+    treeSearchRef: import("vue-demi").Ref<any>;
     locateDropdown: () => void;
     handleRefClick: () => void;
     handleDocumentClick: (e: MouseEvent) => void;
@@ -118,7 +119,7 @@ declare const _default: import("vue-demi").DefineComponent<{
     handleCheckedChange: (nodes: TreeNode[], keys: TreeNodeKeyType[]) => void;
     handleSelectedChange: (node?: TreeNode, key?: TreeNodeKeyType) => void;
     handleSetData: () => void;
-}, unknown, {}, {}, import("vue-demi").ComponentOptionsMixin, import("vue-demi").ComponentOptionsMixin, ("checked-change" | "clear" | "dropdown-visible-change")[], "checked-change" | "clear" | "dropdown-visible-change", import("vue-demi").VNodeProps & import("vue-demi").AllowedComponentProps & import("vue-demi").ComponentCustomProps, Readonly<import("vue-demi").ExtractPropTypes<{
+}, unknown, {}, {}, import("vue-demi").ComponentOptionsMixin, import("vue-demi").ComponentOptionsMixin, ("checked-change" | "update:modelValue" | "clear" | "dropdown-visible-change")[], "checked-change" | "update:modelValue" | "clear" | "dropdown-visible-change", import("vue-demi").VNodeProps & import("vue-demi").AllowedComponentProps & import("vue-demi").ComponentCustomProps, Readonly<import("vue-demi").ExtractPropTypes<{
     /** 兼容 Vue 2.5.16 bug */
     modelValue: PropType<string | number | TreeNodeKeyType[]>;
     /** 下拉内容高度 */
@@ -163,6 +164,7 @@ declare const _default: import("vue-demi").DefineComponent<{
     };
 }>> & {
     "onChecked-change"?: ((...args: any[]) => any) | undefined;
+    "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
     onClear?: ((...args: any[]) => any) | undefined;
     "onDropdown-visible-change"?: ((...args: any[]) => any) | undefined;
 }, {

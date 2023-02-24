@@ -223,9 +223,7 @@ declare const _default: import("vue-demi").DefineComponent<{
     loadingWrapperCls: import("vue-demi").ComputedRef<string[]>;
     loadingIconCls: import("vue-demi").ComputedRef<string[]>;
     iframeCls: import("vue-demi").ComputedRef<string[]>;
-    treeNodeListeners: import("vue-demi").ComputedRef<{
-        [key: string]: any;
-    }>;
+    treeNodeListeners: Record<string, Function>;
     setData: (data: AnyPropsArrayType) => void;
     setChecked: (key: TreeNodeKeyType, value: boolean) => void;
     setCheckedKeys: (keys: TreeNodeKeyType[], value: boolean) => void;
@@ -315,7 +313,6 @@ declare const _default: import("vue-demi").DefineComponent<{
         handleNodeDrop: (data: TreeNode, e: DragEvent, hoverPart: dragHoverPartEnum) => void;
         emitCheckableInput: (checkedNodes: TreeNode[], checkedKeys: TreeNodeKeyType[]) => void;
         emitSelectableInput: (selectedNode: TreeNode | null, selectedKey: TreeNodeKeyType | null) => void;
-        attachStoreEvents: () => void;
         resetSpaceHeights: () => void;
         updateBlockNodes: () => void;
         updateBlockData: () => void;
@@ -324,7 +321,7 @@ declare const _default: import("vue-demi").DefineComponent<{
         updateRenderNodes: (isScroll?: boolean) => void;
         getNode: (key: TreeNodeKeyType) => TreeNode | null;
     };
-}, unknown, {}, {}, import("vue-demi").ComponentOptionsMixin, import("vue-demi").ComponentOptionsMixin, ("node-drop" | "update:modelValue")[], "node-drop" | "update:modelValue", import("vue-demi").VNodeProps & import("vue-demi").AllowedComponentProps & import("vue-demi").ComponentCustomProps, Readonly<import("vue-demi").ExtractPropTypes<{
+}, unknown, {}, {}, import("vue-demi").ComponentOptionsMixin, import("vue-demi").ComponentOptionsMixin, string[], string, import("vue-demi").VNodeProps & import("vue-demi").AllowedComponentProps & import("vue-demi").ComponentCustomProps, Readonly<import("vue-demi").ExtractPropTypes<{
     /** 单选模式下为字符串或数字，多选模式下为数组或者以 separator 分隔的字符串。当即可单选又可多选时，value 是多选的值 */
     modelValue: PropType<string | number | TreeNodeKeyType[]>;
     /** 传入的树数据。数据量大时，不建议通过 props 传入数据，建议用 `setData` 方法代替 */
@@ -494,8 +491,7 @@ declare const _default: import("vue-demi").DefineComponent<{
         default: boolean;
     };
 }>> & {
-    "onNode-drop"?: ((...args: any[]) => any) | undefined;
-    "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
+    [x: `on${Capitalize<string>}`]: ((...args: any[]) => any) | undefined;
 }, {
     data: AnyPropsArrayType;
     keyField: string;

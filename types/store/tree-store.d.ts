@@ -18,12 +18,12 @@ export interface IEventNames {
     'set-data': () => void;
     'visible-data-change': () => void;
     'render-data-change': () => void;
-    'expand': NodeGeneralListenerType;
-    'select': NodeGeneralListenerType;
-    'unselect': NodeGeneralListenerType;
+    expand: NodeGeneralListenerType;
+    select: NodeGeneralListenerType;
+    unselect: NodeGeneralListenerType;
     'selected-change': (node: TreeNode | null, key: TreeNodeKeyType | null) => void;
-    'check': NodeGeneralListenerType;
-    'uncheck': NodeGeneralListenerType;
+    check: NodeGeneralListenerType;
+    uncheck: NodeGeneralListenerType;
     'checked-change': (nodes: TreeNode[], keys: TreeNodeKeyType[]) => void;
 }
 type NodeGeneralListenerType = (node: TreeNode) => void;

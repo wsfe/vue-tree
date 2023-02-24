@@ -64,4 +64,5 @@ export declare enum dragHoverPartEnum {
     body = "body",
     after = "after"
 }
+export declare const TREE_NODE_EVENTS: string[];
 export {};
