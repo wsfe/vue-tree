@@ -1,5 +1,5 @@
 import CTree from './components/Tree.vue'
-import type {Ref} from 'vue'
+import type { Ref } from 'vue'
 import { API_METHODS } from './const'
 
 type CTreeInstanceType = InstanceType<typeof CTree>

@@ -118,15 +118,15 @@ export enum dragHoverPartEnum {
 //#endregion Drag
 
 export const TREE_NODE_EVENTS = [
-    'expand',
-    'check',
-    'click',
-    'select',
-    'node-dblclick',
-    'node-right-click',
-    'node-dragstart',
-    'node-dragenter',
-    'node-dragover',
-    'node-dragleave',
-    'node-drop'
-  ]
+  'expand',
+  'check',
+  'click',
+  'select',
+  'node-dblclick',
+  'node-right-click',
+  'node-dragstart',
+  'node-dragenter',
+  'node-dragover',
+  'node-dragleave',
+  'node-drop'
+]
