@@ -73,7 +73,7 @@ export default defineComponent({
 
   button {
     cursor: pointer;
-    width: 100px;
+    min-width: 100px;
     height: 38px;
     margin-right: 30px;
     margin-bottom: 10px;
