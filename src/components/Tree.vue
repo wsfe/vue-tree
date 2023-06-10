@@ -65,6 +65,7 @@ import {
   computed,
   watch,
   onMounted,
+  onBeforeUnmount,
   PropType
 } from 'vue-demi'
 import TreeStore, { TreeNode } from '../store'
@@ -80,8 +81,14 @@ import {
   TREE_NODE_EVENTS
 } from '../const'
 import { TreeNodeKeyType, IgnoreType } from '../types'
+
 type AnyPropsArrayType = Array<{ [key: string]: any }>
 type VModelType = TreeNodeKeyType | TreeNodeKeyType[]
+interface INonReactiveData {
+  store: TreeStore
+  blockNodes: TreeNode[]
+}
+
 const storeEvents: Array<keyof IEventNames> = [
   'expand',
   'select',
@@ -360,7 +367,7 @@ export default defineComponent({
     ) as Ref<VModelType>
     const debounceTimer = ref(undefined) as Ref<number | undefined>
     const scrollArea = ref()
-    const iframe = ref()
+    const iframe = ref<HTMLIFrameElement | undefined>()
     //computed
     const topSpaceStyles = computed(() => {
       return {
@@ -407,19 +414,25 @@ export default defineComponent({
       }
       return prev
     }, {} as Record<string, Function>)
-    //watch
-    const nonReactive = {
-      store: new TreeStore({
-        keyField: props.keyField,
-        ignoreMode: props.ignoreMode,
-        filteredNodeCheckable: props.filteredNodeCheckable,
-        cascade: props.cascade,
-        defaultExpandAll: props.defaultExpandAll,
-        load: props.load,
-        expandOnFilter: props.expandOnFilter
-      }),
-      blockNodes: [] as TreeNode[]
+
+    const getInitialNonReactiveValues = (): INonReactiveData => {
+      return {
+        store: new TreeStore({
+          keyField: props.keyField,
+          ignoreMode: props.ignoreMode,
+          filteredNodeCheckable: props.filteredNodeCheckable,
+          cascade: props.cascade,
+          defaultExpandAll: props.defaultExpandAll,
+          load: props.load,
+          expandOnFilter: props.expandOnFilter
+        }),
+        blockNodes: [] as TreeNode[]
+      }
     }
+
+    //watch
+    let nonReactive = getInitialNonReactiveValues()
+
     watch(
       () => props.modelValue,
       newVal => {
@@ -1039,10 +1052,22 @@ export default defineComponent({
         }
         loadRootNodes()
       }
-      const $iframe: any = iframe
-      if ($iframe.contentWindow) {
+      const $iframe = iframe.value
+      if ($iframe?.contentWindow) {
         $iframe.contentWindow.addEventListener('resize', updateRender)
       }
+    })
+
+    onBeforeUnmount(() => {
+      const $iframe = iframe.value
+      if ($iframe?.contentWindow) {
+        $iframe.contentWindow.removeEventListener('resize', updateRender)
+      }
+      // 卸载组件之前重置 nonReactive 中的数据，缓解 Vue 切换组件可能导致的内存无法释放问题
+      nonReactive.store.disposeListeners()
+      const newNonReactive = getInitialNonReactiveValues()
+      nonReactive.store = newNonReactive.store
+      nonReactive.blockNodes = newNonReactive.blockNodes
     })
 
     attachStoreEvents()
