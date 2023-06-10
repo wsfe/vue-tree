@@ -7,17 +7,24 @@
         <div class="interface">
           <div style="height: 300px">
             <VTree
+              ref="basicTreeRef"
               :data="basicUsage"
               :nodeClassName="node => `generated-class-${node.id}`"
             />
           </div>
         </div>
-        <div class="desc">纯展示</div>
+        <div class="desc">
+          <div>纯展示</div>
+          <div class="desc-block">
+            <button @click="handleExpandAll">展开全部节点</button>
+            <button @click="handleCollapseAll">折叠全部节点</button>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- 数据正确性验证 -->
-    <div class="panel">
+    <!-- <div class="panel">
       <div class="header">数据正确性验证</div>
       <div class="body">
         <div class="interface">
@@ -27,7 +34,7 @@
         </div>
         <div class="desc">数据正确性</div>
       </div>
-    </div>
+    </div> -->
 
     <!-- 单选 -->
     <div class="panel">
@@ -176,7 +183,8 @@ const genChildrenData = (nodeCount = 2) => {
   return treeDataGenerator({
     treeDepth: 1,
     nodesPerLevel: nodeCount,
-    inOrder: true
+    inOrder: true,
+    useNanoID: true,
   })
 }
 
@@ -249,9 +257,23 @@ export default defineComponent({
       })
     }
 
+    const basicTreeRef = ref()
+
+    const handleExpandAll = () => {
+      basicTreeRef.value.setExpandAll(true)
+    }
+
+    const handleCollapseAll = () => {
+      basicTreeRef.value.setExpandAll(false)
+      basicTreeRef.value.scrollTo(basicUsage.value[0].id, 0)
+    }
+
     return {
       // 基本用法
       basicUsage,
+      basicTreeRef,
+      handleExpandAll,
+      handleCollapseAll,
 
       // 数据正确性
       orderData,

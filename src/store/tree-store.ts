@@ -1212,5 +1212,11 @@ export default class TreeStore {
       this.listenersMap[eventName][i](...args)
     }
   }
+
+  disposeListeners(): void {
+    for (const eventName in this.listenersMap) {
+      this.listenersMap[eventName] = []
+    }
+  }
   //#endregion Mini EventTarget
 }
