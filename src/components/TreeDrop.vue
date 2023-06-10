@@ -385,12 +385,11 @@ export default defineComponent({
       node?: TreeNode,
       key?: TreeNodeKeyType
     ): void {
-      debugger
       slotProps.selectedNode = node
       slotProps.selectedKey = key
 
       if (node) {
-        const titleField = treeSearchRef.value.$refs.treeRef.value.titleField
+        const titleField = treeSearchRef.value.$refs.treeRef.titleField
         selectedTitle.value = node[titleField]
       } else if (key) {
         selectedTitle.value = key as string
@@ -417,7 +416,7 @@ export default defineComponent({
             props.modelValue as TreeNodeKeyType
           )
           if (node) {
-            const titleField = treeRef.value.titleField
+            const titleField = treeRef.titleField
             selectedTitle.value = node[titleField]
           } else {
             selectedTitle.value = props.modelValue as any

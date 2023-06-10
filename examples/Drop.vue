@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="padding: 10px;">
     <div style="width: 200px">
       <p>自定义展示 slot ：</p>
       <VTreeDrop
@@ -40,6 +40,22 @@
       </VTreeDrop>
       {{ value }}
     </div>
+    <div style="width: 200px">
+      <p>单选：</p>
+      <VTreeDrop
+        v-model="value2"
+        :data="data"
+        selectable
+        clearable
+        drop-placeholder="请选择"
+        :placement="placement"
+        :dropdown-min-width="300"
+        dropdown-width-fixed
+      >
+        <template #empty>slot 传进来的暂无数据</template>
+      </VTreeDrop>
+      选中的值：{{ value2 }}
+    </div>
   </div>
 </template>
 
@@ -72,6 +88,7 @@ export default defineComponent({
   setup() {
     const data = ref(genData().data)
     const value = ref('2')
+    const value2 = ref('2')
     const placement = ref<PlacementType>('bottom-start')
     function handleCheckedChange() {
       console.log('checked-change')
@@ -79,6 +96,7 @@ export default defineComponent({
     return {
       data,
       value,
+      value2,
       placement,
       handleCheckedChange
     }
