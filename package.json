@@ -1,6 +1,6 @@
 {
   "name": "@wsfe/ctree",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "main": "./dist/ctree.umd.min.js",
   "types": "./types",
   "description": "A vue tree component using virtual list.",
