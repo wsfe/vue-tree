@@ -8,6 +8,10 @@ type AnyPropsArrayType = Array<{
     [key: string]: any;
 }>;
 type VModelType = TreeNodeKeyType | TreeNodeKeyType[];
+interface INonReactiveData {
+    store: TreeStore;
+    blockNodes: TreeNode[];
+}
 declare const _default: import("vue-demi").DefineComponent<{
     /** 单选模式下为字符串或数字，多选模式下为数组或者以 separator 分隔的字符串。当即可单选又可多选时，value 是多选的值 */
     modelValue: PropType<string | number | TreeNodeKeyType[]>;
@@ -178,10 +182,7 @@ declare const _default: import("vue-demi").DefineComponent<{
         default: boolean;
     };
 }, {
-    nonReactive: {
-        store: TreeStore;
-        blockNodes: TreeNode[];
-    };
+    nonReactive: INonReactiveData;
     /** 未加载选中的节点，展示已选时生成，其他情况下没用 */
     unloadCheckedNodes: TreeNode[];
     /** 可见节点个数 */
@@ -272,7 +273,7 @@ declare const _default: import("vue-demi").DefineComponent<{
     updateRenderNodes: (isScroll?: boolean) => void;
     getNode: (key: TreeNodeKeyType) => TreeNode | null;
     scrollArea: Ref<any>;
-    iframe: Ref<any>;
+    iframe: Ref<HTMLIFrameElement | undefined>;
     methods: {
         setData: (data: AnyPropsArrayType) => void;
         setChecked: (key: TreeNodeKeyType, value: boolean) => void;

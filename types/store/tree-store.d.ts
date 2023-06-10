@@ -223,5 +223,6 @@ export default class TreeStore {
     on<T extends keyof IEventNames>(eventName: T, listener: ListenerType<T> | Array<ListenerType<T>>): void;
     off<T extends keyof IEventNames>(eventName: T, listener?: ListenerType<T>): void;
     emit<T extends keyof IEventNames>(eventName: T, ...args: Parameters<IEventNames[T]>): void;
+    disposeListeners(): void;
 }
 export {};
