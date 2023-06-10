@@ -273,8 +273,8 @@ describe('树多选测试', () => {
         data,
         checkable: true
       },
-      listeners: {
-        input: (emitValue: Array<string | number>) => {
+      attrs: {
+        'onUpdate:modelValue': (emitValue: Array<string | number>) => {
           modelValue = emitValue
 
           let expectedCheck = flatten(data[0])
@@ -301,8 +301,8 @@ describe('树多选测试', () => {
         data,
         checkable: true
       },
-      listeners: {
-        input: (emitValue: Array<string | number>) => {
+      attrs: {
+        'onUpdate:modelValue': (emitValue: Array<string | number>) => {
           modelValue = emitValue
 
           let expectedCheck = flatten(data[0]).map(d => d.id)
@@ -328,8 +328,8 @@ describe('树多选测试', () => {
         data,
         checkable: true
       },
-      listeners: {
-        input: (emitValue: Array<string | number>) => {
+      attrs: {
+        'onUpdate:modelValue': (emitValue: Array<string | number>) => {
           modelValue = emitValue
 
           let expectedCheck = flatten(data[0])

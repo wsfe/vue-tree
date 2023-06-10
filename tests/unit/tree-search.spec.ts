@@ -52,7 +52,7 @@ describe('树搜索测试', () => {
       propsData: { data }
     })
     const vm = wrapper.vm
-    const tree = wrapper.findComponent({ ref: 'tree' }).vm
+    const tree = wrapper.findComponent({ ref: 'treeRef' }).vm
 
     const input = wrapper.find('.ctree-tree-search__input')
     const inputElement = input.element as HTMLInputElement
@@ -115,14 +115,14 @@ describe('树远程搜索增强测试包', () => {
         checkable: true,
         modelValue: ['93', '124']
       },
-      listeners: {
-        input: (emitValue: Array<string | number>) => {
+      attrs: {
+        'onUpdate:modelValue': (emitValue: Array<string | number>) => {
           wrapper.setProps({ modelValue: emitValue })
         }
       }
     }) as any
     const vm = wrapper.vm
-    const treeWrapper = wrapper.findComponent({ ref: 'tree' }) as any
+    const treeWrapper = wrapper.findComponent({ ref: 'treeRef' }) as any
 
     const input = wrapper.find('.ctree-tree-search__input')
     const inputElement = input.element as HTMLInputElement
