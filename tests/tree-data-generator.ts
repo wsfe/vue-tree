@@ -1,3 +1,5 @@
+import { faker } from '@faker-js/faker'
+
 export interface ITreeNodeData {
   title?: string | number
   id?: string | number
@@ -15,10 +17,15 @@ interface IGeneratorOptions {
   sameIdTitle?: boolean
   inOrder?: boolean
   forceString?: boolean
+  useNanoID?: boolean
 }
 
-const genRandomStr = (): string => {
-  return Math.random().toString(36).substring(2)
+const genRandomStr = ({ index, useNanoID }: { index?: number; useNanoID?: boolean }): string => {
+  if (useNanoID) {
+    return faker.string.nanoid()
+  }
+  const randomStr = faker.person.lastName()
+  return index == null ? randomStr : `${randomStr} - (${index})`
 }
 
 export default ({
@@ -26,7 +33,8 @@ export default ({
   nodesPerLevel,
   sameIdTitle = false,
   inOrder = false,
-  forceString = false
+  forceString = false,
+  useNanoID = false,
 }: IGeneratorOptions = {}): { data: ITreeNodeData[]; total: number } => {
   let data: ITreeNodeData[] = []
   let total = 0
@@ -37,9 +45,9 @@ export default ({
       ? nodesPerLevel
       : Math.floor(Math.random() * 100)
     for (let i: number = 0; i < len; i++) {
-      let title = inOrder ? orderCount++ : genRandomStr()
+      let title = inOrder ? orderCount : genRandomStr({ index: orderCount })
       if (forceString) title = title.toString()
-      const id = sameIdTitle ? title : genRandomStr()
+      const id = sameIdTitle ? title : genRandomStr({ index: orderCount, useNanoID })
       const node = {
         title,
         id,
@@ -47,6 +55,7 @@ export default ({
       }
       root.push(node)
       total++
+      orderCount++
       genNodeData(node.children, level + 1)
     }
   }

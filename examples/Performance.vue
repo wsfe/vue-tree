@@ -6,25 +6,28 @@
     <div class="control">
       <div class="desc-block">
         <p>说明：在 Chrome 下表现良好</p>
-        <p>
-          在火狐浏览器下，因为其异步滚动策略 (scroll-linked)
-          ，在快速滚动时会导致内容空白。
-        </p>
-        <p>
-          另：浏览器元素/文档是有最大高度限制的，过多数据会导致显示不正常(Chrome
-          下 100 万条可以正常显示，但是在火狐或 Edge 则不行)
-        </p>
+        <p>浏览器元素/文档是有最大高度限制的，过多数据会导致显示不正常</p>
+        <p>生成节点比较耗时，请注意节点深度</p>
       </div>
+      <hr>
       <div class="controls">
         <label>节点深度：</label>
         <input v-model="params.treeDepth" type="number" />
+        (请输入 1-10 的整数)
       </div>
       <div class="controls">
         <label>每层节点个数：</label>
         <input v-model="params.nodesPerLevel" type="number" />
       </div>
       <div class="controls">
-        <label>总节点个数：</label>
+        <label>预计生成节点个数：</label>
+        <span>
+          {{ totalNodesToGenerate }}
+          <span v-if="tooManyNodes" style="color: red">节点过多或无效节点数，请调整节点深度或个数</span>
+        </span>
+      </div>
+      <div class="controls">
+        <label>已生成节点个数：</label>
         {{ nodeTotal }}
       </div>
       <div class="controls">
@@ -41,6 +44,13 @@
         <div class="actions">
           <span v-if="!isTreeSet" style="color: red">树数据已生成</span>
           <span v-else style="color: green">树数据已设置</span>
+        </div>
+      </div>
+      <hr>
+      <div class="controls">
+        <div class="actions">
+          <button @click="handleExpandAll">展开全部节点</button>
+          <button @click="handleCollapseAll">折叠全部节点</button>
         </div>
       </div>
       <div class="controls">
@@ -63,6 +73,9 @@
         <div class="actions">
           <button @click="handleScrollToNode">滚动到此节点</button>
         </div>
+        <div class="actions">
+          <p>(滚动只对没被折叠的节点有效)</p>
+        </div>
       </div>
     </div>
   </div>
@@ -71,7 +84,7 @@
 <script lang="ts">
 import VTree from '../src'
 import treeDataGenerator from '../tests/tree-data-generator'
-import { defineComponent, ref } from 'vue-demi'
+import { computed, defineComponent, ref } from 'vue-demi'
 
 interface TreeMockMeta {
   treeDepth: number
@@ -80,20 +93,20 @@ interface TreeMockMeta {
 
 const dataAmountMap: Record<string, TreeMockMeta> = {
   '1w': {
-    treeDepth: 2,
-    nodesPerLevel: 100
+    treeDepth: 3,
+    nodesPerLevel: 22
   },
   '10w': {
-    treeDepth: 2,
-    nodesPerLevel: 320
+    treeDepth: 3,
+    nodesPerLevel: 47
   },
   '20w': {
-    treeDepth: 2,
-    nodesPerLevel: 450
+    treeDepth: 3,
+    nodesPerLevel: 59
   },
   '30w': {
-    treeDepth: 2,
-    nodesPerLevel: 550
+    treeDepth: 3,
+    nodesPerLevel: 67
   }
 }
 
@@ -117,7 +130,29 @@ export default defineComponent({
     const scrollVerticalOption = ref('top')
     const scrollValue = ref(0)
     const tree = ref()
+
+    const totalNodesToGenerate = computed(() => {
+      const d = ~~Number(params.value.treeDepth)
+      const n = ~~Number(params.value.nodesPerLevel)
+
+      if (d < 1 || d > 10) return 0
+      if (n < 1) return 0
+
+      let total = 0
+      let times = d
+      while (times) {
+        total += Math.pow(n, times--)
+      }
+
+      return total
+    })
+
+    const tooManyNodes = computed(() => {
+      return totalNodesToGenerate.value < 1 || totalNodesToGenerate.value > 1000000
+    })
+
     const handleGenerate = () => {
+      if (tooManyNodes.value) return
       const mock = treeDataGenerator(
         Object.assign({}, params.value, {
           inOrder: true,
@@ -146,6 +181,15 @@ export default defineComponent({
       )
     }
 
+    const handleExpandAll = () => {
+      tree.value.setExpandAll(true)
+    }
+
+    const handleCollapseAll = () => {
+      tree.value.setExpandAll(false)
+      tree.value.scrollTo('0', 0)
+    }
+
     return {
       tree,
       cache,
@@ -159,7 +203,11 @@ export default defineComponent({
       handleGenerate,
       handleGenerateTotal,
       handleSetData,
-      handleScrollToNode
+      handleScrollToNode,
+      totalNodesToGenerate,
+      tooManyNodes,
+      handleExpandAll,
+      handleCollapseAll,
     }
   },
   created() {
@@ -181,16 +229,15 @@ export default defineComponent({
 
   .control {
     flex: 1;
-    padding: 30px 0;
+    padding: 10px 0;
     border-left: 1px solid gray;
 
     .desc-block {
-      padding: 10px 30px;
-      margin-bottom: 20px;
+      padding: 0 30px;
     }
 
     .controls {
-      @left-len: 120px;
+      @left-len: 150px;
 
       padding: 10px;
 
