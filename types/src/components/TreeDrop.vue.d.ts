@@ -9,7 +9,7 @@ declare const _default: import("vue/types/vue").ExtendedVue<Vue & {
             checkAllStatus: {
                 checked: boolean;
                 indeterminate: boolean; /** 多选选中节点个数 */
-                disabled: boolean;
+                disabled: boolean; /** 单选选中节点名称 */
             };
             isShowingChecked: boolean;
             /** 展示 slot 的 props */
@@ -149,6 +149,7 @@ declare const _default: import("vue/types/vue").ExtendedVue<Vue & {
                     updateRenderAmount(): void;
                     updateRenderNodes(isScroll?: boolean): void;
                     handleTreeScroll(): void;
+                    initializeNonReactiveData(): void;
                 } & {
                     topSpaceStyles: object;
                     bottomSpaceStyles: object;

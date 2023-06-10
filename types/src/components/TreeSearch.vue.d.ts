@@ -67,6 +67,7 @@ declare const _default: import("vue/types/vue").ExtendedVue<Vue & {
             updateRenderAmount(): void;
             updateRenderNodes(isScroll?: boolean): void;
             handleTreeScroll(): void;
+            initializeNonReactiveData(): void;
         } & {
             topSpaceStyles: object;
             bottomSpaceStyles: object;
