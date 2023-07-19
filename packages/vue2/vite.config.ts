@@ -1,17 +1,17 @@
 import { defineConfig, UserConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+// import vue2 from '@vitejs/plugin-vue2'
+import { createVuePlugin } from 'vite-plugin-vue2'
 import { resolve, join } from 'path'
-
 
 // https://vitejs.dev/config/
 export default defineConfig((): UserConfig => {
   return {
     resolve: {
       alias: {
-        '@': resolve('src')
+        '@': resolve('../../src')
       }
     },
-    plugins: [vue()],
+    plugins: [createVuePlugin()],
     optimizeDeps: {
       exclude: ['vue-demi']
     },
@@ -20,16 +20,15 @@ export default defineConfig((): UserConfig => {
       hmr:true
     },
     build: {
-      // outDir: 'dist',
       lib: {
-        entry: resolve(__dirname,'src/index.ts'),
+        entry: resolve(__dirname,'../../src/index.ts'),
         name:'Vtree',
         fileName: 'vue-tree'
       },
       rollupOptions: {
         external: ['vue', 'vue-demi'],
         output: {
-          dir: join(__dirname, 'dist/v3'),
+          dir: join(__dirname, '../../dist/v2'),
           exports: 'named',
           globals: {
             vue: 'Vue',

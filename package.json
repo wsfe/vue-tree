@@ -1,25 +1,29 @@
 {
   "name": "@wsfe/vue-tree",
-  "version": "3.0.3",
+  "version": "3.0.6",
   "types": "./types",
   "description": "A vue tree component using virtual list.",
-  "main": "./dist/vue-tree.umd.min.js",
-  "module": "./dist/vue-tree.mjs",
+  "main": "./dist/v3/vue-tree.umd.js",
+  "module": "./dist/v3/vue-tree.mjs",
   "exports": {
     ".": {
-      "import": "./dist/vue-tree.mjs",
-      "require": "./dist/vue-tree.umd.js"
+      "import": "./dist/v3/vue-tree.mjs",
+      "require": "./dist/v3/vue-tree.umd.js"
     },
+    "./style.css": "./dist/v3/style.css",
     "./*": "./*"
   },
   "scripts": {
     "dev": "vite",
     "dts": "vue-tsc --declaration --emitDeclarationOnly",
-    "build": "npm run dts && vite build",
+    "build": "npm run dts && npm run build:2 && npm run build:3",
+    "build:2": "pnpm --filter vue2 run build",
+    "build:3": "vite build",
     "docs": "vue-tsc --noEmit && vite build -c examples/vite.config.ts",
     "preview": "vite preview",
     "test": "jest --watch",
-    "prettier": "prettier --write \"{src,examples,tests}/**/*.{ts,js,json,vue,tsx,less,scss,less,html}\" --fix"
+    "prettier": "prettier --write \"{src,examples,tests}/**/*.{ts,js,json,vue,tsx,less,scss,less,html}\" --fix",
+    "postinstall": "node ./scripts/postinstall.cjs"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
@@ -27,6 +31,7 @@
   },
   "files": [
     "dist",
+    "scripts",
     "src",
     "types"
   ],
@@ -76,10 +81,6 @@
     "vue": "^3.2.47",
     "vue-jest": "5.0.0-alpha.10",
     "vue-tsc": "^1.0.24"
-  },
-  "peerDependencies": {
-    "@vue/composition-api": "^1.0.0-rc.1",
-    "vue": "^2.0.0 || >=3.0.0"
   },
   "peerDependenciesMeta": {
     "@vue/composition-api": {

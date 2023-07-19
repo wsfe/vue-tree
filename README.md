@@ -28,7 +28,7 @@ npm install @wsfe/vue-tree
 直接引入 css
 
 ```less
-@import '~@wsfe/vue-tree/dist/style.css';
+@import '~@wsfe/vue-tree/style.css';
 ```
 
 引入 less 以便于变量覆盖
@@ -42,7 +42,7 @@ npm install @wsfe/vue-tree
 ```typescript
 // 大家可以根据需要是否引入VTreeNode, VTreeSearch, VTreeDrop
 import Vtree, { VTreeNode, VTreeSearch, VTreeDrop } from '@wsfe/vue-tree'
-import '@wsfe/vue-tree/dist/style.css'
+import '@wsfe/vue-tree/style.css'
 ```
 
 # 接口文档
