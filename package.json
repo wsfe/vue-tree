@@ -87,5 +87,14 @@
     "@vue/composition-api": {
       "optional": true
     }
+  },
+  "pnpm": {
+    "packageExtensions": {
+      "vue-template-compiler@2.6.14": {
+        "peerDependencies": {
+          "vue": "2.6.14"
+        }
+      }
+    }
   }
 }
