@@ -1,12 +1,13 @@
 {
   "name": "@wsfe/vue-tree",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "types": "./types",
   "description": "A vue tree component using virtual list.",
   "main": "./dist/v3/vue-tree.umd.js",
   "module": "./dist/v3/vue-tree.mjs",
   "exports": {
     ".": {
+      "types": "./types/index.d.ts",
       "import": "./dist/v3/vue-tree.mjs",
       "require": "./dist/v3/vue-tree.umd.js"
     },
