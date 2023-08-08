@@ -61,7 +61,10 @@ export default defineComponent({
     data: Object as PropType<TreeNode>,
 
     /** 节点标题字段 */
-    titleField: String,
+    titleField: {
+      type: String,
+      default: ''
+    },
 
     /** 节点唯一标识字段 */
     keyField: String,
@@ -95,7 +98,7 @@ export default defineComponent({
     const dragoverAfter = ref(false)
     const keyField = props.keyField as string
     const getNode = props.getNode as Function
-    const titleField = props.titleField as string
+    // const titleField = props.titleField as string
     const wrapperCls = computed(() => {
       return [
         `${prefixCls}__wrapper`,
@@ -325,7 +328,7 @@ export default defineComponent({
       renderComponent,
       dragListeners,
       dropListeners,
-      titleField,
+      // titleField,
       handleExpand,
       handleCheck,
       handleSelect,

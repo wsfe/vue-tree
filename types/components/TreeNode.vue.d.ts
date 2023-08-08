@@ -5,7 +5,10 @@ declare const _default: import("vue-demi").DefineComponent<{
     /** 节点数据，注意！！为了性能，不让 Vue 监听过多属性，这个 data 不是完整的 TreeNode ，不包括 _parent 和 children 属性 */
     data: PropType<TreeNode>;
     /** 节点标题字段 */
-    titleField: StringConstructor;
+    titleField: {
+        type: StringConstructor;
+        default: string;
+    };
     /** 节点唯一标识字段 */
     keyField: StringConstructor;
     /** 节点渲染 render 函数 */
@@ -59,7 +62,6 @@ declare const _default: import("vue-demi").DefineComponent<{
     renderComponent: import("vue-demi").ComputedRef<import("vue-demi").DefineComponent<{}, {}, {}, {}, {}, import("vue-demi").ComponentOptionsMixin, import("vue-demi").ComponentOptionsMixin, {}, string, import("vue-demi").VNodeProps & import("vue-demi").AllowedComponentProps & import("vue-demi").ComponentCustomProps, Readonly<import("vue-demi").ExtractPropTypes<{}>>, {}>>;
     dragListeners: import("vue-demi").ComputedRef<{}>;
     dropListeners: import("vue-demi").ComputedRef<{}>;
-    titleField: string;
     handleExpand: () => void;
     handleCheck: () => void;
     handleSelect: () => void;
@@ -70,7 +72,10 @@ declare const _default: import("vue-demi").DefineComponent<{
     /** 节点数据，注意！！为了性能，不让 Vue 监听过多属性，这个 data 不是完整的 TreeNode ，不包括 _parent 和 children 属性 */
     data: PropType<TreeNode>;
     /** 节点标题字段 */
-    titleField: StringConstructor;
+    titleField: {
+        type: StringConstructor;
+        default: string;
+    };
     /** 节点唯一标识字段 */
     keyField: StringConstructor;
     /** 节点渲染 render 函数 */
@@ -91,6 +96,7 @@ declare const _default: import("vue-demi").DefineComponent<{
 }>> & {
     [x: `on${Capitalize<string>}`]: ((...args: any[]) => any) | undefined;
 }, {
+    titleField: string;
     checkable: boolean;
     selectable: boolean;
     unselectOnClick: boolean;
