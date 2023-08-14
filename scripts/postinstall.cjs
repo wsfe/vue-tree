@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const pkg = require('../package.json')
-const { version, isVue2 } = require('vue-demi')
+const { version } = require('vue-demi')
 
 const pkgPath = path.join(__dirname, '../package.json')
 
@@ -10,7 +10,7 @@ function switchVersion() {
     throw new Error('[vue-demi-component-template] not current Vue version, please use vue2/3')
   }
 
-  const distDir = `./dist/${isVue2 ? 'v2' : 'v3'}`
+  const distDir = `./dist/${version.startsWith('2.') ? 'v2' : 'v3'}`
 
   const exportJson = {
     main: `${distDir}/vue-tree.umd.js`,
