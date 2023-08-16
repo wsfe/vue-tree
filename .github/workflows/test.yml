@@ -32,4 +32,4 @@ jobs:
         run_install: |
           - recursive: true
             args: [--frozen-lockfile, --strict-peer-dependencies]
-    - run: pnpm run test
+    - run: pnpm run test:ci
