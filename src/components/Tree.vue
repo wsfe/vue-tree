@@ -735,7 +735,6 @@ export default defineComponent({
 
     //#region Handle node events
     function handleNodeCheck(node: TreeNode): void {
-      ctx.emit('check', node)
       if (!props.cascade && props.enableLeafOnly && !node.isLeaf) return
       nonReactive.store.setChecked(
         node[props.keyField],
@@ -746,12 +745,10 @@ export default defineComponent({
       )
     }
     function handleNodeSelect(node: TreeNode): void {
-      ctx.emit('select', node)
       if (props.enableLeafOnly && !node.isLeaf) return
       nonReactive.store.setSelected(node[props.keyField], !node.selected)
     }
     function handleNodeExpand(node: TreeNode): void {
-      ctx.emit('expand', node)
       nonReactive.store.setExpand(node[props.keyField], !node.expand)
     }
     function handleNodeDrop(

@@ -1,6 +1,6 @@
 {
   "name": "@wsfe/vue-tree",
-  "version": "3.0.9",
+  "version": "3.0.10",
   "types": "./types",
   "description": "A vue tree component using virtual list.",
   "main": "./dist/v3/vue-tree.umd.js",
@@ -23,6 +23,7 @@
     "docs": "vue-tsc --noEmit && vite build -c examples/vite.config.ts",
     "preview": "vite preview",
     "test": "jest --watch",
+    "test:ci": "jest",
     "prettier": "prettier --write \"{src,examples,tests}/**/*.{ts,js,json,vue,tsx,less,scss,less,html}\" --fix",
     "postinstall": "node ./scripts/postinstall.cjs"
   },
