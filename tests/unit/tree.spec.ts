@@ -180,6 +180,29 @@ describe('树展示测试', () => {
       done()
     })
   })
+
+  it('点击展开节点', done => {
+    const data = genData().data
+    const wrapper = mount(VTree as any, {
+      propsData: {
+        data
+      }
+    })
+    const vm = wrapper.vm
+
+    vm.$nextTick(() => {
+      const treeNodes: any[] = wrapper.findAllComponents({
+        name: 'CTreeNode'
+      }) as any[]
+
+      treeNodes[0].find('.ctree-tree-node__expand').trigger('click')
+
+      vm.$nextTick(() => {
+        expect(wrapper.emitted('expand')).toHaveLength(1)
+        done()
+      })
+    })
+  })
 })
 
 describe('树单选测试', () => {
@@ -254,6 +277,7 @@ describe('树单选测试', () => {
         expect(
           treeNodes[2].find('.ctree-tree-node__title_selected').exists()
         ).toBe(true)
+        expect(wrapper.emitted('select')).toHaveLength(1)
         done()
       })
     })
@@ -383,7 +407,7 @@ describe('树多选测试', () => {
         expect(modelValue.length).toBe(expectedCheck.length)
         expect(modelValue).toEqual(expect.arrayContaining(expectedCheck))
         expect(expectedCheck.length).toBeGreaterThan(2)
-
+        expect(wrapper.emitted('check')).toHaveLength(1)
         done()
       })
     })
