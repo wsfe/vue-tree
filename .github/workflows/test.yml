@@ -25,10 +25,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-    - uses: pnpm/action-setup@v2
-      with:
-        version: 6
-        run_install: |
-          - recursive: true
-            args: [--frozen-lockfile]
-    - run: pnpm run test:ci
+        cache: 'npm'
+    - run: npm install --frozen-lockfile
+    - run: npm run test:ci
