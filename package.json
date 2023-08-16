@@ -1,6 +1,6 @@
 {
   "name": "@wsfe/vue-tree",
-  "version": "3.0.9",
+  "version": "3.0.10",
   "types": "./types",
   "description": "A vue tree component using virtual list.",
   "main": "./dist/v3/vue-tree.umd.js",
