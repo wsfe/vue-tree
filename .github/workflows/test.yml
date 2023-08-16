@@ -27,8 +27,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - uses: pnpm/action-setup@v2
       with:
-        version: 8
+        version: 7
         run_install: |
           - recursive: true
-            args: [--frozen-lockfile, --strict-peer-dependencies]
+            args: [--frozen-lockfile]
     - run: pnpm run test:ci
