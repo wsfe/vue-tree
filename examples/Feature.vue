@@ -10,6 +10,9 @@
               ref="basicTreeRef"
               :data="basicUsage"
               :nodeClassName="node => `generated-class-${node.id}`"
+              @click="handleClick"
+              @node-dblclick="handleDblClick"
+              @node-right-click="handleRightClick"
             />
           </div>
         </div>
@@ -268,10 +271,27 @@ export default defineComponent({
       basicTreeRef.value.scrollTo(basicUsage.value[0].id, 0)
     }
 
+    const handleClick = (node: TreeNode, e: MouseEvent) => {
+      console.log('click', node, e)
+      console.log('click mouse position', e.x, e.y)
+    }
+    const handleDblClick = (node: TreeNode, e: MouseEvent) => {
+      console.log('node-dblclick', node, e)
+      console.log('node-dblclick mouse position', e.x, e.y)
+    }
+    const handleRightClick = (node: TreeNode, e: MouseEvent) => {
+      e.preventDefault()
+      console.log('node-right-click', node, e)
+      console.log('node-right-click mouse position', e.x, e.y)
+    }
+
     return {
       // 基本用法
       basicUsage,
       basicTreeRef,
+      handleClick,
+      handleDblClick,
+      handleRightClick,
       handleExpandAll,
       handleCollapseAll,
 

@@ -611,3 +611,32 @@ describe('节点拖拽测试', () => {
     })
   })
 })
+
+describe('节点鼠标事件', () => {
+  it('点击、双击与右键', done => {
+    const data = genData().data
+    const wrapper = mount(VTree as any, {
+      propsData: {
+        data,
+      }
+    })
+    const vm = wrapper.vm
+
+    vm.$nextTick(() => {
+      const treeNodes: any[] = wrapper.findAllComponents({ name: 'CTreeNode' })
+
+      treeNodes[0].find('.ctree-tree-node__title').trigger('click')
+      treeNodes[0].find('.ctree-tree-node__title').trigger('dblclick')
+      treeNodes[0].find('.ctree-tree-node__title').trigger('contextmenu')
+      vm.$nextTick(() => {
+        expect(wrapper.emitted('click')).toHaveLength(1)
+        expect((wrapper.emitted('click')?.[0] as any)?.[1]).toBeInstanceOf(MouseEvent)
+        expect(wrapper.emitted('node-dblclick')).toHaveLength(1)
+        expect((wrapper.emitted('node-dblclick')?.[0] as any)?.[1]).toBeInstanceOf(MouseEvent)
+        expect(wrapper.emitted('node-right-click')).toHaveLength(1)
+        expect((wrapper.emitted('node-right-click')?.[0] as any)?.[1]).toBeInstanceOf(MouseEvent)
+        done()
+      })
+    })
+  })
+})
