@@ -101,9 +101,9 @@ import '@wsfe/vue-tree/style.css'
 | select           | 选中时触发（单选）          | 被选中的节点信息                                                            |
 | unselect         | 取消选中时触发（单选）      | 被取消选中的节点信息                                                        |
 | selected-change  | 选中/取消选中时触发（单选） | 被选中节点                                                                  |
-| click            | 点击节点时触发              | 节点信息                                                                    |
-| node-dblclick    | 双击节点时触发              | 节点信息                                                                    |
-| node-right-click | 右击节点时触发              | 节点信息                                                                    |
+| click            | 点击节点时触发              | 节点信息, 鼠标事件                                                          |
+| node-dblclick    | 双击节点时触发              | 节点信息, 鼠标事件                                                          |
+| node-right-click | 右击节点时触发              | 节点信息, 鼠标事件                                                          |
 | node-dragstart   | 开始拖拽节点时触发          | 节点信息, 拖拽事件对象                                                      |
 | node-dragenter   | dragenter 时触发            | 节点信息 , 拖拽事件对象, 事件触发的节点部位 `'before' \| 'body' \| 'after'` |
 | node-dragover    | dragover 时触发             | 节点信息 , 拖拽事件对象, 事件触发的节点部位 `'before' \| 'body' \| 'after'` |

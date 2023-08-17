@@ -219,8 +219,8 @@ export default defineComponent({
       emit('check', fullData.value)
     }
 
-    function handleSelect(): void {
-      emit('click', fullData.value)
+    function handleSelect(e: MouseEvent): void {
+      emit('click', fullData.value, e)
       if (props.selectable) {
         if (props.disableAll || props.data?.disabled) return
         if (props.data?.selected && !props.unselectOnClick) return
@@ -232,12 +232,12 @@ export default defineComponent({
       }
     }
 
-    function handleDblclick(): void {
-      emit('node-dblclick', fullData.value)
+    function handleDblclick(e: MouseEvent): void {
+      emit('node-dblclick', fullData.value, e)
     }
 
-    function handleRightClick(): void {
-      emit('node-right-click', fullData.value)
+    function handleRightClick(e: MouseEvent): void {
+      emit('node-right-click', fullData.value, e)
     }
 
     //#region Drag handlers
