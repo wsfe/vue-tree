@@ -64,9 +64,9 @@ declare const _default: import("vue-demi").DefineComponent<{
     dropListeners: import("vue-demi").ComputedRef<{}>;
     handleExpand: () => void;
     handleCheck: () => void;
-    handleSelect: () => void;
-    handleDblclick: () => void;
-    handleRightClick: () => void;
+    handleSelect: (e: MouseEvent) => void;
+    handleDblclick: (e: MouseEvent) => void;
+    handleRightClick: (e: MouseEvent) => void;
     nodeBody: import("vue-demi").Ref<any>;
 }, unknown, {}, {}, import("vue-demi").ComponentOptionsMixin, import("vue-demi").ComponentOptionsMixin, string[], string, import("vue-demi").VNodeProps & import("vue-demi").AllowedComponentProps & import("vue-demi").ComponentCustomProps, Readonly<import("vue-demi").ExtractPropTypes<{
     /** 节点数据，注意！！为了性能，不让 Vue 监听过多属性，这个 data 不是完整的 TreeNode ，不包括 _parent 和 children 属性 */
