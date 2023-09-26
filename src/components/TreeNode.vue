@@ -3,18 +3,17 @@
     <div :class="dropBeforeCls"></div>
     <div ref="nodeBody" :class="nodeBodyCls" v-on="dropListeners">
       <!-- 展开按钮 -->
-      <div :class="squareCls">
+      <div :class="expandCls">
         <!-- 外层用于占位，icon 用于点击 -->
         <i
           v-show="!data?.isLeaf && !data?._loading"
-          :class="expandCls"
           @click="handleExpand"
         ></i>
         <LoadingIcon v-if="data?._loading" :class="loadingIconCls" />
       </div>
 
       <!-- 复选框 -->
-      <div v-if="showCheckbox" :class="squareCls">
+      <div v-if="showCheckbox" :class="checkboxWrapperCls">
         <div :class="checkboxCls" @click="handleCheck"></div>
       </div>
 
@@ -103,7 +102,18 @@ export default defineComponent({
       return [
         `${prefixCls}__wrapper`,
         {
-          [`${prefixCls}__wrapper_is-leaf`]: props.data?.isLeaf
+          [`${prefixCls}__wrapper_is-leaf`]: props.data?.isLeaf,
+          [`${prefixCls}_disabled`]:
+            props.disableAll || props.data?.disabled
+        },
+        // 复选
+        {
+          [`${prefixCls}_checked`]: props.checkable && props.data?.checked,
+          [`${prefixCls}_indeterminate`]: props.checkable && props.data?.indeterminate
+        },
+        // 单选
+        {
+          [`${prefixCls}_selected`]: props.data?.selected,
         }
       ]
     })
@@ -131,11 +141,16 @@ export default defineComponent({
         }
       ]
     })
-    const squareCls = computed(() => {
-      return [`${prefixCls}__square`]
+    // const squareCls = computed(() => {
+    //   return [`${prefixCls}__square`]
+    // })
+    // 复选框图标
+    const checkboxWrapperCls = computed(() => {
+      return [`${prefixCls}__square`, `${prefixCls}__checkbox_wrapper`]
     })
     const expandCls = computed(() => {
       return [
+        `${prefixCls}__square`,
         `${prefixCls}__expand`,
         {
           [`${prefixCls}__expand_active`]: props.data?.expand
@@ -317,7 +332,8 @@ export default defineComponent({
       nodeBodyCls,
       dropBeforeCls,
       dropAfterCls,
-      squareCls,
+      // squareCls,
+      checkboxWrapperCls,
       expandCls,
       loadingIconCls,
       checkboxCls,

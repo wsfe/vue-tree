@@ -3,7 +3,15 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/zh-CN/0.3.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/).
 
-## [Unreleased]
+## [3.2.0]
+### Added
+1. 新增节点选中的样式class
+
+### Changed
+1. 展开icon的class转移到父节点
+### Deprecated
+1. 删除vTree的usePadding属性，使用 padding 代替 margin 来展示子节点缩进
+
 
 ## [2.3.0] - 2020-04-15
 
