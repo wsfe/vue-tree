@@ -35,7 +35,7 @@
         ref="treeRef"
         v-bind="$attrs"
         v-model="treeModelValue"
-        @set-data="onSetData"
+        @set-data="isVue2 ? onSetDataV2 : onSetData"
         @checked-change="checkedChange"
       >
         <template v-for="(_, slot) in $slots" :name="slot" v-slot="scope">
@@ -61,7 +61,9 @@ import {
   Ref,
   computed,
   onMounted,
-  PropType
+  PropType,
+  isVue2,
+nextTick
 } from 'vue-demi'
 import CTree from './Tree.vue'
 import { ApiType } from '../const'
@@ -372,6 +374,10 @@ export default defineComponent({
       emit('set-data')
       handleSetData()
     }
+
+    function onSetDataV2() {
+      nextTick(onSetData)
+    }
     onMounted(() => {
       if (checkable.value && !checkedCount.value) {
         handleSetData()
@@ -421,7 +427,9 @@ export default defineComponent({
       checkedChange,
       onSetData,
       clearKeyword,
-      search
+      search,
+      isVue2,
+      onSetDataV2
     }
   }
 })

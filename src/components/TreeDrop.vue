@@ -33,7 +33,7 @@
           ref="treeSearchRef"
           v-model="treeSearchValue"
           v-bind="$attrs"
-          @set-data="handleSetData"
+          @set-data="isVue2 ? handleSetDataV2 : handleSetData"
           @checked-change="handleCheckedChange"
           @selected-change="handleSelectedChange"
         >
@@ -56,7 +56,8 @@ import {
   watch,
   nextTick,
   PropType,
-  withCtx
+  withCtx,
+  isVue2
 } from 'vue-demi'
 import CTreeSearch from './TreeSearch.vue'
 import { TreeNode } from '../store'
@@ -424,6 +425,9 @@ export default defineComponent({
         }
       }
     }
+    function handleSetDataV2() {
+      nextTick(handleSetData)
+    }
     onMounted(() => {
       document.addEventListener('click', handleDocumentClick)
       if (props.transfer) {
@@ -475,7 +479,9 @@ export default defineComponent({
       handleClear,
       handleCheckedChange,
       handleSelectedChange,
-      handleSetData
+      handleSetData,
+      isVue2,
+      handleSetDataV2
     }
   }
 })
