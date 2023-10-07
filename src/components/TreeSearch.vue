@@ -35,7 +35,7 @@
         ref="treeRef"
         v-bind="$attrs"
         v-model="treeModelValue"
-        @set-data="isVue2 ? onSetDataV2 : onSetData"
+        @set-data="onSetData"
         @checked-change="checkedChange"
       >
         <template v-for="(_, slot) in $slots" :name="slot" v-slot="scope">
@@ -372,12 +372,9 @@ export default defineComponent({
 
     function onSetData() {
       emit('set-data')
-      handleSetData()
+      isVue2 ?  nextTick(handleSetData) : handleSetData()
     }
 
-    function onSetDataV2() {
-      nextTick(onSetData)
-    }
     onMounted(() => {
       if (checkable.value && !checkedCount.value) {
         handleSetData()
@@ -428,8 +425,6 @@ export default defineComponent({
       onSetData,
       clearKeyword,
       search,
-      isVue2,
-      onSetDataV2
     }
   }
 })

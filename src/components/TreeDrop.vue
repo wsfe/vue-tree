@@ -33,7 +33,7 @@
           ref="treeSearchRef"
           v-model="treeSearchValue"
           v-bind="$attrs"
-          @set-data="isVue2 ? handleSetDataV2 : handleSetData"
+          @set-data="handleSetData"
           @checked-change="handleCheckedChange"
           @selected-change="handleSelectedChange"
         >
@@ -400,8 +400,7 @@ export default defineComponent({
       dropdownVisible.value = false
     }
 
-    /** 处理树数据更新 */
-    function handleSetData(): void {
+    function onSetData() {
       const treeRef = treeSearchRef.value.$refs.treeRef
       slotProps.checkedNodes = treeSearchRef.value.getCheckedNodes()
       slotProps.checkedKeys = treeSearchRef.value.getCheckedKeys()
@@ -425,8 +424,9 @@ export default defineComponent({
         }
       }
     }
-    function handleSetDataV2() {
-      nextTick(handleSetData)
+    /** 处理树数据更新 */
+    function handleSetData(): void {
+      isVue2 ? nextTick(onSetData) : onSetData()
     }
     onMounted(() => {
       document.addEventListener('click', handleDocumentClick)
@@ -480,8 +480,6 @@ export default defineComponent({
       handleCheckedChange,
       handleSelectedChange,
       handleSetData,
-      isVue2,
-      handleSetDataV2
     }
   }
 })
