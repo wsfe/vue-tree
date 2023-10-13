@@ -113,32 +113,36 @@
 
     // 展开 icon
     &__expand {
-      @icon-border-width: 5px;
-      // 展开图标可点击区域大小
-      @icon-clickable-size: 16px;
+      i {
+        @icon-border-width: 5px;
+        // 展开图标可点击区域大小
+        @icon-clickable-size: 16px;
 
-      &::after {
-        content: '';
-        display: block;
-        width: 0;
-        height: 0;
-        position: absolute;
-        border: @icon-border-width solid transparent;
-        border-left: @icon-border-width solid @ctree-color-content;
+        &::after {
+          content: '';
+          display: block;
+          width: 0;
+          height: 0;
+          position: absolute;
+          border: @icon-border-width solid transparent;
+          border-left: @icon-border-width solid @ctree-color-content;
+        }
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        width: @icon-clickable-size;
+        height: @icon-clickable-size;
+        position: relative;
+        transition: transform 0.2s linear;
       }
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      width: @icon-clickable-size;
-      height: @icon-clickable-size;
-      position: relative;
-      transition: transform 0.2s linear;
 
       // 展开状态，顺时针旋转 90 度
       &_active {
-        transform: rotate(90deg);
+        i {
+          transform: rotate(90deg);
+        }
       }
     }
 
@@ -184,8 +188,10 @@
         transition: all 0.2s ease-in-out;
       }
 
-      &:hover {
-        border-color: @ctree-color-disabled;
+      @media(any-hover:hover) {
+        &:hover {
+          border-color: @ctree-color-disabled;
+        }
       }
 
       &:focus {
@@ -203,9 +209,12 @@
           transform: rotate(45deg) scale(1);
         }
 
-        &:hover {
-          .active-color();
+        @media(any-hover:hover) {
+          &:hover {
+            .active-color();
+          }
         }
+
       }
 
       &_indeterminate {
@@ -219,9 +228,12 @@
           transform: scale(1);
         }
 
-        &:hover {
-          .active-color();
+        @media(any-hover:hover) {
+          &:hover {
+            .active-color();
+          }
         }
+
       }
 
       &_disabled {
@@ -229,9 +241,11 @@
         border-color: @ctree-color-border;
         background-color: @ctree-color-divider;
 
-        &:hover {
-          border-color: @ctree-color-border;
-          background-color: @ctree-color-divider;
+        @media(any-hover:hover) {
+          &:hover {
+            border-color: @ctree-color-border;
+            background-color: @ctree-color-divider;
+          }
         }
 
         &::after {
@@ -258,8 +272,10 @@
       white-space: nowrap;
       word-wrap: none;
 
-      &:hover {
-        background-color: lighten(@ctree-color-light-primary, 28%);
+      @media(any-hover:hover) {
+        &:hover {
+          background-color: lighten(@ctree-color-light-primary, 28%);
+        }
       }
 
       &_selected {
@@ -269,8 +285,10 @@
 
         .selected();
 
-        &:hover {
-          .selected();
+        @media(any-hover:hover) {
+          &:hover {
+            .selected();
+          }
         }
       }
 

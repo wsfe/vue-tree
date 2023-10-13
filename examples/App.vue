@@ -28,6 +28,7 @@ import DropDataChange from './DropDataChange.vue'
 import Feature from './Feature.vue'
 import Performance from './Performance.vue'
 import InsertRenderTree from './InsertRenderTree.vue'
+import Mobile from './Mobile.vue'
 
 export default defineComponent({
   components: {
@@ -39,7 +40,8 @@ export default defineComponent({
     // DropDataChange,
     Feature,
     Performance,
-    InsertRenderTree
+    InsertRenderTree,
+    Mobile
   },
   setup(props) {
     const components = {
@@ -53,7 +55,8 @@ export default defineComponent({
       // DropRemote,
       Drag,
       // DropDataChange,
-      InsertRenderTree
+      InsertRenderTree,
+      Mobile
     }
     const tabList = reactive(Object.keys(components)) as any[]
     const currentTab = ref(tabList[0])
@@ -70,6 +73,7 @@ export default defineComponent({
   height: 90px;
   padding: 10px 50px;
   border-bottom: 1px solid lightgray;
+  overflow: auto;
 
   button {
     cursor: pointer;

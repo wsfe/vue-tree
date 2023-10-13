@@ -64,8 +64,10 @@
         color: @ctree-color-input-placeholder;
       }
 
-      &:hover {
-        border-color: @ctree-color-input-border;
+      @media(any-hover:hover) {
+        &:hover {
+          border-color: @ctree-color-input-border;
+        }
       }
 
       &:focus {
@@ -78,8 +80,10 @@
         color: @ctree-color-input-disabled;
         background-color: @ctree-color-input-background-disabled;
 
-        &:hover {
-          border-color: @ctree-color-border;
+        @media(any-hover:hover) {
+          &:hover {
+            border-color: @ctree-color-border;
+          }
         }
       }
     }
@@ -94,8 +98,10 @@
     &__checked-button {
       cursor: pointer;
 
-      &:hover {
-        color: @ctree-color-light-primary;
+      @media(any-hover:hover) {
+        &:hover {
+          color: @ctree-color-light-primary;
+        }
       }
 
       &_active {

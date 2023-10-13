@@ -195,7 +195,10 @@ describe('树展示测试', () => {
         name: 'CTreeNode'
       }) as any[]
 
-      treeNodes[0].find('.ctree-tree-node__expand').trigger('click')
+      const node = treeNodes[0].find('.ctree-tree-node__expand')
+      console.log(node)
+
+      treeNodes[0].find('.ctree-tree-node__expand i').trigger('click')
 
       vm.$nextTick(() => {
         expect(wrapper.emitted('expand')).toHaveLength(1)
@@ -494,7 +497,7 @@ describe('树远程测试', () => {
         name: 'CTreeNode'
       }) as any[]
 
-      treeNodes[0].find('.ctree-tree-node__expand').trigger('click')
+      treeNodes[0].find('.ctree-tree-node__expand i').trigger('click')
       vm.$nextTick(() => {
         setTimeout(() => {
           expect((vm as any).nonReactive.store.flatData.length).toBe(7)

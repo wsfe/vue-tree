@@ -23,8 +23,7 @@
           "
           :style="{
             minHeight: `${nodeMinHeight}px`,
-            marginLeft: usePadding ? null : `${node._level * nodeIndent}px`,
-            paddingLeft: usePadding ? `${node._level * nodeIndent}px` : null
+            paddingLeft: `${node._level * nodeIndent}px`
           }"
           @check="handleNodeCheck"
           @select="handleNodeSelect"
@@ -330,10 +329,10 @@ export default defineComponent({
      * 此 Prop 是为了方便样式定制，在下个大版本将全部使用 padding
      * @deprecated
      */
-    usePadding: {
-      type: Boolean,
-      default: false
-    }
+    // usePadding: {
+    //   type: Boolean,
+    //   default: false
+    // }
   },
   setup(props, ctx) {
     const prefixCls = 'ctree-tree'
@@ -738,7 +737,7 @@ export default defineComponent({
       if (!props.cascade && props.enableLeafOnly && !node.isLeaf) return
       nonReactive.store.setChecked(
         node[props.keyField],
-        node.indeterminate ? false : !node.checked,
+        node.indeterminate ? true : !node.checked,
         true,
         true,
         true
