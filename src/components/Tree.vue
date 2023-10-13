@@ -737,7 +737,7 @@ export default defineComponent({
       if (!props.cascade && props.enableLeafOnly && !node.isLeaf) return
       nonReactive.store.setChecked(
         node[props.keyField],
-        node.indeterminate ? false : !node.checked,
+        node.indeterminate ? true : !node.checked,
         true,
         true,
         true
