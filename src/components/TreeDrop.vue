@@ -56,7 +56,8 @@ import {
   watch,
   nextTick,
   PropType,
-  withCtx
+  withCtx,
+  isVue2
 } from 'vue-demi'
 import CTreeSearch from './TreeSearch.vue'
 import { TreeNode } from '../store'
@@ -399,8 +400,7 @@ export default defineComponent({
       dropdownVisible.value = false
     }
 
-    /** 处理树数据更新 */
-    function handleSetData(): void {
+    function onSetData() {
       const treeRef = treeSearchRef.value.$refs.treeRef
       slotProps.checkedNodes = treeSearchRef.value.getCheckedNodes()
       slotProps.checkedKeys = treeSearchRef.value.getCheckedKeys()
@@ -423,6 +423,10 @@ export default defineComponent({
           }
         }
       }
+    }
+    /** 处理树数据更新 */
+    function handleSetData(): void {
+      isVue2 ? nextTick(onSetData) : onSetData()
     }
     onMounted(() => {
       document.addEventListener('click', handleDocumentClick)
@@ -475,7 +479,7 @@ export default defineComponent({
       handleClear,
       handleCheckedChange,
       handleSelectedChange,
-      handleSetData
+      handleSetData,
     }
   }
 })

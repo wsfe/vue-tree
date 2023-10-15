@@ -61,7 +61,9 @@ import {
   Ref,
   computed,
   onMounted,
-  PropType
+  PropType,
+  isVue2,
+nextTick
 } from 'vue-demi'
 import CTree from './Tree.vue'
 import { ApiType } from '../const'
@@ -370,8 +372,9 @@ export default defineComponent({
 
     function onSetData() {
       emit('set-data')
-      handleSetData()
+      isVue2 ?  nextTick(handleSetData) : handleSetData()
     }
+
     onMounted(() => {
       if (checkable.value && !checkedCount.value) {
         handleSetData()
@@ -421,7 +424,7 @@ export default defineComponent({
       checkedChange,
       onSetData,
       clearKeyword,
-      search
+      search,
     }
   }
 })
