@@ -29,7 +29,12 @@
           @select="handleNodeSelect"
           @expand="handleNodeExpand"
           @node-drop="handleNodeDrop"
-        />
+        >
+          <template #default="{title,node}">
+            <slot name="node" :title="title" :node="node" >{{title}}</slot>
+          </template>
+        </CTreeNode>
+
         <div :style="bottomSpaceStyles"></div>
       </div>
     </div>

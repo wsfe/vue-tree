@@ -151,6 +151,7 @@ import '@wsfe/vue-tree/style.css'
 | :------ | :--------------- |
 | empty   | 暂无数据         |
 | loading | 加载中显示的图标 |
+| node    | 自定义节点,参数为 {title,node} |
 
 ### VTree Data Fields
 
@@ -173,6 +174,7 @@ import '@wsfe/vue-tree/style.css'
 | \_level         | 节点层级，默认从 0 开始                                                         |
 | \_loading       | 节点是否正在加载                                                                |
 | \_loaded        | 节点是否已经加载过，异步加载下有效                                              |
+| type            | 自定义节点类型                                                  |
 
 ## VTreeSearch API
 

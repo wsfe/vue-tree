@@ -26,6 +26,37 @@
       </div>
     </div>
 
+    <div class="panel">
+      <div class="header">基本用法-自定义节点</div>
+      <div class="body">
+        <div class="interface">
+          <div style="height: 300px">
+            <VTree
+              ref="basicTreeRef"
+              :data="basicUsageCustomNode"
+              :nodeClassName="node => `generated-class-${node.id}`"
+              @click="handleClick"
+              @node-dblclick="handleDblClick"
+              @node-right-click="handleRightClick"
+            >
+              <!--自定义 Node 样式-->
+              <template  v-slot:node="{title,node,}">
+                <template v-if="node.type=='dept'"><div >{{title}}</div></template>
+                <template v-else-if="node.type=='user'"><img src="https://picsum.photos/20" >  {{title}}  </template>
+              </template>
+            </VTree>
+          </div>
+        </div>
+        <div class="desc">
+          <div>纯展示</div>
+          <div class="desc-block">
+            <button @click="handleExpandAll">展开全部节点</button>
+            <button @click="handleCollapseAll">折叠全部节点</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 数据正确性验证 -->
     <!-- <div class="panel">
       <div class="header">数据正确性验证</div>
@@ -181,6 +212,28 @@ const genData = (extra = {}) => {
     )
   )
 }
+const genOrg=()=>{
+  const org=[];
+
+  for (let i = 0; i < 5; i++) {
+    const dept={
+      title:"部门-"+i,
+      id:"dept-"+i,
+      type:"dept",
+      children:[],
+    };
+
+    for (let j = 0; j < 10; j++) {
+      dept.children.push({
+        title:"人员-"+j,
+        id:`user-${i}-${j}`,
+        type:"user",
+      })
+    }
+    org.push(dept)
+  }
+  return org
+}
 
 const genChildrenData = (nodeCount = 2) => {
   return treeDataGenerator({
@@ -206,6 +259,7 @@ export default defineComponent({
     const selectableValue = ref('')
     const checkableValue = ref<(string | number)[]>([checkableData[0].id!])
     const basicUsage = ref(genData().data)
+    const basicUsageCustomNode = ref(genOrg())
     const orderData = ref(genData({ inOrder: true }).data)
     const selectable = ref(selectableData)
     const showCheckable = ref(true)
@@ -288,6 +342,7 @@ export default defineComponent({
     return {
       // 基本用法
       basicUsage,
+      basicUsageCustomNode,
       basicTreeRef,
       handleClick,
       handleDblClick,
