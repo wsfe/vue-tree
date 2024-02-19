@@ -58,6 +58,9 @@ export default class TreeNode {
   /** 是否是子节点 */
   isLeaf: boolean = false
 
+  /** 节点类型,用于对节点进行分类 */
+  type: string = ''
+
   /** 节点是否正在加载 */
   _loading: boolean = false
 

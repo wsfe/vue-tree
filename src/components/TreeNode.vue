@@ -27,7 +27,7 @@
         :draggable="draggable && !disableAll && !data?.disabled"
       >
         <component v-if="renderFunction" :is="renderComponent"></component>
-        <template v-else>{{ data ? data[titleField] : '' }}</template>
+        <template v-else><slot name="default" :title="data ? data[titleField] : ''" :node="data">{{ data ? data[titleField] : '' }}</slot></template>
       </div>
     </div>
     <div :class="dropAfterCls"></div>
