@@ -47,26 +47,37 @@ export const useVirtualList = (nonReactive: INonReactiveData, props: IUseVirtual
   /**
    * 计算渲染的节点，基于 scrollTop 计算当前应该渲染哪些节点
    */
-  const updateRenderNodes = (isScroll: boolean = false): void => {
+  function updateRenderNodes(isScroll: boolean = false): void {
+    // 添加边界检查,防止无效更新
+    if (blockLength.value === 0) return;
+
     if (blockLength.value > renderAmount.value) {
-      const scrollTop = Math.max(scrollArea.value.scrollTop, 0)
-      /** 当前滚动了多少节点 */
-      const scrollNodeAmount = Math.floor(scrollTop / props.nodeMinHeight)
-      renderStart.value =
-        Math.floor(scrollNodeAmount / props.bufferNodeAmount) *
-        props.bufferNodeAmount
+      const scrollTop = scrollArea.value.scrollTop
+      const maxScrollTop = blockAreaHeight.value - scrollArea.value.clientHeight
+
+      // 添加滚动到底部的判断
+      if (scrollTop >= maxScrollTop) {
+        renderStart.value = Math.max(0, blockLength.value - renderAmount.value)
+      } else {
+        const scrollNodeAmount = Math.floor(scrollTop / props.nodeMinHeight)
+        renderStart.value = Math.floor(scrollNodeAmount / props.bufferNodeAmount) * props.bufferNodeAmount
+      }
     } else {
       renderStart.value = 0
     }
+
+    // 避免不必要的更新
     if (
       isScroll &&
       renderAmountCache.value === renderAmount.value &&
       renderStartCache.value === renderStart.value
-    )
+    ) {
       return
+    }
+
     renderNodes.value = nonReactive.blockNodes
       .slice(renderStart.value, renderStart.value + renderAmount.value)
-      .map(blockNode => {
+      .map((blockNode: TreeNode) => {
         return Object.assign({}, blockNode, {
           _parent: null,
           children: []
@@ -105,15 +116,30 @@ export const useVirtualList = (nonReactive: INonReactiveData, props: IUseVirtual
     blockAreaHeight.value = props.nodeMinHeight * blockLength.value
   }
 
-  const handleTreeScroll = (): void => {
+  //#endregion Calculate nodes
+  const isThrottled = ref(false)
+
+  function handleTreeScroll(): void {
     if (debounceTimer.value) {
       window.cancelAnimationFrame(debounceTimer.value)
     }
-    renderAmountCache.value = renderAmount.value
-    renderStartCache.value = renderStart.value
-    debounceTimer.value = window.requestAnimationFrame(
-      updateRenderNodes.bind(null, true)
-    )
+
+    // 添加节流
+    if (!isThrottled.value) {
+      isThrottled.value = true
+
+      renderAmountCache.value = renderAmount.value
+      renderStartCache.value = renderStart.value
+
+      debounceTimer.value = window.requestAnimationFrame(() => {
+        updateRenderNodes(true)
+
+        // 重置节流状态
+        setTimeout(() => {
+          isThrottled.value = false
+        }, 16) // 约60fps
+      })
+    }
   }
 
   /**
