@@ -40,6 +40,7 @@
 | nodeIndent                       | 子节点缩进                                                                                                            | `number`                                                                                                              | 20                                                                                                                  |
 | renderNodeAmount                 | 渲染节点数量，可见节点数大于此值且高度超过(容器可视高度能容纳节点数 + bufferNodeAmount)则不会渲染所有可见节点         | `number`                                                                                                              | 100                                                                                                                 |
 | bufferNodeAmount                 | 当滚动到视野外的节点个数大于此值时刷新渲染节点                                                                        | `number`                                                                                                              | 20                                                                                                                  |
+| maintainCheckOrder `4.2.0`            | 多选时保持选中的顺序                                                                                                  | `boolean`                                                                                                             | false                                                                                                               |
 
 ## VTree Events
 

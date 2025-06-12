@@ -226,6 +226,11 @@ export interface TreeProps {
 
   /** 当滚动到视野外的节点个数大于此值时刷新渲染节点 */
   bufferNodeAmount?: number,
+
+  /**
+   * 多选时是否保持选中顺序
+   */
+  maintainCheckOrder?: boolean,
 }
 
 export const DEFAULT_TREE_PROPS = {
@@ -258,6 +263,7 @@ export const DEFAULT_TREE_PROPS = {
   nodeIndent: 20,
   renderNodeAmount: 100,
   bufferNodeAmount: 20,
+  maintainCheckOrder: false,
 }
 </script>
 
@@ -314,7 +320,8 @@ const getInitialNonReactiveValues = (): INonReactiveData => {
       cascade: props.cascade,
       defaultExpandAll: props.defaultExpandAll,
       load: props.load,
-      expandOnFilter: props.expandOnFilter
+      expandOnFilter: props.expandOnFilter,
+      maintainCheckOrder: props.maintainCheckOrder,
     }),
     blockNodes: [] as TreeNode[]
   }

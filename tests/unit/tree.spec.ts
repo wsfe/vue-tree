@@ -463,6 +463,144 @@ describe('树多选测试', () => {
 
     expect(wrapper.emitted()['update:modelValue'].length).toBe(1)
   }))
+
+  it('保持选中顺序', () => new Promise<void>(done => {
+    const data = genData({ treeDepth: 1 }).data
+    const wrapper = mount(VTree as any, {
+      propsData: {
+        data,
+        checkable: true
+      }
+    })
+    const vm = wrapper.vm
+
+    vm.$nextTick(() => {
+      const treeNodes: any[] = wrapper.findAllComponents({
+        name: 'VTreeNode'
+      }) as any[]
+  
+      // 按顺序选中节点
+      treeNodes[4].find('.vtree-tree-node__checkbox').trigger('click')
+      treeNodes[0].find('.vtree-tree-node__checkbox').trigger('click')
+      treeNodes[2].find('.vtree-tree-node__checkbox').trigger('click')
+
+      vm.$nextTick(() => {
+        // 获取选中节点，不保持顺序
+        const unorderedNodes = (vm as any).nonReactive.store.getCheckedNodes()
+        const unorderedKeys = (vm as any).nonReactive.store.getCheckedKeys()
+        
+        // 获取选中节点，保持顺序
+        const orderedNodes = (vm as any).nonReactive.store.getCheckedNodes(undefined, true)
+        const orderedKeys = (vm as any).nonReactive.store.getCheckedKeys(undefined, true)
+    
+        // 验证节点数量
+        expect(unorderedNodes.length).toBe(orderedNodes.length)
+        expect(unorderedKeys.length).toBe(orderedKeys.length)
+    
+        // 验证顺序
+        expect(orderedNodes[0].id).toBe(data[4].id)
+        expect(orderedNodes[1].id).toBe(data[0].id)
+        expect(orderedNodes[2].id).toBe(data[2].id)
+        treeNodes[0].find('.vtree-tree-node__checkbox').trigger('click')
+
+        vm.$nextTick(() => {
+          // 验证取消选中后顺序更新
+          const updatedOrderedNodes = (vm as any).nonReactive.store.getCheckedNodes(undefined, true)
+          expect(updatedOrderedNodes.length).toBe(2)
+          expect(updatedOrderedNodes[0].id).toBe(data[4].id)
+          expect(updatedOrderedNodes[1].id).toBe(data[2].id)
+
+          done()
+        })
+      })
+    })
+  }))
+
+  it('级联选择时保持选中顺序', () => new Promise<void>(done => {
+    const data = genData().data
+    const wrapper = mount(VTree as any, {
+      propsData: {
+        data,
+        checkable: true,
+        cascade: true
+      }
+    })
+    const vm = wrapper.vm
+
+    vm.$nextTick(() => {
+      const treeNodes: any[] = wrapper.findAllComponents({
+        name: 'VTreeNode'
+      }) as any[]
+
+      // 选中第一个父节点及其子节点
+      treeNodes[0].find('.vtree-tree-node__checkbox').trigger('click')
+      // 选中第二个父节点及其子节点
+      treeNodes[2].find('.vtree-tree-node__checkbox').trigger('click')
+
+      vm.$nextTick(() => {
+        const orderedNodes = (vm as any).nonReactive.store.getCheckedNodes(undefined, true)
+        
+        // 验证第一个父节点及其子节点的顺序
+        const firstParentNode = orderedNodes.find(node => node.id === data[0].id)
+        const firstChildNodes = orderedNodes.filter(node => 
+          node.id !== data[0].id && flatten(data[0]).some(n => n.id === node.id)
+        )
+        
+        // 验证第二个父节点及其子节点的顺序
+        const secondParentNode = orderedNodes.find(node => node.id === data[2].id)
+        const secondChildNodes = orderedNodes.filter(node => 
+          node.id !== data[2].id && flatten(data[2]).some(n => n.id === node.id)
+        )
+        
+        // 验证第一个父节点在其子节点之前
+        const firstParentIndex = orderedNodes.indexOf(firstParentNode)
+        firstChildNodes.forEach(childNode => {
+          const childIndex = orderedNodes.indexOf(childNode)
+          expect(childIndex).toBeGreaterThan(firstParentIndex)
+        })
+
+        // 验证第二个父节点在其子节点之前
+        const secondParentIndex = orderedNodes.indexOf(secondParentNode)
+        secondChildNodes.forEach(childNode => {
+          const childIndex = orderedNodes.indexOf(childNode)
+          expect(childIndex).toBeGreaterThan(secondParentIndex)
+        })
+
+        // 验证两个父节点及其子节点的相对顺序
+        expect(secondParentIndex).toBeGreaterThan(firstParentIndex)
+        secondChildNodes.forEach(childNode => {
+          const childIndex = orderedNodes.indexOf(childNode)
+          expect(childIndex).toBeGreaterThan(firstParentIndex)
+        })
+
+        // 验证总节点数量 (每个父节点有 1 + 5 + 5*5 = 31 个子节点)
+        expect(orderedNodes.length).toBe(62) // 2个父节点各31个节点
+
+        done()
+      })
+    })
+  }))
+
+  it('批量设置选中状态时保持顺序', () => {
+    const data = genData({ treeDepth: 1 }).data
+    const wrapper = mount(VTree as any, {
+      propsData: {
+        data,
+        checkable: true
+      }
+    })
+    const vm = wrapper.vm
+
+    // 批量设置选中状态
+    const keys = [data[2].id, data[0].id, data[4].id]
+    ;(vm as any).nonReactive.store.setCheckedKeys(keys, true)
+
+    // 验证选中顺序
+    const orderedNodes = (vm as any).nonReactive.store.getCheckedNodes(undefined, true)
+    expect(orderedNodes[0].id).toBe(data[2].id)
+    expect(orderedNodes[1].id).toBe(data[0].id)
+    expect(orderedNodes[2].id).toBe(data[4].id)
+  })
 })
 
 describe('树远程测试', () => {

@@ -14,6 +14,7 @@ interface ITreeStoreOptions {
   defaultExpandAll?: boolean
   load?: Function
   expandOnFilter?: boolean
+  maintainCheckOrder?: boolean
 }
 
 interface IMapData {
@@ -46,6 +47,9 @@ export default class TreeStore extends TreeEventTarget {
   /** 当前单选选中节点 key */
   private currentSelectedKey: TreeNodeKeyType | null = null
 
+  /** 多选选中节点的顺序 */
+  private checkedNodesOrder: TreeNodeKeyType[] = []
+
   //#endregion Properties
 
   constructor(private readonly options: ITreeStoreOptions) {
@@ -74,6 +78,8 @@ export default class TreeStore extends TreeEventTarget {
     for (let key in this.mapData) delete this.mapData[key]
     // 扁平化之前清空单选选中，如果 value 有值，则是 selectableUnloadKey 有值，会重新设置 currentSelectedKey ；多选选中没有存储在 store 中，因此不必事先清空。
     this.currentSelectedKey = null
+    // 清空选中顺序
+    this.checkedNodesOrder = []
     // 扁平化节点数据
     this.flatData = this.flattenData(this.data)
     // 更新未载入多选选中节点
@@ -122,6 +128,20 @@ export default class TreeStore extends TreeEventTarget {
       node.checked = value
     }
 
+    // 更新选中顺序
+    if (value) {
+      // 如果节点被选中，将其添加到顺序数组的末尾
+      if (!this.checkedNodesOrder.includes(key)) {
+        this.checkedNodesOrder.push(key)
+      }
+    } else {
+      // 如果节点被取消选中，从顺序数组中移除
+      const index = this.checkedNodesOrder.indexOf(key)
+      if (index !== -1) {
+        this.checkedNodesOrder.splice(index, 1)
+      }
+    }
+
     if (triggerEvent) {
       if (node.checked) {
         this.emit('check', node)
@@ -168,6 +188,8 @@ export default class TreeStore extends TreeEventTarget {
     triggerEvent: boolean = true,
     triggerDataChange: boolean = true
   ): void {
+    // 清空选中顺序
+    this.checkedNodesOrder = []
     keys.forEach(key => {
       this.setChecked(key, value, false, false)
     })
@@ -222,6 +244,8 @@ export default class TreeStore extends TreeEventTarget {
     })
     // 清空未加载多选选中节点
     this.unloadCheckedKeys = []
+    // 清空选中顺序
+    this.checkedNodesOrder = []
 
     this.triggerCheckedChange(triggerEvent, triggerDataChange)
   }
@@ -605,8 +629,10 @@ export default class TreeStore extends TreeEventTarget {
   /**
    * 获取多选选中节点
    * @param ignoreMode 忽略模式，可选择忽略父节点或子节点，默认值是 VTree 的 ignoreMode Prop
+   * @param maintainCheckOrder 是否保持选中顺序，默认为 false 以保持向后兼容性
    */
-  getCheckedNodes(ignoreMode = this.options.ignoreMode): TreeNode[] {
+  getCheckedNodes(ignoreMode = this.options.ignoreMode, maintainCheckOrder = this.options.maintainCheckOrder): TreeNode[] {
+    let checkedNodes: TreeNode[]
     if (ignoreMode === ignoreEnum.children) {
       const result: TreeNode[] = []
       const traversal = (nodes: TreeNode[]) => {
@@ -619,22 +645,36 @@ export default class TreeStore extends TreeEventTarget {
         })
       }
       traversal(this.data)
-      return result
+      checkedNodes = result
     } else {
-      return this.flatData.filter(node => {
+      checkedNodes = this.flatData.filter(node => {
         if (ignoreMode === ignoreEnum.parents)
           return node.checked && node.isLeaf
         return node.checked
       })
     }
+
+    // 只有在需要保持选中顺序时才进行排序
+    if (maintainCheckOrder) {
+      return checkedNodes.sort((a, b) => {
+        const aIndex = this.checkedNodesOrder.indexOf(a[this.options.keyField])
+        const bIndex = this.checkedNodesOrder.indexOf(b[this.options.keyField])
+        if (aIndex === -1) return 1
+        if (bIndex === -1) return -1
+        return aIndex - bIndex
+      })
+    }
+
+    return checkedNodes
   }
 
   /**
    * 获取多选选中的节点 key ，包括未加载的 key
    * @param ignoreMode 忽略模式，同 `getCheckedNodes`
+   * @param maintainCheckOrder 是否保持选中顺序，默认为 false 以保持向后兼容性
    */
-  getCheckedKeys(ignoreMode = this.options.ignoreMode): TreeNodeKeyType[] {
-    return this.getCheckedNodes(ignoreMode)
+  getCheckedKeys(ignoreMode = this.options.ignoreMode, maintainCheckOrder = this.options.maintainCheckOrder): TreeNodeKeyType[] {
+    return this.getCheckedNodes(ignoreMode, maintainCheckOrder)
       .map(checkedNodes => checkedNodes[this.options.keyField])
       .concat(this.unloadCheckedKeys)
   }
@@ -1224,6 +1264,19 @@ export default class TreeStore extends TreeEventTarget {
   //#region Check nodes
 
   /**
+   * 递归收集节点及其所有子节点的 key，父节点在前，子节点在后
+   */
+  private collectAllKeys(node: TreeNode): TreeNodeKeyType[] {
+    const keys: TreeNodeKeyType[] = [node[this.options.keyField]]
+    if (node.children && node.children.length) {
+      node.children.forEach(child => {
+        keys.push(...this.collectAllKeys(child))
+      })
+    }
+    return keys
+  }
+
+  /**
    * 向下勾选/取消勾选节点，包括自身
    * @param node 需要向下勾选的节点
    * @param value 勾选或取消勾选
@@ -1234,6 +1287,21 @@ export default class TreeStore extends TreeEventTarget {
     value: boolean,
     filtering: boolean = false
   ): void {
+    // cascade 模式下，父节点整体操作 checkedNodesOrder
+    if (this.options.cascade && !node._parent) {
+      const keys = this.collectAllKeys(node)
+      if (value) {
+        // 整体插入末尾，去重
+        keys.forEach(key => {
+          if (!this.checkedNodesOrder.includes(key)) {
+            this.checkedNodesOrder.push(key)
+          }
+        })
+      } else {
+        // 整体移除
+        this.checkedNodesOrder = this.checkedNodesOrder.filter(key => !keys.includes(key))
+      }
+    }
     node.children.forEach(child => {
       this.checkNodeDownward(child, value, filtering)
     })
@@ -1248,6 +1316,21 @@ export default class TreeStore extends TreeEventTarget {
           return
         node.checked = value
         node.indeterminate = false
+
+        // 非 cascade 或子节点单独勾选时，单独插入末尾，去重
+        if (!this.options.cascade || node._parent) {
+          const key = node[this.options.keyField]
+          if (value) {
+            if (!this.checkedNodesOrder.includes(key)) {
+              this.checkedNodesOrder.push(key)
+            }
+          } else {
+            const index = this.checkedNodesOrder.indexOf(key)
+            if (index !== -1) {
+              this.checkedNodesOrder.splice(index, 1)
+            }
+          }
+        }
       }
     } else {
       this.checkParentNode(node)

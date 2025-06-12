@@ -58,6 +58,22 @@
       </VTreeDrop>
       选中的值：{{ value2 }}
     </div>
+    <div style="width: 200px">
+      <p>多选（保持顺序）：</p>
+      <VTreeDrop
+        v-model="orderValue"
+        :data="data"
+        checkable
+        clearable
+        drop-placeholder="请选择"
+        :placement="placement"
+        :dropdown-min-width="300"
+        dropdown-width-fixed
+        maintain-check-order
+        @checked-change="handleCheckedChange"
+      />
+      <div>顺序值：{{ orderValue }}</div>
+    </div>
   </div>
 </template>
 
@@ -91,6 +107,7 @@ export default defineComponent({
     const data = ref(genData().data)
     const value = ref('2')
     const value2 = ref('2')
+    const orderValue = ref([])
     const placement = ref<PlacementType>('bottom-start')
     function handleCheckedChange() {
       console.log('checked-change')
@@ -108,6 +125,7 @@ export default defineComponent({
       data,
       value,
       value2,
+      orderValue,
       placement,
       handleCheckedChange,
       handleSelectedChange,
