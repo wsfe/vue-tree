@@ -31,10 +31,20 @@
         <!-- 展开按钮 -->
         <div :class="expandCls">
           <!-- 外层用于占位，icon 用于点击 -->
-          <i
+          <!-- <i
             v-show="!data?.isLeaf && !data?._loading"
             @click="handleExpand"
-          ></i>
+          ></i> -->
+          <span v-show="!data?.isLeaf && !data?._loading" style="cursor: pointer;">
+            <span v-if="showLine" @click="handleExpand">
+              <svg v-if="props.data?.expand" focusable="false" data-icon="minus-square" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M328 544h368c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8H328c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8z"></path><path d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-40 728H184V184h656v656z"></path></svg>
+              <svg v-else focusable="false" data-icon="plus-square" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M328 544h152v152c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V544h152c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8H544V328c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v152H328c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8z"></path><path d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-40 728H184V184h656v656z"></path></svg>
+            </span>
+            <i
+              v-else
+              @click="handleExpand"
+            ></i>
+          </span>
           <LoadingIcon v-if="data?._loading" :class="loadingIconCls" />
         </div>
 
